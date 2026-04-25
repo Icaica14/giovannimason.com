@@ -1,0 +1,59 @@
+---
+import { type Lang, t, routeMap } from '../i18n/ui';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const items = ['home', 'menu', 'eventi', 'prenota', 'contatti'] as const;
+
+const year = new Date().getFullYear();
+---
+
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a class="brand" href={routeMap.home[lang]}>Bib<span style="color:var(--brass)">l</span>io</a>
+        <p>{t(lang, 'footer.tagline')}</p>
+        <p style="margin-top:.6rem; font-style: italic; color: var(--paper-3); max-width: 22rem;">
+          {lang === 'it'
+            ? 'Una biblioteca calda e accogliente nel cuore di Treviso, dove i libri si fanno scenografia e la musica risponde sottovoce.'
+            : 'A warmly-lit literary bar in the heart of Treviso, where books set the scene and music answers softly.'}
+        </p>
+      </div>
+
+      <div>
+        <h4>{t(lang, 'footer.nav.title')}</h4>
+        <ul style="list-style:none; padding:0; margin:0; display:grid; gap:.5rem;">
+          {items.map((item) => {
+            const href = routeMap[item][lang];
+            const labelKey = `nav.${item === 'home' ? 'home' : item}` as const;
+            return <li><a href={href}>{t(lang, labelKey)}</a></li>;
+          })}
+        </ul>
+      </div>
+
+      <div>
+        <h4>{t(lang, 'footer.contatti.title')}</h4>
+        <p style="margin:0 0 .5rem;">
+          Via Armando Diaz, 3/A<br />
+          31100 Treviso (TV)
+        </p>
+        <p style="margin:0 0 .5rem;">
+          <a href="tel:+390422270575">+39 0422 270575</a>
+        </p>
+        <p style="margin:0 0 .8rem;">
+          <a href="mailto:biblio.bookcafe@gmail.com">biblio.bookcafe@gmail.com</a>
+        </p>
+        <p>
+          <a href="https://www.instagram.com/bookcafebiblio/" target="_blank" rel="noopener">Instagram →</a>
+        </p>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      © {year} {t(lang, 'footer.copyright')}
+    </div>
+  </div>
+</footer>

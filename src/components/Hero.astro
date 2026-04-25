@@ -1,0 +1,30 @@
+---
+import { getImage } from 'astro:assets';
+import heroSrc from '../assets/img/interni/img_1.webp';
+import { type Lang, t, routeMap } from '../i18n/ui';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+
+// Versione ottimizzata su misura per il banner hero
+const heroOpt = await getImage({
+  src: heroSrc,
+  width: 1920,
+  format: 'webp',
+  quality: 80,
+});
+---
+
+<section class="hero" style={`--hero-bg: url("${heroOpt.src}")`}>
+  <div class="hero-inner">
+    <h1 class="brand-mark">Bib<span>l</span>io</h1>
+    <p class="tagline">{t(lang, 'hero.tagline')}</p>
+    <p class="lede">"{t(lang, 'hero.lede')}"</p>
+    <div class="hero-cta">
+      <a class="btn" href={routeMap.prenota[lang]}>{t(lang, 'hero.cta.book')}</a>
+      <a class="btn btn-ghost" href={routeMap.menu[lang]}>{t(lang, 'hero.cta.menu')}</a>
+    </div>
+  </div>
+</section>

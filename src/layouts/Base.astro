@@ -1,0 +1,57 @@
+---
+import '../styles/global.css';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+import { type Lang, t } from '../i18n/ui';
+
+interface Props {
+  lang: Lang;
+  currentRoute: 'home' | 'menu' | 'eventi' | 'prenota' | 'contatti';
+  /** Override SEO title; default è il titolo di sito */
+  title?: string;
+  description?: string;
+}
+
+const { lang, currentRoute, title, description } = Astro.props;
+const pageTitle = title ?? t(lang, 'site.title');
+const pageDesc  = description ?? t(lang, 'site.description');
+---
+
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{pageTitle}</title>
+    <meta name="description" content={pageDesc} />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={pageDesc} />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content={lang === 'it' ? 'it_IT' : 'en_US'} />
+    <meta name="theme-color" content="#f6efe1" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <!-- Google Fonts: Cormorant Garamond (display) + Lora (body) + Cinzel (brand) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Lora:ital,wght@0,400;0,500;0,600;1,400&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <Nav lang={lang} currentRoute={currentRoute} />
+    <main id="main">
+      <slot />
+    </main>
+    <Footer lang={lang} />
+    <script>
+      // Toggle mobile nav
+      const navEl = document.querySelector<HTMLElement>('.nav');
+      const toggle = document.querySelector<HTMLButtonElement>('.nav-toggle');
+      toggle?.addEventListener('click', () => {
+        const open = navEl?.classList.toggle('is-open');
+        toggle.setAttribute('aria-expanded', String(open ?? false));
+      });
+    </script>
+  </body>
+</html>

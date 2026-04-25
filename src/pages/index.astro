@@ -1,0 +1,88 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import Hero from '../components/Hero.astro';
+import { t, routeMap } from '../i18n/ui';
+
+import interno from '../assets/img/interni/interni-1.png';
+import gal1 from '../assets/img/interni/interni-2.png';
+import gal2 from '../assets/img/cibo/cibo-1.png';
+import gal3 from '../assets/img/interni/interni-3.png';
+import gal4 from '../assets/img/cibo/cibo-3.png';
+
+const lang = 'it' as const;
+---
+
+<Base lang={lang} currentRoute="home">
+  <Hero lang={lang} />
+
+  <!-- Intro: chi siamo -->
+  <section class="container">
+    <div class="intro-grid">
+      <Image src={interno} alt="Interni di Biblio: librerie, lampade dorate, legno antico" widths={[480, 800, 1200]} sizes="(max-width: 820px) 100vw, 540px" />
+      <div class="prose">
+        <span class="eyebrow">{t(lang, 'home.intro.eyebrow')}</span>
+        <h2>{t(lang, 'home.intro.title')}</h2>
+        <p>{t(lang, 'home.intro.body')}</p>
+        <p>{t(lang, 'home.intro.body2')}</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"><span>· · ·</span></div>
+
+  <!-- Eventi della settimana -->
+  <section class="bg-paper-2">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow">{t(lang, 'home.eventi.eyebrow')}</span>
+        <h2>{t(lang, 'home.eventi.title')}</h2>
+        <p>{t(lang, 'home.eventi.intro')}</p>
+      </div>
+
+      <div class="events-grid">
+        <article class="event-card">
+          <p class="day">{t(lang, 'evento.gio.day')}</p>
+          <h3>{t(lang, 'evento.gio.title')}</h3>
+          <p class="note">{t(lang, 'evento.gio.note')}</p>
+        </article>
+        <article class="event-card">
+          <p class="day">{t(lang, 'evento.ven.day')}</p>
+          <h3>{t(lang, 'evento.ven.title')}</h3>
+          <p class="note">{t(lang, 'evento.ven.note')}</p>
+        </article>
+        <article class="event-card">
+          <p class="day">{t(lang, 'evento.dom.day')}</p>
+          <h3>{t(lang, 'evento.dom.title')}</h3>
+          <p class="note">{t(lang, 'evento.dom.note')}</p>
+        </article>
+      </div>
+
+      <p style="text-align:center; margin-top: 2.5rem;">
+        <a class="btn btn-dark" href={routeMap.eventi[lang]}>{t(lang, 'home.eventi.cta')}</a>
+      </p>
+    </div>
+  </section>
+
+  <!-- Galleria -->
+  <section class="container">
+    <div class="section-head">
+      <span class="eyebrow">{t(lang, 'home.gallery.eyebrow')}</span>
+      <h2>{t(lang, 'home.gallery.title')}</h2>
+    </div>
+    <div class="gallery">
+      <Image src={gal1} alt="Interno di Biblio" widths={[300, 600]} sizes="(max-width: 820px) 50vw, 280px" />
+      <Image src={gal2} alt="Un cicchetto gourmet" widths={[300, 600]} sizes="(max-width: 820px) 50vw, 280px" />
+      <Image src={gal3} alt="Soppalco con palco" widths={[300, 600]} sizes="(max-width: 820px) 50vw, 280px" />
+      <Image src={gal4} alt="Dettaglio dal bancone" widths={[300, 600]} sizes="(max-width: 820px) 50vw, 280px" />
+    </div>
+  </section>
+
+  <!-- CTA prenota -->
+  <section class="cta-banner">
+    <span class="eyebrow">{t(lang, 'home.cta.title')}</span>
+    <h2>{t(lang, 'home.cta.title')}</h2>
+    <p>{t(lang, 'home.cta.body')}</p>
+    <a class="btn" href={routeMap.prenota[lang]}>{t(lang, 'home.cta.btn')}</a>
+  </section>
+</Base>
