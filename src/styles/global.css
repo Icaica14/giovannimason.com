@@ -748,3 +748,203 @@ section { padding: 5rem 0; }
     font-size: 1.15rem;
   }
 }
+
+/* ============================================================
+   EVENTI PAGE — locandine + scroll reveal
+   ============================================================ */
+
+/* Hero */
+.eventi-page .eventi-hero {
+  text-align: center;
+  padding: 4rem 1.25rem 2rem;
+  max-width: 760px;
+}
+.eventi-page .eventi-hero h1 {
+  font-family: var(--font-display);
+  font-size: clamp(2.4rem, 6vw, 3.8rem);
+  font-style: italic;
+  font-weight: 500;
+  margin: .25rem 0 1rem;
+  color: var(--ink);
+}
+.eventi-page .eventi-hero .lede {
+  font-size: 1.1rem;
+  color: var(--ink-soft);
+  max-width: 56ch;
+  margin: 0 auto 1.25rem;
+}
+
+/* Sezioni della pagina */
+.eventi-weekly,
+.eventi-upcoming,
+.eventi-past {
+  padding: 4rem 0;
+}
+.eventi-page .eventi-empty {
+  text-align: center;
+  font-style: italic;
+  color: var(--ink-soft);
+  max-width: 56ch;
+  margin: 0 auto;
+}
+
+/* Griglia locandine */
+.poster-grid {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 2rem;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+}
+.poster-grid-featured {
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 2.5rem;
+}
+
+.poster-card {
+  display: flex;
+  flex-direction: column;
+  background: var(--paper);
+  border: 1px solid rgba(20, 12, 6, .08);
+  border-radius: 8px;
+  overflow: hidden;
+  transition: transform .35s var(--ease), box-shadow .35s var(--ease);
+}
+.poster-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 18px 40px -22px rgba(20, 12, 6, .35);
+}
+
+.poster-link {
+  text-decoration: none;
+  color: inherit;
+  display: flex;
+  flex-direction: column;
+}
+
+.poster-frame {
+  position: relative;
+  overflow: hidden;
+  background: #1a120a;
+  aspect-ratio: 4 / 5;
+}
+.poster-frame img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform .55s var(--ease), filter .35s var(--ease);
+}
+.poster-card:hover .poster-frame img {
+  transform: scale(1.04);
+}
+
+.poster-meta {
+  padding: 1.1rem 1.15rem 1.25rem;
+}
+.poster-meta h3 {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 500;
+  font-size: 1.25rem;
+  margin: .55rem 0 .35rem;
+  color: var(--ink);
+  line-height: 1.25;
+}
+.poster-when {
+  margin: 0;
+  font-size: .92rem;
+  color: var(--ink-soft);
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: .35rem .5rem;
+  align-items: baseline;
+}
+.poster-when .dot {
+  color: var(--brass-deep, #a07a30);
+}
+.poster-blurb {
+  margin: .65rem 0 0;
+  font-size: .92rem;
+  color: var(--ink-soft);
+  line-height: 1.6;
+}
+
+/* Featured (in arrivo): card più grandi e immagine 3:4 */
+.poster-grid-featured .poster-frame {
+  aspect-ratio: 3 / 4;
+}
+.poster-grid-featured .poster-meta h3 {
+  font-size: 1.45rem;
+}
+
+/* Genre badge */
+.genre-badge {
+  display: inline-block;
+  font-family: var(--font-brand);
+  font-size: .65rem;
+  letter-spacing: .25em;
+  text-transform: uppercase;
+  padding: .3rem .7rem;
+  border-radius: 999px;
+  background: rgba(20, 12, 6, .85);
+  color: var(--paper);
+}
+.genre-badge.genre-jazz       { background: #2c1c12; }
+.genre-badge.genre-blues      { background: #1c2a4a; }
+.genre-badge.genre-soul       { background: #6b1f3a; }
+.genre-badge.genre-indie      { background: #243827; }
+.genre-badge.genre-songwriter { background: rgba(200, 69, 58, .92); }
+.genre-badge.genre-reading    { background: #4a2c1a; }
+.genre-badge.genre-workshop   { background: #2a3a3a; }
+
+.follow-line {
+  text-align: center;
+  margin: 3rem 0 0;
+}
+.follow-line a {
+  font-family: var(--font-brand);
+  font-size: .78rem;
+  letter-spacing: .25em;
+  text-transform: uppercase;
+  color: var(--vino, #c8453a);
+  text-decoration: none;
+  border-bottom: 1px solid currentColor;
+  padding-bottom: 3px;
+}
+.follow-line a:hover { color: var(--ink); }
+
+/* Scroll reveal — entra dal basso con un po\u2019 di blur off
+   La transizione si attiva su .is-visible, settata da JS via IntersectionObserver. */
+.reveal {
+  opacity: 0;
+  transform: translateY(18px);
+  transition:
+    opacity .7s var(--ease) var(--reveal-delay, 0s),
+    transform .7s var(--ease) var(--reveal-delay, 0s);
+  will-change: opacity, transform;
+}
+.reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+  .poster-card:hover { transform: none; }
+  .poster-card:hover .poster-frame img { transform: none; }
+}
+
+/* Mobile */
+@media (max-width: 640px) {
+  .eventi-weekly, .eventi-upcoming, .eventi-past { padding: 3rem 0; }
+  .poster-grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 1.25rem; }
+  .poster-grid-featured { grid-template-columns: 1fr; gap: 1.75rem; }
+  .poster-meta { padding: .9rem 1rem 1.1rem; }
+  .poster-meta h3 { font-size: 1.1rem; }
+  .poster-grid-featured .poster-meta h3 { font-size: 1.25rem; }
+}

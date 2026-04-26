@@ -1,0 +1,10 @@
+---
+import Base from '../layouts/Base.astro';
+import EventiList from '../components/EventiList.astro';
+
+const lang = 'it' as const;
+---
+
+<Base lang={lang} currentRoute="eventi">
+  <EventiList lang={lang} />
+</Base>
