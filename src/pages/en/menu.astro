@@ -1,0 +1,11 @@
+---
+import Base from '../../layouts/Base.astro';
+import MenuList from '../../components/MenuList.astro';
+
+const lang = 'en' as const;
+---
+
+<Base lang={lang} currentRoute="menu">
+  <span id="top"></span>
+  <MenuList lang={lang} />
+</Base>
