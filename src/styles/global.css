@@ -195,20 +195,18 @@ p { margin: 0 0 1em; }
   z-index: -1;
 }
 .hero-inner { max-width: 48rem; padding: 6rem 1.5rem 5rem; }
-.hero .brand-mark {
-  font-family: var(--font-brand);
-  letter-spacing: .35em;
-  font-size: clamp(3rem, 9vw, 6.5rem);
-  color: var(--paper);
-  line-height: 1; margin: 0 0 1rem;
+.hero .hero-logo {
+  margin: 0 auto 2rem;
+  line-height: 0;
+  color: #c8453a;
+  --logo-ink: var(--paper);
+  filter: drop-shadow(0 4px 24px rgba(0, 0, 0, .55));
 }
-.hero .brand-mark span { color: var(--brass); }
-.hero .tagline {
-  font-family: var(--font-brand);
-  font-size: .85rem; letter-spacing: .5em;
-  text-transform: uppercase;
-  color: var(--paper-3);
-  margin-bottom: 2rem;
+.hero .hero-logo svg {
+  display: block;
+  width: clamp(220px, 38vw, 380px);
+  height: auto;
+  margin: 0 auto;
 }
 .hero p.lede {
   font-family: var(--font-display);
