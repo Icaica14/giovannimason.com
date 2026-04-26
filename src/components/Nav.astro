@@ -1,6 +1,5 @@
 ---
-import { Image } from 'astro:assets';
-import logoSrc from '../assets/img/logo/logo.png';
+import logoSvg from '../assets/img/logo/logo.svg?raw';
 import { type Lang, t, routeMap } from '../i18n/ui';
 
 interface Props {
@@ -18,7 +17,7 @@ const enHref = routeMap[currentRoute].en;
 <nav class="nav" aria-label="Primary">
   <div class="container nav-inner">
     <a class="brand" href={routeMap.home[lang]} aria-label="Biblio — home">
-      <Image src={logoSrc} alt="Biblio" widths={[120, 240]} sizes="120px" loading="eager" />
+      <span class="brand-logo" set:html={logoSvg}></span>
     </a>
 
     <button class="nav-toggle" aria-expanded="false" aria-controls="primary-nav" aria-label="Apri menu">
