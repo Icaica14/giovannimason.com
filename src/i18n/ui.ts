@@ -19,6 +19,8 @@ export const ui = {
     'nav.contatti':   'Contatti',
     'nav.lang.it':    'IT',
     'nav.lang.en':    'EN',
+    'nav.menu.toggle':'Apri il menu',
+    'nav.menu.close': 'Chiudi il menu',
 
     'site.title':     'Biblio — musica dal vivo · cicchetti & drink · Treviso',
     'site.description': 'Tre sere a settimana di musica dal vivo a Treviso: jazz, blues, soul e voci emergenti. Cicchetti gourmet, vini selezionati e drink d\'autore in una cornice antiquaria.',
@@ -114,6 +116,10 @@ export const ui = {
     'prenota.success.title':          'Richiesta inviata, grazie.',
     'prenota.success.body':           'Ti ricontattiamo a mano in poche ore via email. Per urgenze, scrivici su WhatsApp.',
     'prenota.error':                  'Qualcosa è andato storto. Riprova fra un attimo o scrivici su WhatsApp.',
+    'prenota.live.heading':           'Prossime serate live',
+    'prenota.selected.eyebrow':       'La tua serata',
+    'prenota.email.subject':          'Nuova prenotazione Biblio',
+    'prenota.wa.prefill':             'Ciao Biblio, vorrei prenotare un tavolo per…',
 
     'contatti.title':       'Contatti & Come arrivare',
     'contatti.lede':        'Siamo nel cuore di Treviso, dietro la quinta di un antiquario. Per le sere live conviene prenotare in anticipo — il primo piano si riempie presto.',
@@ -134,8 +140,10 @@ export const ui = {
     'contatti.cta.title':     'Vieni a trovarci',
     'contatti.cta.body':      'Tre sere a settimana il palco si accende. Ti aspettiamo fra le librerie e i divanetti.',
     'contatti.cta.btn':       'Prenota un tavolo',
+    'contatti.reviews.stars.label': 'stelle',
 
     'footer.tagline':       'art · food and drink · Treviso',
+    'footer.about':         'Una biblioteca calda e accogliente nel cuore di Treviso, dove i libri si fanno scenografia e la musica risponde sottovoce.',
     'footer.nav.title':     'Naviga',
     'footer.contatti.title': 'Trovaci',
     'footer.copyright':     'Biblio Treviso — Tutti i diritti riservati',
@@ -148,6 +156,8 @@ export const ui = {
     'nav.contatti':   'Contact',
     'nav.lang.it':    'IT',
     'nav.lang.en':    'EN',
+    'nav.menu.toggle':'Open menu',
+    'nav.menu.close': 'Close menu',
 
     'site.title':     'Biblio — live music · small plates & drinks · Treviso',
     'site.description': 'Three nights a week of live music in Treviso: jazz, blues, soul and emerging voices. Gourmet small plates, hand-picked wines and signature drinks in an antique-shop setting.',
@@ -243,6 +253,10 @@ export const ui = {
     'prenota.success.title':          'Request sent, thank you.',
     'prenota.success.body':           'We\'ll get back to you personally within a few hours. For urgent requests, message us on WhatsApp.',
     'prenota.error':                  'Something went wrong. Try again in a moment, or message us on WhatsApp.',
+    'prenota.live.heading':           'Upcoming live nights',
+    'prenota.selected.eyebrow':       'Your evening',
+    'prenota.email.subject':          'New booking — Biblio',
+    'prenota.wa.prefill':             'Hi Biblio, I\'d like to book a table for…',
 
     'contatti.title':       'Contact & How to find us',
     'contatti.lede':        'We\'re in the heart of Treviso, behind the curtain of an antique shop. On live nights it pays to book ahead — the upstairs floor fills up fast.',
@@ -263,8 +277,10 @@ export const ui = {
     'contatti.cta.title':     'Come find us',
     'contatti.cta.body':      'Three nights a week the stage lights up. We\'ll save you a spot among the bookshelves and sofas.',
     'contatti.cta.btn':       'Book a table',
+    'contatti.reviews.stars.label': 'stars',
 
     'footer.tagline':       'art · food and drink · Treviso',
+    'footer.about':         'A warmly-lit literary bar in the heart of Treviso, where books set the scene and music answers softly.',
     'footer.nav.title':     'Browse',
     'footer.contatti.title': 'Find us',
     'footer.copyright':     'Biblio Treviso — All rights reserved',

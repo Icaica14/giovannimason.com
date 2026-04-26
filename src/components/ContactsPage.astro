@@ -13,11 +13,8 @@ const EMAIL = 'biblio.bookcafe@gmail.com';
 const IG_URL = 'https://www.instagram.com/bookcafebiblio/';
 const FB_URL = 'https://www.facebook.com/bookcafebiblio';
 
-// WhatsApp con messaggio precompilato bilingue.
-const waPrefill =
-  lang === 'it'
-    ? 'Ciao Biblio, vorrei prenotare un tavolo per…'
-    : 'Hi Biblio, I\'d like to book a table for…';
+// WhatsApp con messaggio precompilato bilingue (chiave condivisa con BookingForm).
+const waPrefill = t(lang, 'prenota.wa.prefill');
 const waUrl = `https://wa.me/${TEL_NUMBER.replace(/\D/g, '')}?text=${encodeURIComponent(waPrefill)}`;
 
 // Google Maps embed (Via Armando Diaz 3/A, Treviso).
@@ -192,7 +189,7 @@ const renderStars = (n: number) => '★'.repeat(n) + '☆'.repeat(5 - n);
       <ul class="reviews-grid" role="list">
         {reviews.map((r, i) => (
           <li class="review-card reveal" style={`--reveal-delay:${(i % 4) * 0.07}s`}>
-            <p class="review-stars" aria-label={`${r.stars} ${lang === 'it' ? 'stelle' : 'stars'}`}>
+            <p class="review-stars" aria-label={`${r.stars} ${t(lang, 'contatti.reviews.stars.label')}`}>
               {renderStars(r.stars)}
             </p>
             <blockquote class="review-body">

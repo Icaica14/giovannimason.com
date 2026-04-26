@@ -17,9 +17,7 @@ const year = new Date().getFullYear();
         <a class="brand" href={routeMap.home[lang]}>Bib<span style="color:var(--brass)">l</span>io</a>
         <p>{t(lang, 'footer.tagline')}</p>
         <p style="margin-top:.6rem; font-style: italic; color: var(--paper-3); max-width: 22rem;">
-          {lang === 'it'
-            ? 'Una biblioteca calda e accogliente nel cuore di Treviso, dove i libri si fanno scenografia e la musica risponde sottovoce.'
-            : 'A warmly-lit literary bar in the heart of Treviso, where books set the scene and music answers softly.'}
+          {t(lang, 'footer.about')}
         </p>
       </div>
 

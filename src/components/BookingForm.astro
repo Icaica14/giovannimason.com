@@ -25,10 +25,7 @@ const TEL_NUMBER = '+390422270575';
 const TEL_DISPLAY = '+39 0422 270 575';
 const EMAIL = 'biblio.bookcafe@gmail.com';
 
-const waPrefill =
-  lang === 'it'
-    ? 'Ciao Biblio, vorrei prenotare un tavolo per…'
-    : 'Hi Biblio, I\'d like to book a table for…';
+const waPrefill = t(lang, 'prenota.wa.prefill');
 const waUrl = `https://wa.me/${WA_NUMBER.replace(/\D/g, '')}?text=${encodeURIComponent(waPrefill)}`;
 
 // Min date = oggi, così il datepicker non permette il passato.
@@ -126,7 +123,7 @@ const liveDataset = upcomingLiveNights.map((n) => ({
                 <circle cx="6" cy="18" r="3" fill="currentColor"/>
                 <circle cx="18" cy="16" r="3" fill="currentColor"/>
               </svg>
-              <span class="eyebrow">{lang === 'it' ? 'Prossime serate live' : 'Upcoming live nights'}</span>
+              <span class="eyebrow">{t(lang, 'prenota.live.heading')}</span>
             </div>
             <ul class="live-strip-list" role="list">
               {upcomingLiveNights.map((n) => (
@@ -171,7 +168,7 @@ const liveDataset = upcomingLiveNights.map((n) => ({
           {/* Preview evento selezionato (compare quando l'utente sceglie una data live) */}
           <div class="selected-event" id="selectedEvent" hidden aria-live="polite">
             <p class="selected-event-eyebrow">
-              {lang === 'it' ? 'La tua serata' : 'Your evening'}
+              {t(lang, 'prenota.selected.eyebrow')}
             </p>
             <p class="selected-event-title" data-se-artist></p>
             <p class="selected-event-meta">
@@ -190,7 +187,7 @@ const liveDataset = upcomingLiveNights.map((n) => ({
           >
             {/* Honeypot anti-spam — campo nascosto, deve restare vuoto */}
             <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" style="display:none" />
-            <input type="hidden" name="_subject" value={`Nuova prenotazione Biblio (${lang.toUpperCase()})`} />
+            <input type="hidden" name="_subject" value={`${t(lang, 'prenota.email.subject')} (${lang.toUpperCase()})`} />
             <input type="hidden" name="lang" value={lang} />
             <input type="hidden" name="event" id="eventField" value="" />
 
