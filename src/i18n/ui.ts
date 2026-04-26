@@ -38,6 +38,11 @@ export const ui = {
     'home.eventi.intro':   'Dal giovedì alla domenica la musica dal vivo è di casa. Programmazione fissa di generi, artisti che cambiano ogni settimana e firmano la serata.',
     'home.eventi.cta':     'Vedi tutti gli eventi',
 
+    'home.cucina.eyebrow':  'Cucina & bancone',
+    'home.cucina.title':    'Cicchetti gourmet, drink d\'autore',
+    'home.cucina.intro':    'Tradizione veneta riletta in chiave contemporanea, vini di territorio e cocktail figli della grande scuola italiana. Pensati per non interrompere la conversazione — né il concerto.',
+    'home.cucina.cta':      'Vedi la carta',
+
     'home.gallery.eyebrow': 'Atmosfera',
     'home.gallery.title':   'Uno sguardo dentro',
     'home.gallery.cta':     'Vieni a trovarci',
@@ -161,6 +166,11 @@ export const ui = {
     'home.eventi.title':   'Three nights, every time different',
     'home.eventi.intro':   'From Thursday to Sunday live music is at home here. A fixed schedule of genres, artists that change every week and shape the evening.',
     'home.eventi.cta':     'See all events',
+
+    'home.cucina.eyebrow':  'Kitchen & bar',
+    'home.cucina.title':    'Gourmet small plates, signature drinks',
+    'home.cucina.intro':    'Veneto tradition rewritten in a contemporary key, regional wines and cocktails rooted in the great Italian school. Built not to interrupt the conversation — or the show.',
+    'home.cucina.cta':      'See the menu',
 
     'home.gallery.eyebrow': 'Atmosphere',
     'home.gallery.title':   'A glimpse inside',

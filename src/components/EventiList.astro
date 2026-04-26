@@ -143,21 +143,5 @@ const { upcoming, past } = splitEventi(todayISO);
   </section>
 </section>
 
-<script>
-  // Scroll-reveal: aggiungo .is-visible alle .reveal quando entrano in viewport.
-  // Rispetta prefers-reduced-motion (in CSS .reveal è sempre visibile in quel caso).
-  const els = document.querySelectorAll<HTMLElement>('.reveal');
-  if ('IntersectionObserver' in window) {
-    const io = new IntersectionObserver((entries) => {
-      for (const entry of entries) {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('is-visible');
-          io.unobserve(entry.target);
-        }
-      }
-    }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
-    els.forEach((el) => io.observe(el));
-  } else {
-    els.forEach((el) => el.classList.add('is-visible'));
-  }
-</script>
+<!-- Scroll-reveal è gestito globalmente dal Base layout. -->
+
