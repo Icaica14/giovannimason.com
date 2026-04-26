@@ -1,0 +1,10 @@
+---
+import Base from '../../layouts/Base.astro';
+import ContactsPage from '../../components/ContactsPage.astro';
+
+const lang = 'en' as const;
+---
+
+<Base lang={lang} currentRoute="contatti">
+  <ContactsPage lang={lang} />
+</Base>

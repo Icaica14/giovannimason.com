@@ -1,0 +1,242 @@
+---
+import { type Lang, t, routeMap } from '../i18n/ui';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+
+// Numero e contatti del locale (dalla locandina ufficiale).
+const TEL_NUMBER  = '+390422270575';
+const TEL_DISPLAY = '+39 0422 270 575';
+const EMAIL = 'info@bookcafebiblio.it';
+const IG_URL = 'https://www.instagram.com/bookcafebiblio/';
+const FB_URL = 'https://www.facebook.com/bookcafebiblio';
+
+// WhatsApp con messaggio precompilato bilingue.
+const waPrefill =
+  lang === 'it'
+    ? 'Ciao Biblio, vorrei prenotare un tavolo per…'
+    : 'Hi Biblio, I\'d like to book a table for…';
+const waUrl = `https://wa.me/${TEL_NUMBER.replace(/\D/g, '')}?text=${encodeURIComponent(waPrefill)}`;
+
+// Google Maps embed (Via Armando Diaz 3/A, Treviso).
+// Niente API key — usiamo l'URL embed pubblico, che è sufficiente per un iframe statico.
+const mapsEmbedUrl = 'https://www.google.com/maps?q=Via+Armando+Diaz+3%2FA,+31100+Treviso+TV,+Italia&output=embed';
+const mapsLinkUrl  = 'https://www.google.com/maps/search/?api=1&query=Via+Armando+Diaz+3%2FA,+31100+Treviso+TV,+Italia';
+
+// Recensioni placeholder — realistiche ma fittizie. Da sostituire con reali post-lancio.
+type Review = { name: string; meta: { it: string; en: string }; body: { it: string; en: string }; stars: 5 | 4 };
+const reviews: Review[] = [
+  {
+    name: 'Marta P.',
+    meta: { it: 'Recensione Google · Aprile 2026', en: 'Google review · April 2026' },
+    stars: 5,
+    body: {
+      it: 'Posto magico. Sono andata per il giovedì jazz, sono rimasta fino a chiusura. Drink curatissimi, cicchetti ottimi, e un\'atmosfera da romanzo. La band del giovedì era da brividi.',
+      en: 'A magical place. I came in for Thursday jazz and stayed till closing. Beautifully crafted drinks, excellent small plates, and a novel-like atmosphere. The Thursday band was unreal.',
+    },
+  },
+  {
+    name: 'Luca M.',
+    meta: { it: 'Recensione Google · Marzo 2026', en: 'Google review · March 2026' },
+    stars: 5,
+    body: {
+      it: 'Da anni il mio locale preferito a Treviso. La sera del venerdì la blues band fa muovere il bancone, ma anche i pomeriggi tranquilli con un libro funzionano benissimo. Personale gentile.',
+      en: 'My favourite spot in Treviso for years. The Friday blues band gets the counter swinging, but the quiet afternoons with a book work just as well. Lovely staff.',
+    },
+  },
+  {
+    name: 'Elena & James',
+    meta: { it: 'Visitatori da Londra · Febbraio 2026', en: 'Visiting from London · February 2026' },
+    stars: 5,
+    body: {
+      it: 'Ci hanno consigliato Biblio in hotel e abbiamo capito perché. Lampade d\'epoca, libri ovunque, e un cantautore italiano dal vivo che ci ha conquistati. Da tornare.',
+      en: 'Our hotel sent us to Biblio and now we get it. Vintage lamps, books everywhere, and an Italian songwriter live who completely won us over. We\'ll be back.',
+    },
+  },
+  {
+    name: 'Davide R.',
+    meta: { it: 'Recensione Google · Gennaio 2026', en: 'Google review · January 2026' },
+    stars: 4,
+    body: {
+      it: 'Cocktail superbi e gli spritz "d\'autore" da soli valgono il viaggio. Cucina sopraffina, ma in formato cicchetto: arrivate affamati e prendete più cose. Le sere live sono affollate, prenotate. Una piccola gemma trevigiana.',
+      en: 'Superb cocktails — the "signature" spritz alone is worth the trip. The kitchen is excellent but cicchetto-sized: come hungry and order plenty. Live nights get busy, book ahead. A little Treviso gem.',
+    },
+  },
+];
+
+// Helper stelle.
+const renderStars = (n: number) => '★'.repeat(n) + '☆'.repeat(5 - n);
+---
+
+<section class="contatti-page">
+  <header class="contatti-hero container">
+    <span class="eyebrow">{t(lang, 'hero.tagline')}</span>
+    <h1>{t(lang, 'contatti.title')}</h1>
+    <p class="lede">{t(lang, 'contatti.lede')}</p>
+  </header>
+
+  {/* Info + mappa */}
+  <section class="contatti-main bg-paper-2">
+    <div class="container">
+      <div class="contatti-grid">
+        {/* Colonna info */}
+        <div class="contatti-info">
+          <div class="info-block">
+            <h3 class="info-label">{t(lang, 'contatti.address.label')}</h3>
+            <p class="info-body">
+              {t(lang, 'contatti.address.body').split('\n').map((line, i) => (
+                <>
+                  {i > 0 && <br />}
+                  {line}
+                </>
+              ))}
+            </p>
+            <a class="info-link" href={mapsLinkUrl} target="_blank" rel="noopener noreferrer">
+              {t(lang, 'contatti.address.cta')} →
+            </a>
+          </div>
+
+          <div class="info-block">
+            <h3 class="info-label">{t(lang, 'contatti.hours.label')}</h3>
+            <p class="info-body info-hours">
+              {t(lang, 'contatti.hours.body').split('\n').map((line, i) => (
+                <>
+                  {i > 0 && <br />}
+                  {line}
+                </>
+              ))}
+            </p>
+            <p class="info-note">{t(lang, 'contatti.hours.note')}</p>
+          </div>
+
+          <div class="info-block">
+            <h3 class="info-label">{t(lang, 'contatti.phone.label')}</h3>
+            <ul class="info-actions" role="list">
+              <li>
+                <a class="info-action" href={`tel:${TEL_NUMBER}`}>
+                  <span class="info-action-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.2 11.4 11.4 0 0 0 3.6.6 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1 11.4 11.4 0 0 0 .6 3.6 1 1 0 0 1-.2 1Z"/></svg>
+                  </span>
+                  {TEL_DISPLAY}
+                </a>
+              </li>
+              <li>
+                <a class="info-action info-action-wa" href={waUrl} target="_blank" rel="noopener noreferrer">
+                  <span class="info-action-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M20 3.5A11.4 11.4 0 0 0 12 .2 11.7 11.7 0 0 0 1.6 17.7L0 24l6.5-1.7A11.7 11.7 0 0 0 23.7 12 11.4 11.4 0 0 0 20 3.5Zm-8 18.4a9.7 9.7 0 0 1-4.9-1.3l-.4-.2-3.9 1 1-3.8-.2-.4A9.7 9.7 0 1 1 21.7 12 9.7 9.7 0 0 1 12 21.9Zm5.3-7.3c-.3-.1-1.7-.8-2-.9s-.5-.1-.7.1-.8.9-1 1.1-.4.2-.7.1a8 8 0 0 1-2.4-1.5 9 9 0 0 1-1.6-2c-.2-.3 0-.5.1-.7l.5-.5a2 2 0 0 0 .3-.5.5.5 0 0 0 0-.5l-.9-2c-.2-.6-.4-.5-.6-.5h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.1 5.1 0 0 0 1.1 2.7 11.7 11.7 0 0 0 4.5 4 15 15 0 0 0 1.5.5 3.6 3.6 0 0 0 1.6.1 2.7 2.7 0 0 0 1.7-1.2 2.1 2.1 0 0 0 .2-1.2c-.1-.1-.3-.2-.5-.3Z"/></svg>
+                  </span>
+                  WhatsApp
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          <div class="info-block">
+            <h3 class="info-label">{t(lang, 'contatti.email.label')}</h3>
+            <p class="info-body">
+              <a class="info-link" href={`mailto:${EMAIL}`}>{EMAIL}</a>
+            </p>
+          </div>
+
+          <div class="info-block">
+            <h3 class="info-label">{t(lang, 'contatti.social.label')}</h3>
+            <ul class="social-row" role="list">
+              <li>
+                <a class="social-link" href={IG_URL} target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+                  <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="currentColor" d="M12 2.2c3.2 0 3.6 0 4.8.1 1.2 0 1.9.2 2.4.4.6.2 1 .5 1.5 1s.8.9 1 1.5c.2.5.4 1.2.4 2.4.1 1.2.1 1.6.1 4.8s0 3.6-.1 4.8c0 1.2-.2 1.9-.4 2.4a4 4 0 0 1-1 1.5c-.5.5-.9.8-1.5 1-.5.2-1.2.4-2.4.4-1.2.1-1.6.1-4.8.1s-3.6 0-4.8-.1c-1.2 0-1.9-.2-2.4-.4a4 4 0 0 1-1.5-1 4 4 0 0 1-1-1.5c-.2-.5-.4-1.2-.4-2.4C2.2 15.6 2.2 15.2 2.2 12s0-3.6.1-4.8c0-1.2.2-1.9.4-2.4.2-.6.5-1 1-1.5s.9-.8 1.5-1c.5-.2 1.2-.4 2.4-.4C8.4 2.2 8.8 2.2 12 2.2Zm0 1.8c-3.2 0-3.5 0-4.7.1-1.1.1-1.7.2-2.1.4-.5.2-.9.4-1.3.8-.4.4-.6.8-.8 1.3-.2.4-.3 1-.4 2.1-.1 1.2-.1 1.5-.1 4.7s0 3.5.1 4.7c.1 1.1.2 1.7.4 2.1.2.5.4.9.8 1.3.4.4.8.6 1.3.8.4.2 1 .3 2.1.4 1.2.1 1.5.1 4.7.1s3.5 0 4.7-.1c1.1-.1 1.7-.2 2.1-.4.5-.2.9-.4 1.3-.8.4-.4.6-.8.8-1.3.2-.4.3-1 .4-2.1.1-1.2.1-1.5.1-4.7s0-3.5-.1-4.7c-.1-1.1-.2-1.7-.4-2.1a3 3 0 0 0-.8-1.3 3 3 0 0 0-1.3-.8c-.4-.2-1-.3-2.1-.4-1.2-.1-1.5-.1-4.7-.1Zm0 3a5 5 0 1 1 0 10 5 5 0 0 1 0-10Zm0 1.8a3.2 3.2 0 1 0 0 6.4 3.2 3.2 0 0 0 0-6.4Zm5.4-2a1.2 1.2 0 1 1 0 2.4 1.2 1.2 0 0 1 0-2.4Z"/></svg>
+                  <span>Instagram</span>
+                </a>
+              </li>
+              <li>
+                <a class="social-link" href={FB_URL} target="_blank" rel="noopener noreferrer" aria-label="Facebook">
+                  <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="currentColor" d="M22 12a10 10 0 1 0-11.6 9.9V14.9H7.9V12h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.5H15c-1.2 0-1.6.8-1.6 1.6V12h2.8l-.5 2.9h-2.3v7A10 10 0 0 0 22 12Z"/></svg>
+                  <span>Facebook</span>
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        {/* Colonna mappa */}
+        <div class="contatti-map">
+          <h3 class="map-title">{t(lang, 'contatti.map.title')}</h3>
+          <div class="map-frame">
+            <iframe
+              src={mapsEmbedUrl}
+              width="100%"
+              height="420"
+              style="border:0"
+              loading="lazy"
+              referrerpolicy="no-referrer-when-downgrade"
+              title="Biblio — Via Armando Diaz 3/A, Treviso"
+              allowfullscreen
+            ></iframe>
+          </div>
+          <p class="map-note">{t(lang, 'contatti.map.note')}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {/* Recensioni */}
+  <section class="contatti-reviews">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow">{t(lang, 'contatti.reviews.title')}</span>
+        <h2>{t(lang, 'contatti.reviews.title')}</h2>
+        <p>{t(lang, 'contatti.reviews.intro')}</p>
+      </div>
+
+      <ul class="reviews-grid" role="list">
+        {reviews.map((r, i) => (
+          <li class="review-card reveal" style={`--reveal-delay:${(i % 4) * 0.07}s`}>
+            <p class="review-stars" aria-label={`${r.stars} ${lang === 'it' ? 'stelle' : 'stars'}`}>
+              {renderStars(r.stars)}
+            </p>
+            <blockquote class="review-body">
+              <p>{r.body[lang]}</p>
+            </blockquote>
+            <p class="review-author">
+              <span class="review-name">{r.name}</span>
+              <span class="review-meta">{r.meta[lang]}</span>
+            </p>
+          </li>
+        ))}
+      </ul>
+
+      <p class="reviews-cta">
+        <a href={mapsLinkUrl} target="_blank" rel="noopener noreferrer">
+          {t(lang, 'contatti.reviews.cta')} →
+        </a>
+      </p>
+    </div>
+  </section>
+
+  {/* CTA finale */}
+  <section class="cta-banner">
+    <span class="eyebrow">{t(lang, 'contatti.cta.title')}</span>
+    <h2>{t(lang, 'contatti.cta.title')}</h2>
+    <p>{t(lang, 'contatti.cta.body')}</p>
+    <a class="btn" href={routeMap.prenota[lang]}>{t(lang, 'contatti.cta.btn')}</a>
+  </section>
+</section>
+
+<script>
+  // Scroll-reveal: stesso pattern di EventiList per uniformare il sito.
+  const els = document.querySelectorAll<HTMLElement>('.reveal');
+  if ('IntersectionObserver' in window) {
+    const io = new IntersectionObserver((entries) => {
+      for (const entry of entries) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-visible');
+          io.unobserve(entry.target);
+        }
+      }
+    }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+    els.forEach((el) => io.observe(el));
+  } else {
+    els.forEach((el) => el.classList.add('is-visible'));
+  }
+</script>
