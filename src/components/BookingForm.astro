@@ -1,0 +1,472 @@
+---
+import { Image } from 'astro:assets';
+import { type Lang, t } from '../i18n/ui';
+import { genreLabel, tx } from '../data/eventi';
+import type { Bilingual, EventGenre } from '../data/eventi';
+import type { ImageMetadata } from 'astro';
+
+import poster3 from '../assets/img/locandine/locandine-3.png';
+import poster4 from '../assets/img/locandine/locandine-4.png';
+import poster8 from '../assets/img/locandine/locandine-8.png';
+import poster9 from '../assets/img/locandine/locandine-9.png';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+
+// Endpoint Formspree placeholder — sostituire con quello reale prima del lancio.
+// (https://formspree.io/forms — copia l'endpoint dal pannello e incolla qui)
+const FORMSPREE_ENDPOINT = 'https://formspree.io/f/PLACEHOLDER';
+
+// Numero e contatti del locale (dalla locandina ufficiale).
+const WA_NUMBER  = '+390422270575';
+const TEL_NUMBER = '+390422270575';
+const TEL_DISPLAY = '+39 0422 270 575';
+const EMAIL = 'info@bookcafebiblio.it';
+
+const waPrefill =
+  lang === 'it'
+    ? 'Ciao Biblio, vorrei prenotare un tavolo per…'
+    : 'Hi Biblio, I\'d like to book a table for…';
+const waUrl = `https://wa.me/${WA_NUMBER.replace(/\D/g, '')}?text=${encodeURIComponent(waPrefill)}`;
+
+// Min date = oggi, così il datepicker non permette il passato.
+const todayISO = new Date().toISOString().slice(0, 10);
+
+// Slot orari proposti — ogni 30' dalle 18:00 alle 23:30.
+const timeSlots: string[] = [];
+for (let h = 18; h <= 23; h++) {
+  timeSlots.push(`${String(h).padStart(2, '0')}:00`);
+  timeSlots.push(`${String(h).padStart(2, '0')}:30`);
+}
+
+// --- Demo: serate live della settimana prossima (placeholder con locandine vecchie) ---
+// Quando si seleziona una di queste date, sotto compare la preview dell'evento.
+// In produzione: derivare automaticamente da `eventi.ts` filtrando date ≥ oggi.
+type LiveNight = {
+  date: string;
+  dateLabel: Bilingual;
+  weekday: Bilingual;
+  artist: string;
+  genre: EventGenre;
+  time: string;
+  poster: ImageMetadata;
+};
+
+const upcomingLiveNights: LiveNight[] = [
+  {
+    date: '2026-04-30',
+    dateLabel: { it: '30 aprile', en: '30 April' },
+    weekday:   { it: 'Giovedì',   en: 'Thursday' },
+    artist: 'Trabucco · Alfonso',
+    genre: 'jazz',
+    time: '20:00',
+    poster: poster3,
+  },
+  {
+    date: '2026-05-01',
+    dateLabel: { it: '1 maggio', en: '1 May' },
+    weekday:   { it: 'Venerdì',  en: 'Friday' },
+    artist: 'Reckless Blues Band',
+    genre: 'blues',
+    time: '20:00',
+    poster: poster9,
+  },
+  {
+    date: '2026-05-03',
+    dateLabel: { it: '3 maggio', en: '3 May' },
+    weekday:   { it: 'Domenica', en: 'Sunday' },
+    artist: 'Linda',
+    genre: 'songwriter',
+    time: '18:30',
+    poster: poster4,
+  },
+  {
+    date: '2026-05-07',
+    dateLabel: { it: '7 maggio', en: '7 May' },
+    weekday:   { it: 'Giovedì',  en: 'Thursday' },
+    artist: 'Quai des Brumes',
+    genre: 'jazz',
+    time: '20:00',
+    poster: poster8,
+  },
+];
+
+// Dataset compatto da serializzare nel DOM per il preview JS-side.
+const liveDataset = upcomingLiveNights.map((n) => ({
+  date:      n.date,
+  artist:    n.artist,
+  genreText: tx(genreLabel[n.genre], lang),
+  genre:     n.genre,
+  time:      n.time,
+  weekday:   tx(n.weekday, lang),
+  dateLabel: tx(n.dateLabel, lang),
+}));
+---
+
+<section class="prenota-page">
+  <header class="prenota-hero container">
+    <span class="eyebrow">{t(lang, 'hero.tagline')}</span>
+    <h1>{t(lang, 'prenota.title')}</h1>
+    <p class="lede">{t(lang, 'prenota.lede')}</p>
+  </header>
+
+  <section class="prenota-form-wrap bg-paper-2">
+    <div class="container">
+      <div class="prenota-grid">
+        {/* Colonna principale: form */}
+        <div class="prenota-form-col">
+
+          {/* Strip: prossime serate live, ognuna pre-compila la data */}
+          <div class="live-strip" data-live-strip>
+            <div class="live-strip-head">
+              <svg class="music-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <path d="M9 18V5l12-2v13" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                <circle cx="6" cy="18" r="3" fill="currentColor"/>
+                <circle cx="18" cy="16" r="3" fill="currentColor"/>
+              </svg>
+              <span class="eyebrow">{lang === 'it' ? 'Prossime serate live' : 'Upcoming live nights'}</span>
+            </div>
+            <ul class="live-strip-list" role="list">
+              {upcomingLiveNights.map((n) => (
+                <li>
+                  <button
+                    type="button"
+                    class="live-chip"
+                    data-live-date={n.date}
+                  >
+                    <span class="live-chip-poster">
+                      <Image
+                        src={n.poster}
+                        alt=""
+                        widths={[120, 160]}
+                        sizes="64px"
+                        loading="lazy"
+                      />
+                    </span>
+                    <span class="live-chip-body">
+                      <span class="live-chip-day">
+                        <svg class="music-mini" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                          <path d="M9 18V5l12-2v13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                          <circle cx="6" cy="18" r="2.4" fill="currentColor"/>
+                          <circle cx="18" cy="16" r="2.4" fill="currentColor"/>
+                        </svg>
+                        <span>{tx(n.weekday, lang)} {tx(n.dateLabel, lang)}</span>
+                      </span>
+                      <span class="live-chip-artist">{n.artist}</span>
+                      <span class={`live-chip-genre genre-${n.genre}`}>{tx(genreLabel[n.genre], lang)} · {n.time}</span>
+                    </span>
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Nudge sera live: nascosto, lo script lo mostra quando data = Gio/Ven/Dom */}
+          <div class="live-nudge" id="liveNudge" hidden>
+            {t(lang, 'prenota.live.nudge')}
+          </div>
+
+          {/* Preview evento selezionato (compare quando l'utente sceglie una data live) */}
+          <div class="selected-event" id="selectedEvent" hidden aria-live="polite">
+            <p class="selected-event-eyebrow">
+              {lang === 'it' ? 'La tua serata' : 'Your evening'}
+            </p>
+            <p class="selected-event-title" data-se-artist></p>
+            <p class="selected-event-meta">
+              <span data-se-genre></span>
+              <span class="dot" aria-hidden="true">·</span>
+              <span data-se-when></span>
+            </p>
+          </div>
+
+          <form
+            class="booking-form"
+            id="bookingForm"
+            action={FORMSPREE_ENDPOINT}
+            method="POST"
+            novalidate
+          >
+            {/* Honeypot anti-spam — campo nascosto, deve restare vuoto */}
+            <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" style="display:none" />
+            <input type="hidden" name="_subject" value={`Nuova prenotazione Biblio (${lang.toUpperCase()})`} />
+            <input type="hidden" name="lang" value={lang} />
+            <input type="hidden" name="event" id="eventField" value="" />
+
+            <div class="form-grid">
+              <label class="field field-full">
+                <span class="field-label">
+                  {t(lang, 'prenota.form.name')} <em class="req" aria-hidden="true">*</em>
+                </span>
+                <input
+                  type="text"
+                  name="name"
+                  required
+                  autocomplete="name"
+                  placeholder={t(lang, 'prenota.form.placeholder.name')}
+                />
+              </label>
+
+              <label class="field">
+                <span class="field-label">
+                  {t(lang, 'prenota.form.email')} <em class="req" aria-hidden="true">*</em>
+                </span>
+                <input
+                  type="email"
+                  name="email"
+                  required
+                  autocomplete="email"
+                  inputmode="email"
+                  placeholder="email@example.com"
+                />
+              </label>
+
+              <label class="field">
+                <span class="field-label">
+                  {t(lang, 'prenota.form.phone')} <span class="opt">{t(lang, 'prenota.form.optional')}</span>
+                </span>
+                <input
+                  type="tel"
+                  name="phone"
+                  autocomplete="tel"
+                  inputmode="tel"
+                  placeholder="+39 …"
+                />
+              </label>
+
+              <label class="field field-date">
+                <span class="field-label">
+                  <svg class="music-mini inline" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                    <path d="M9 18V5l12-2v13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                    <circle cx="6" cy="18" r="2.4" fill="currentColor"/>
+                    <circle cx="18" cy="16" r="2.4" fill="currentColor"/>
+                  </svg>
+                  <span>{t(lang, 'prenota.form.date')}</span>
+                  <em class="req" aria-hidden="true">*</em>
+                </span>
+                <input
+                  type="date"
+                  name="date"
+                  id="bookingDate"
+                  required
+                  min={todayISO}
+                />
+              </label>
+
+              <label class="field">
+                <span class="field-label">
+                  {t(lang, 'prenota.form.time')} <em class="req" aria-hidden="true">*</em>
+                </span>
+                <select name="time" id="bookingTime" required>
+                  <option value="">—</option>
+                  {timeSlots.map((s) => (
+                    <option value={s}>{s}</option>
+                  ))}
+                </select>
+              </label>
+
+              <label class="field">
+                <span class="field-label">
+                  {t(lang, 'prenota.form.guests')} <em class="req" aria-hidden="true">*</em>
+                </span>
+                <select name="guests" required>
+                  <option value="">—</option>
+                  <option value="1">1 {t(lang, 'prenota.form.guests.one')}</option>
+                  {Array.from({ length: 11 }, (_, i) => i + 2).map((n) => (
+                    <option value={String(n)}>{n} {t(lang, 'prenota.form.guests.many')}</option>
+                  ))}
+                  <option value="13+">{t(lang, 'prenota.form.guests.group')}</option>
+                </select>
+              </label>
+
+              <label class="field field-full">
+                <span class="field-label">
+                  {t(lang, 'prenota.form.note')} <span class="opt">{t(lang, 'prenota.form.optional')}</span>
+                </span>
+                <textarea
+                  name="note"
+                  rows="3"
+                  placeholder={t(lang, 'prenota.form.placeholder.note')}
+                ></textarea>
+              </label>
+            </div>
+
+            <p class="form-privacy">{t(lang, 'prenota.form.privacy')}</p>
+
+            <div class="form-actions">
+              <button type="submit" class="btn btn-primary" id="submitBtn">
+                {t(lang, 'prenota.form.submit')}
+              </button>
+            </div>
+
+            <div class="form-success" id="formSuccess" hidden>
+              <h3>{t(lang, 'prenota.success.title')}</h3>
+              <p>{t(lang, 'prenota.success.body')}</p>
+            </div>
+            <p class="form-error" id="formError" hidden role="alert">
+              {t(lang, 'prenota.error')}
+            </p>
+          </form>
+        </div>
+
+        {/* Colonna laterale: contatti diretti */}
+        <aside class="prenota-alt-col">
+          <div class="alt-card">
+            <h3>{t(lang, 'prenota.alt.title')}</h3>
+            <ul class="alt-actions" role="list">
+              <li>
+                <a class="alt-link alt-wa" href={waUrl} target="_blank" rel="noopener noreferrer">
+                  <span class="alt-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M20 3.5A11.4 11.4 0 0 0 12 .2 11.7 11.7 0 0 0 1.6 17.7L0 24l6.5-1.7A11.7 11.7 0 0 0 23.7 12 11.4 11.4 0 0 0 20 3.5Zm-8 18.4a9.7 9.7 0 0 1-4.9-1.3l-.4-.2-3.9 1 1-3.8-.2-.4A9.7 9.7 0 1 1 21.7 12 9.7 9.7 0 0 1 12 21.9Zm5.3-7.3c-.3-.1-1.7-.8-2-.9s-.5-.1-.7.1-.8.9-1 1.1-.4.2-.7.1a8 8 0 0 1-2.4-1.5 9 9 0 0 1-1.6-2c-.2-.3 0-.5.1-.7l.5-.5a2 2 0 0 0 .3-.5.5.5 0 0 0 0-.5l-.9-2c-.2-.6-.4-.5-.6-.5h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.1 5.1 0 0 0 1.1 2.7 11.7 11.7 0 0 0 4.5 4 15 15 0 0 0 1.5.5 3.6 3.6 0 0 0 1.6.1 2.7 2.7 0 0 0 1.7-1.2 2.1 2.1 0 0 0 .2-1.2c-.1-.1-.3-.2-.5-.3Z"/></svg>
+                  </span>
+                  <span class="alt-text">
+                    <span class="alt-action">{t(lang, 'prenota.alt.whatsapp')}</span>
+                    <span class="alt-meta">{TEL_DISPLAY}</span>
+                  </span>
+                </a>
+              </li>
+              <li>
+                <a class="alt-link" href={`tel:${TEL_NUMBER}`}>
+                  <span class="alt-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.2 11.4 11.4 0 0 0 3.6.6 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1 11.4 11.4 0 0 0 .6 3.6 1 1 0 0 1-.2 1Z"/></svg>
+                  </span>
+                  <span class="alt-text">
+                    <span class="alt-action">{t(lang, 'prenota.alt.call')}</span>
+                    <span class="alt-meta">{TEL_DISPLAY}</span>
+                  </span>
+                </a>
+              </li>
+              <li>
+                <a class="alt-link" href={`mailto:${EMAIL}`}>
+                  <span class="alt-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M4 4h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Zm0 4v10h16V8l-8 5Zm0-2 8 5 8-5Z"/></svg>
+                  </span>
+                  <span class="alt-text">
+                    <span class="alt-action">{t(lang, 'prenota.alt.email')}</span>
+                    <span class="alt-meta">{EMAIL}</span>
+                  </span>
+                </a>
+              </li>
+            </ul>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </section>
+</section>
+
+<script type="application/json" id="liveDataset" set:html={JSON.stringify(liveDataset)}></script>
+
+<script>
+  type LiveEntry = {
+    date: string;
+    artist: string;
+    genreText: string;
+    genre: string;
+    time: string;
+    weekday: string;
+    dateLabel: string;
+  };
+
+  const datasetEl = document.getElementById('liveDataset');
+  const liveData: LiveEntry[] = datasetEl?.textContent ? JSON.parse(datasetEl.textContent) : [];
+  const byDate = new Map(liveData.map((e) => [e.date, e]));
+
+  const dateInput = document.getElementById('bookingDate') as HTMLInputElement | null;
+  const timeInput = document.getElementById('bookingTime') as HTMLSelectElement | null;
+  const eventField = document.getElementById('eventField') as HTMLInputElement | null;
+  const nudge = document.getElementById('liveNudge') as HTMLElement | null;
+  const sel = document.getElementById('selectedEvent') as HTMLElement | null;
+  const selArtist = sel?.querySelector('[data-se-artist]') as HTMLElement | null;
+  const selGenre = sel?.querySelector('[data-se-genre]') as HTMLElement | null;
+  const selWhen = sel?.querySelector('[data-se-when]') as HTMLElement | null;
+
+  const updateForDate = () => {
+    if (!dateInput) return;
+    const v = dateInput.value;
+    const entry = v ? byDate.get(v) : undefined;
+
+    // Nudge generico (Gio/Ven/Dom): si attiva solo se non c'è già la preview specifica.
+    if (nudge) {
+      if (entry) {
+        nudge.hidden = true;
+      } else if (v) {
+        const d = new Date(v);
+        const wd = d.getUTCDay();
+        nudge.hidden = !(wd === 4 || wd === 5 || wd === 0);
+      } else {
+        nudge.hidden = true;
+      }
+    }
+
+    // Preview evento selezionato
+    if (sel && selArtist && selGenre && selWhen) {
+      if (entry) {
+        selArtist.textContent = entry.artist;
+        selGenre.textContent = entry.genreText;
+        selWhen.textContent = `${entry.weekday} ${entry.dateLabel} · ${entry.time}`;
+        sel.hidden = false;
+        sel.classList.remove(...Array.from(sel.classList).filter((c) => c.startsWith('genre-')));
+        sel.classList.add(`genre-${entry.genre}`);
+        if (eventField) eventField.value = `${entry.weekday} ${entry.dateLabel} — ${entry.artist}`;
+        if (timeInput && !timeInput.value) timeInput.value = entry.time;
+      } else {
+        sel.hidden = true;
+        if (eventField) eventField.value = '';
+      }
+    }
+  };
+
+  dateInput?.addEventListener('change', updateForDate);
+  updateForDate();
+
+  // Strip chips: cliccando, set della data e scroll dolce al form
+  document.querySelectorAll<HTMLButtonElement>('.live-chip').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const d = btn.getAttribute('data-live-date');
+      if (!d || !dateInput) return;
+      dateInput.value = d;
+      dateInput.dispatchEvent(new Event('change', { bubbles: true }));
+      // Stato visivo: chip selezionata
+      document.querySelectorAll('.live-chip.is-active').forEach((c) => c.classList.remove('is-active'));
+      btn.classList.add('is-active');
+      // Scroll: porta in vista la preview / il form
+      sel?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    });
+  });
+
+  // Submit AJAX a Formspree — niente redirect, mostra inline success/error.
+  const form = document.getElementById('bookingForm') as HTMLFormElement | null;
+  const success = document.getElementById('formSuccess') as HTMLElement | null;
+  const error = document.getElementById('formError') as HTMLElement | null;
+  const btn = document.getElementById('submitBtn') as HTMLButtonElement | null;
+  if (form && success && error && btn) {
+    form.addEventListener('submit', async (ev) => {
+      ev.preventDefault();
+      error.hidden = true;
+      btn.disabled = true;
+      const data = new FormData(form);
+      try {
+        const res = await fetch(form.action, {
+          method: 'POST',
+          body: data,
+          headers: { Accept: 'application/json' },
+        });
+        if (res.ok) {
+          form.querySelectorAll<HTMLElement>('.field, .form-privacy, .form-actions').forEach(
+            (el) => (el.style.display = 'none'),
+          );
+          success.hidden = false;
+          success.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        } else {
+          error.hidden = false;
+          btn.disabled = false;
+        }
+      } catch {
+        error.hidden = false;
+        btn.disabled = false;
+      }
+    });
+  }
+</script>
