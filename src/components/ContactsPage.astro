@@ -10,7 +10,7 @@ const { lang } = Astro.props;
 const TEL_NUMBER  = '+390422270575';
 const TEL_DISPLAY = '+39 0422 270 575';
 const EMAIL = 'biblio.bookcafe@gmail.com';
-const IG_URL = 'https://www.instagram.com/bookcafebiblio/';
+const IG_URL = 'https://www.instagram.com/biblio_treviso/';
 const FB_URL = 'https://www.facebook.com/bookcafebiblio';
 
 // WhatsApp con messaggio precompilato bilingue (chiave condivisa con BookingForm).
@@ -20,7 +20,8 @@ const waUrl = `https://wa.me/${TEL_NUMBER.replace(/\D/g, '')}?text=${encodeURICo
 // Google Maps embed (Via Armando Diaz 3/A, Treviso).
 // Niente API key, usiamo l'URL embed pubblico, che è sufficiente per un iframe statico.
 const mapsEmbedUrl = 'https://www.google.com/maps?q=Via+Armando+Diaz+3%2FA,+31100+Treviso+TV,+Italia&output=embed';
-const mapsLinkUrl  = 'https://www.google.com/maps/search/?api=1&query=Via+Armando+Diaz+3%2FA,+31100+Treviso+TV,+Italia';
+// Link "Apri in Google Maps" → indicazioni stradali verso il locale.
+const mapsLinkUrl  = 'https://www.google.com/maps/dir/?api=1&destination=Via+Armando+Diaz+3%2FA,+31100+Treviso+TV,+Italia';
 
 // Recensioni placeholder, realistiche ma fittizie. Da sostituire con reali post-lancio.
 type Review = { name: string; meta: { it: string; en: string }; body: { it: string; en: string }; stars: 5 | 4 };
