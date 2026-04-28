@@ -2,16 +2,11 @@
 import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
 
-// IMPORTANT: aggiornare `site` con il dominio finale del locale
-// (es. https://biblio-treviso.it). Il dominio è usato per:
-//   - canonical URL
-//   - hreflang
-//   - og:image (URL assoluto)
-//   - sitemap.xml
-//   - robots.txt
-// Lasciare il placeholder fino al go-live.
+// Dominio di pubblicazione. Servito da GitHub Pages tramite il repo
+// Icaica14/giovannimason.com con CNAME masoninnovation.it (vedi public/CNAME).
+// Il dominio è usato per: canonical URL, hreflang, og:image, sitemap.xml, robots.txt.
 export default defineConfig({
-  site: 'https://biblio-treviso.example',
+  site: 'https://masoninnovation.it',
   // base: '/',  // se metti il sito in https://utente.github.io/biblio/, decommenta e usa '/biblio'
   i18n: {
     defaultLocale: 'it',
