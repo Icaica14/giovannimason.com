@@ -6,7 +6,7 @@ interface Props {
   lang: Lang;
 }
 const { lang } = Astro.props;
-const items = ['home', 'menu', 'eventi', 'prenota', 'contatti'] as const;
+const items = ['home', 'menu', 'eventi', 'prenota', 'contatti', 'artisti'] as const;
 
 const year = new Date().getFullYear();
 ---
@@ -15,7 +15,7 @@ const year = new Date().getFullYear();
   <div class="container">
     <div class="footer-grid">
       <div>
-        <a class="brand brand-footer" href={routeMap.home[lang]} aria-label="Biblio — home">
+        <a class="brand brand-footer" href={routeMap.home[lang]} aria-label="Biblio, home">
           <span class="brand-logo" set:html={logoSvg}></span>
         </a>
         <p>{t(lang, 'footer.tagline')}</p>

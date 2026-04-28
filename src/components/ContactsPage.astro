@@ -18,11 +18,11 @@ const waPrefill = t(lang, 'prenota.wa.prefill');
 const waUrl = `https://wa.me/${TEL_NUMBER.replace(/\D/g, '')}?text=${encodeURIComponent(waPrefill)}`;
 
 // Google Maps embed (Via Armando Diaz 3/A, Treviso).
-// Niente API key — usiamo l'URL embed pubblico, che è sufficiente per un iframe statico.
+// Niente API key, usiamo l'URL embed pubblico, che è sufficiente per un iframe statico.
 const mapsEmbedUrl = 'https://www.google.com/maps?q=Via+Armando+Diaz+3%2FA,+31100+Treviso+TV,+Italia&output=embed';
 const mapsLinkUrl  = 'https://www.google.com/maps/search/?api=1&query=Via+Armando+Diaz+3%2FA,+31100+Treviso+TV,+Italia';
 
-// Recensioni placeholder — realistiche ma fittizie. Da sostituire con reali post-lancio.
+// Recensioni placeholder, realistiche ma fittizie. Da sostituire con reali post-lancio.
 type Review = { name: string; meta: { it: string; en: string }; body: { it: string; en: string }; stars: 5 | 4 };
 const reviews: Review[] = [
   {
@@ -58,7 +58,7 @@ const reviews: Review[] = [
     stars: 4,
     body: {
       it: 'Cocktail superbi e gli spritz "d\'autore" da soli valgono il viaggio. Cucina sopraffina, ma in formato cicchetto: arrivate affamati e prendete più cose. Le sere live sono affollate, prenotate. Una piccola gemma trevigiana.',
-      en: 'Superb cocktails — the "signature" spritz alone is worth the trip. The kitchen is excellent but cicchetto-sized: come hungry and order plenty. Live nights get busy, book ahead. A little Treviso gem.',
+      en: 'Superb cocktails, the "signature" spritz alone is worth the trip. The kitchen is excellent but cicchetto-sized: come hungry and order plenty. Live nights get busy, book ahead. A little Treviso gem.',
     },
   },
 ];
@@ -167,7 +167,7 @@ const renderStars = (n: number) => '★'.repeat(n) + '☆'.repeat(5 - n);
               style="border:0"
               loading="lazy"
               referrerpolicy="no-referrer-when-downgrade"
-              title="Biblio — Via Armando Diaz 3/A, Treviso"
+              title="Biblio, Via Armando Diaz 3/A, Treviso"
               allowfullscreen
             ></iframe>
           </div>

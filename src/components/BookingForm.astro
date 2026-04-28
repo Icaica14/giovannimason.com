@@ -15,8 +15,8 @@ interface Props {
 }
 const { lang } = Astro.props;
 
-// Endpoint Formspree placeholder — sostituire con quello reale prima del lancio.
-// (https://formspree.io/forms — copia l'endpoint dal pannello e incolla qui)
+// Endpoint Formspree placeholder, sostituire con quello reale prima del lancio.
+// (https://formspree.io/forms, copia l'endpoint dal pannello e incolla qui)
 const FORMSPREE_ENDPOINT = 'https://formspree.io/f/PLACEHOLDER';
 
 // Numero e contatti del locale (dalla locandina ufficiale).
@@ -31,7 +31,7 @@ const waUrl = `https://wa.me/${WA_NUMBER.replace(/\D/g, '')}?text=${encodeURICom
 // Min date = oggi, così il datepicker non permette il passato.
 const todayISO = new Date().toISOString().slice(0, 10);
 
-// Slot orari proposti — ogni 30' dalle 18:00 alle 23:30.
+// Slot orari proposti, ogni 30' dalle 18:00 alle 23:30.
 const timeSlots: string[] = [];
 for (let h = 18; h <= 23; h++) {
   timeSlots.push(`${String(h).padStart(2, '0')}:00`);
@@ -185,7 +185,7 @@ const liveDataset = upcomingLiveNights.map((n) => ({
             method="POST"
             novalidate
           >
-            {/* Honeypot anti-spam — campo nascosto, deve restare vuoto */}
+            {/* Honeypot anti-spam, campo nascosto, deve restare vuoto */}
             <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" style="display:none" />
             <input type="hidden" name="_subject" value={`${t(lang, 'prenota.email.subject')} (${lang.toUpperCase()})`} />
             <input type="hidden" name="lang" value={lang} />
@@ -256,7 +256,7 @@ const liveDataset = upcomingLiveNights.map((n) => ({
                   {t(lang, 'prenota.form.time')} <em class="req" aria-hidden="true">*</em>
                 </span>
                 <select name="time" id="bookingTime" required>
-                  <option value="">—</option>
+                  <option value="">…</option>
                   {timeSlots.map((s) => (
                     <option value={s}>{s}</option>
                   ))}
@@ -268,7 +268,7 @@ const liveDataset = upcomingLiveNights.map((n) => ({
                   {t(lang, 'prenota.form.guests')} <em class="req" aria-hidden="true">*</em>
                 </span>
                 <select name="guests" required>
-                  <option value="">—</option>
+                  <option value="">…</option>
                   <option value="1">1 {t(lang, 'prenota.form.guests.one')}</option>
                   {Array.from({ length: 11 }, (_, i) => i + 2).map((n) => (
                     <option value={String(n)}>{n} {t(lang, 'prenota.form.guests.many')}</option>
@@ -406,7 +406,7 @@ const liveDataset = upcomingLiveNights.map((n) => ({
         sel.hidden = false;
         sel.classList.remove(...Array.from(sel.classList).filter((c) => c.startsWith('genre-')));
         sel.classList.add(`genre-${entry.genre}`);
-        if (eventField) eventField.value = `${entry.weekday} ${entry.dateLabel} — ${entry.artist}`;
+        if (eventField) eventField.value = `${entry.weekday} ${entry.dateLabel}, ${entry.artist}`;
         if (timeInput && !timeInput.value) timeInput.value = entry.time;
       } else {
         sel.hidden = true;
@@ -433,7 +433,7 @@ const liveDataset = upcomingLiveNights.map((n) => ({
     });
   });
 
-  // Submit AJAX a Formspree — niente redirect, mostra inline success/error.
+  // Submit AJAX a Formspree, niente redirect, mostra inline success/error.
   const form = document.getElementById('bookingForm') as HTMLFormElement | null;
   const success = document.getElementById('formSuccess') as HTMLElement | null;
   const error = document.getElementById('formError') as HTMLElement | null;

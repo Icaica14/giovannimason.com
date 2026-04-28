@@ -1,4 +1,4 @@
-// Menu di Biblio — fonte unica per IT + EN.
+// Menu di Biblio, fonte unica per IT + EN.
 // I nomi propri (cocktail, gin, piatti) restano in italiano: sono il prodotto.
 // Le descrizioni e gli intro sono bilingui.
 
@@ -42,14 +42,14 @@ export type MenuChapter = {
 
 export const menu: MenuChapter[] = [
   // =========================================================================
-  // 1. LE NOSTRE BEVANDE — wine, beer, soft
+  // 1. LE NOSTRE BEVANDE, wine, beer, soft
   // =========================================================================
   {
     id: 'bevande',
     title: { it: 'Le nostre bevande', en: 'Wines, beers & sodas' },
     intro: {
       it: 'Vini di territorio, birre artigianali alla spina e bibite italiane di carattere. La base ampia che accompagna la sera, dalla cena al concerto.',
-      en: 'Wines from the territory, craft beers on tap and characterful Italian sodas. The everyday backbone of the evening — from dinner through the live set.',
+      en: 'Wines from the territory, craft beers on tap and characterful Italian sodas. The everyday backbone of the evening, from dinner through the live set.',
     },
     sections: [
       {
@@ -82,7 +82,7 @@ export const menu: MenuChapter[] = [
       },
       {
         id: 'birre-spina',
-        title: { it: 'Birre Baroh — alla spina', en: 'Baroh beers — on tap' },
+        title: { it: 'Birre Baroh, alla spina', en: 'Baroh beers, on tap' },
         rows: [
           { label: 'Bionda 0.2 L', price: '3' },
           { label: 'Bionda 0.4 L', price: '6' },
@@ -119,14 +119,14 @@ export const menu: MenuChapter[] = [
   },
 
   // =========================================================================
-  // 2. I NOSTRI NEGRONI — €10
+  // 2. I NOSTRI NEGRONI, €10
   // =========================================================================
   {
     id: 'negroni',
     title: { it: 'I nostri Negroni', en: 'Our Negronis' },
     intro: {
       it: 'Dal 1919, il bilanciamento tra amaro e vermouth ha reso il Negroni il cocktail italiano per eccellenza. In questo menù celebriamo la straordinaria flessibilità della sua ricetta: una struttura immutata che cambia anima a seconda del distillato principale.',
-      en: 'Since 1919 the balance between bitter and vermouth has made the Negroni the quintessential Italian cocktail. Here we celebrate the recipe\u2019s remarkable flexibility — an unchanged structure whose soul shifts with the spirit at its core.',
+      en: 'Since 1919 the balance between bitter and vermouth has made the Negroni the quintessential Italian cocktail. Here we celebrate the recipe\u2019s remarkable flexibility, an unchanged structure whose soul shifts with the spirit at its core.',
     },
     sections: [
       {
@@ -140,7 +140,7 @@ export const menu: MenuChapter[] = [
         items: [
           { name: 'Perfect Three', desc: {
             it: 'L\u2019espressione più bilanciata: note pungenti del ginepro, sostenute da una ricca dolcezza vanigliata.',
-            en: 'The most balanced expression — pungent juniper notes carried by a rich vanilla sweetness.',
+            en: 'The most balanced expression, pungent juniper notes carried by a rich vanilla sweetness.',
           } },
           { name: 'Contessa', desc: {
             it: 'Raffinato e setoso, unisce la struttura di un gin tradizionale a sfumature dolci e morbidamente floreali.',
@@ -148,7 +148,7 @@ export const menu: MenuChapter[] = [
           } },
           { name: 'Austero', desc: {
             it: 'Imponente e senza compromessi: la gradazione elevata esalta una struttura scura, amara e tostata.',
-            en: 'Bold and uncompromising — high proof draws out a dark, bitter, toasted structure.',
+            en: 'Bold and uncompromising, high proof draws out a dark, bitter, toasted structure.',
           } },
           { name: 'Tropicale', desc: {
             it: 'Floreale e avvolgente, con sentori botanici esotici che si fondono a una base ricca ma vellutata.',
@@ -160,19 +160,19 @@ export const menu: MenuChapter[] = [
           } },
           { name: 'Clandestino', desc: {
             it: 'Un trionfo di erbe e resine artigianali: un sorso profondo e complesso, unico nel suo genere.',
-            en: 'A triumph of artisanal herbs and resins — deep, complex, one of a kind.',
+            en: 'A triumph of artisanal herbs and resins, deep, complex, one of a kind.',
           } },
           { name: 'Soprano', desc: {
             it: 'Verticale e tagliente: il ginepro svetta sull\u2019intensità del bitter e sul rigore del Vermouth dry.',
-            en: 'Vertical and sharp — juniper rising over bitter intensity and the rigour of dry Vermouth.',
+            en: 'Vertical and sharp, juniper rising over bitter intensity and the rigour of dry Vermouth.',
           } },
           { name: 'Tokyo Zen', desc: {
             it: 'Limpido e meditativo, un sorso estremamente leggero con un delicato sentore vegetale.',
-            en: 'Clean and meditative — an exceptionally light sip with a delicate vegetal hint.',
+            en: 'Clean and meditative, an exceptionally light sip with a delicate vegetal hint.',
           } },
           { name: 'Kyoto Flower', desc: {
             it: 'Delicato e floreale: il fiore di ciliegio fa da protagonista su un sorso rotondo e morbido.',
-            en: 'Delicate and floral — cherry blossom takes the lead over a round, soft sip.',
+            en: 'Delicate and floral, cherry blossom takes the lead over a round, soft sip.',
           } },
           { name: 'Boschivo', desc: {
             it: 'Balsamico e profumato, con sfumature montane che si fondono in un sorso fresco.',
@@ -191,15 +191,15 @@ export const menu: MenuChapter[] = [
         items: [
           { name: 'Grand Soir', desc: {
             it: 'Caldo e legnoso: le note di caramello e rovere del whiskey abbracciano la classica struttura dolce-amara.',
-            en: 'Warm and woody — caramel and oak from whiskey wrap around the classic bittersweet frame.',
+            en: 'Warm and woody, caramel and oak from whiskey wrap around the classic bittersweet frame.',
           } },
           { name: 'Revolution', desc: {
             it: 'Oscuro e ribelle: la nota torbata dello scotch si lega al fondo scuro in un sorso profondo e terroso.',
-            en: 'Dark and rebellious — peated scotch ties into the dark base for a deep, earthy sip.',
+            en: 'Dark and rebellious, peated scotch ties into the dark base for a deep, earthy sip.',
           } },
           { name: 'Golden Age', desc: {
             it: 'Morbido e dorato: la rotondità del bourbon si siede su un profilo dolce-amaro limpido e leggero.',
-            en: 'Soft and golden — the round body of bourbon settles on a clean, light bittersweet profile.',
+            en: 'Soft and golden, the round body of bourbon settles on a clean, light bittersweet profile.',
           } },
         ],
       },
@@ -214,15 +214,15 @@ export const menu: MenuChapter[] = [
         items: [
           { name: 'Rojo', desc: {
             it: 'Affumicato e terroso: il carattere rustico dell\u2019agave si sposa con profumi erbacei, ricchi e tradizionali.',
-            en: 'Smoky and earthy — the rustic character of agave marries rich, traditional herbal aromas.',
+            en: 'Smoky and earthy, the rustic character of agave marries rich, traditional herbal aromas.',
           } },
           { name: 'Dorado', desc: {
             it: 'Fumoso e avvolgente: calde note speziate si fondono a sentori terrosi, un sorso intenso e persistente.',
-            en: 'Smoky and enveloping — warm spiced notes meet earthy hints in an intense, persistent sip.',
+            en: 'Smoky and enveloping, warm spiced notes meet earthy hints in an intense, persistent sip.',
           } },
           { name: 'Bianco', desc: {
             it: 'Luminoso e vibrante: sfumature erbacee incontrano una spinta minerale, per un sorso fumoso e asciutto.',
-            en: 'Bright and vibrant — herbal shades meet a mineral push for a smoky, dry sip.',
+            en: 'Bright and vibrant, herbal shades meet a mineral push for a smoky, dry sip.',
           } },
         ],
       },
@@ -237,15 +237,15 @@ export const menu: MenuChapter[] = [
         items: [
           { name: 'Brisa', desc: {
             it: 'Trasparente e puro ma sorprendentemente complesso: fresco, floreale, vivace e dissetante.',
-            en: 'Clear and pure yet surprisingly complex — fresh, floral, lively and thirst-quenching.',
+            en: 'Clear and pure yet surprisingly complex, fresh, floral, lively and thirst-quenching.',
           } },
           { name: 'Solera', desc: {
             it: 'Profondo e suadente, dominato da note di melassa, legno tostato e frutta matura: un sorso pieno.',
-            en: 'Deep and persuasive, led by molasses, toasted wood and ripe fruit — a full-bodied sip.',
+            en: 'Deep and persuasive, led by molasses, toasted wood and ripe fruit, a full-bodied sip.',
           } },
           { name: 'Siesta', desc: {
             it: 'Limpido e dorato ma avvolgente e caldo: amabile, meditativo, rilassante e irresistibile.',
-            en: 'Clear and golden yet warm and enveloping — easy-going, meditative, relaxing, irresistible.',
+            en: 'Clear and golden yet warm and enveloping, easy-going, meditative, relaxing, irresistible.',
           } },
         ],
       },
@@ -253,7 +253,7 @@ export const menu: MenuChapter[] = [
   },
 
   // =========================================================================
-  // 3. I NOSTRI AMERICANI — €8
+  // 3. I NOSTRI AMERICANI, €8
   // =========================================================================
   {
     id: 'americani',
@@ -270,11 +270,11 @@ export const menu: MenuChapter[] = [
         items: [
           { name: 'Opulento', desc: {
             it: 'Ricco e complesso: spiccano eleganti sentori di vaniglia, spezie e frutta secca che donano rotondità.',
-            en: 'Rich and complex — elegant notes of vanilla, spice and dried fruit lend roundness.',
+            en: 'Rich and complex, elegant notes of vanilla, spice and dried fruit lend roundness.',
           } },
           { name: 'Tradizionale', desc: {
             it: 'Autentico e fortemente legato al territorio piemontese: sprigiona note erbacee, calde e speziate.',
-            en: 'Authentic and rooted in Piedmont — herbal, warm, spiced notes throughout.',
+            en: 'Authentic and rooted in Piedmont, herbal, warm, spiced notes throughout.',
           } },
           { name: 'Balsamico', desc: {
             it: 'Estremamente aromatico, dominato da sentori di erbe officinali e resine artigianali.',
@@ -286,31 +286,31 @@ export const menu: MenuChapter[] = [
           } },
           { name: 'Ambrato', desc: {
             it: 'Morbido ed elegante: accarezza il palato con note agrumate e speziate sottili e un finale setoso.',
-            en: 'Soft and elegant — citrus and subtle spice graze the palate with a silky finish.',
+            en: 'Soft and elegant, citrus and subtle spice graze the palate with a silky finish.',
           } },
           { name: 'Rosato', desc: {
             it: 'Fresco, fruttato e amichevole: combina profumi delicati con un tocco di Americano beverino.',
-            en: 'Fresh, fruity and friendly — delicate aromatics meet an easy-drinking Americano touch.',
+            en: 'Fresh, fruity and friendly, delicate aromatics meet an easy-drinking Americano touch.',
           } },
           { name: 'Candido', desc: {
             it: 'Delicato e rinfrescante, si distingue per la limpidezza e per le eleganti sfumature dolci.',
-            en: 'Delicate and refreshing — clean, with elegantly sweet shades.',
+            en: 'Delicate and refreshing, clean, with elegantly sweet shades.',
           } },
           { name: 'Secco', desc: {
             it: 'Nitido e affilato: unisce la nota vinosa secca del vermouth dry alle sfumature agrumate e dolci.',
-            en: 'Crisp and sharp — the dry, wine-like vermouth meets citrus and sweet shades.',
+            en: 'Crisp and sharp, the dry, wine-like vermouth meets citrus and sweet shades.',
           } },
           { name: 'Onesto', desc: {
             it: 'Diretto e senza compromessi: l\u2019intensità del bitter incontra la finezza del vermouth dry.',
-            en: 'Direct and uncompromising — bitter intensity meets the finesse of dry vermouth.',
+            en: 'Direct and uncompromising, bitter intensity meets the finesse of dry vermouth.',
           } },
           { name: 'Bianco-cano', desc: {
             it: 'Inaspettato e dissetante, si bilancia fra vermouth bianco, bitter e la freschezza luppolata della pilsner.',
-            en: 'Unexpected and refreshing — balanced between white vermouth, bitter and the hoppy lift of pilsner.',
+            en: 'Unexpected and refreshing, balanced between white vermouth, bitter and the hoppy lift of pilsner.',
           } },
           { name: 'IPA-cano', desc: {
             it: 'Frizzante, agrumato e luppolato: unisce l\u2019amarezza tipica dell\u2019aperitivo al tocco pungente della birra IPA.',
-            en: 'Sparkling, citrus-driven and hoppy — classic aperitivo bitterness meets the bite of an IPA.',
+            en: 'Sparkling, citrus-driven and hoppy, classic aperitivo bitterness meets the bite of an IPA.',
           } },
         ],
       },
@@ -325,7 +325,7 @@ export const menu: MenuChapter[] = [
     title: { it: 'Gin & Tonic', en: 'Gin & Tonic' },
     intro: {
       it: 'Il classico britannico per eccellenza, nato come cura e diventato un rito. Una ricerca minuziosa dell\u2019incontro tra gin internazionali, toniche premium e guarnizioni specifiche, per trasformare due soli ingredienti in un\u2019esperienza di degustazione.',
-      en: 'The quintessential British classic, born as a cure and turned into a ritual. A careful pairing of international gins, premium tonics and specific garnishes — turning two ingredients into a tasting experience.',
+      en: 'The quintessential British classic, born as a cure and turned into a ritual. A careful pairing of international gins, premium tonics and specific garnishes, turning two ingredients into a tasting experience.',
     },
     sections: [
       {
@@ -338,8 +338,8 @@ export const menu: MenuChapter[] = [
           { name: 'Junipero',             origin: '(USA)',               price: '10', profile: { it: 'Secco, intenso, pungente',           en: 'Dry, intense, pungent' } },
           { name: 'Roku',                 origin: '(Giappone)',          price: '10', profile: { it: 'Secco, pepato, setoso',              en: 'Dry, peppery, silky' } },
           { name: 'Ukiyo Yuzu',           origin: '(Giappone)',          price: '12', profile: { it: 'Agrumato, acidulo, fresco',          en: 'Citric, tart, fresh' } },
-          { name: 'Marconi 42',           origin: '(Italia — Veneto)',   price: '10', profile: { it: 'Mediterraneo, erbaceo, balsamico',   en: 'Mediterranean, herbal, balsamic' } },
-          { name: 'Clandestino',          origin: '(Italia — Emilia)',   price: '10', profile: { it: 'Aromatico, resinoso, speziato',      en: 'Aromatic, resinous, spiced' } },
+          { name: 'Marconi 42',           origin: '(Italia, Veneto)',   price: '10', profile: { it: 'Mediterraneo, erbaceo, balsamico',   en: 'Mediterranean, herbal, balsamic' } },
+          { name: 'Clandestino',          origin: '(Italia, Emilia)',   price: '10', profile: { it: 'Aromatico, resinoso, speziato',      en: 'Aromatic, resinous, spiced' } },
           { name: 'Ukiyo Blossom',        origin: '(Giappone)',          price: '12', profile: { it: 'Morbido, floreale, fresco',          en: 'Soft, floral, fresh' } },
           { name: 'Mellifera',            origin: '(Francia)',           price: '10', profile: { it: 'Floreale, balsamico, setoso',        en: 'Floral, balsamic, silky' } },
           { name: 'Bobby\u2019s',         origin: '(Olanda)',            price: '10', profile: { it: 'Speziato, fresco, secco',            en: 'Spiced, fresh, dry' } },
@@ -353,7 +353,7 @@ export const menu: MenuChapter[] = [
   },
 
   // =========================================================================
-  // 5. I NOSTRI PIATTI — Cucina
+  // 5. I NOSTRI PIATTI, Cucina
   // =========================================================================
   {
     id: 'cucina',

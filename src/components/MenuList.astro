@@ -50,7 +50,7 @@ const { lang } = Astro.props;
               {section.intro && <p class="section-intro">{tx(section.intro, lang)}</p>}
             </header>
 
-            {/* Voci semplici (vini, birre, bibite) — label + prezzo */}
+            {/* Voci semplici (vini, birre, bibite), label + prezzo */}
             {section.rows && (
               <ul class="menu-rows">
                 {section.rows.map((row) => (

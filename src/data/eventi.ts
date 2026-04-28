@@ -1,4 +1,4 @@
-// Eventi di Biblio — origine unica, ordinata per data discendente.
+// Eventi di Biblio, origine unica, ordinata per data discendente.
 // Le locandine sono importate come asset Astro per ottimizzazione automatica.
 
 import type { Lang } from '../i18n/ui';
@@ -28,7 +28,7 @@ export type EventGenre =
 export type EventItem = {
   id: string;
   artist: string;
-  /** ISO date (or earliest of a 2-night billing) — usato per l\u2019ordinamento */
+  /** ISO date (or earliest of a 2-night billing), usato per l\u2019ordinamento */
   date: string;
   /** Etichetta data IT/EN da mostrare in card */
   dateLabel: Bilingual;
@@ -89,7 +89,7 @@ export const eventi: EventItem[] = [
     genre: 'indie',
     blurb: {
       it: 'Serata indie: la band sale al primo piano per un set elettrico.',
-      en: 'Indie night — the band takes the upstairs stage for an electric set.',
+      en: 'Indie night, the band takes the upstairs stage for an electric set.',
     },
     poster: poster2,
   },
@@ -114,8 +114,8 @@ export const eventi: EventItem[] = [
     time: '19:00',
     genre: 'songwriter',
     blurb: {
-      it: 'OnTheCorner — voce e chitarra, il pomeriggio della domenica si allunga.',
-      en: 'OnTheCorner — voice and guitar, a Sunday afternoon set that stretches into evening.',
+      it: 'OnTheCorner, voce e chitarra, il pomeriggio della domenica si allunga.',
+      en: 'OnTheCorner, voice and guitar, a Sunday afternoon set that stretches into evening.',
     },
     poster: poster4,
   },
@@ -141,7 +141,7 @@ export const eventi: EventItem[] = [
     genre: 'jazz',
     blurb: {
       it: 'Sax contralto, contrabbasso e batteria. Un trio sui binari del jazz contemporaneo.',
-      en: 'Alto sax, double bass and drums — a trio on the rails of contemporary jazz.',
+      en: 'Alto sax, double bass and drums, a trio on the rails of contemporary jazz.',
     },
     poster: poster7,
   },
@@ -166,8 +166,8 @@ export const eventi: EventItem[] = [
     time: '20:00',
     genre: 'jazz',
     blurb: {
-      it: 'Federico Benedetti, Tolga During, Roberto Bartoli — clarinetto, chitarra, contrabbasso.',
-      en: 'Federico Benedetti, Tolga During, Roberto Bartoli — clarinet, guitar, double bass.',
+      it: 'Federico Benedetti, Tolga During, Roberto Bartoli, clarinetto, chitarra, contrabbasso.',
+      en: 'Federico Benedetti, Tolga During, Roberto Bartoli, clarinet, guitar, double bass.',
     },
     poster: poster8,
   },
@@ -180,7 +180,7 @@ export const eventi: EventItem[] = [
     genre: 'blues',
     blurb: {
       it: 'Il blues spinto della band del venerdì: il bancone si muove.',
-      en: 'The Friday blues band turned up — the counter starts moving.',
+      en: 'The Friday blues band turned up, the counter starts moving.',
     },
     poster: poster9,
   },
@@ -192,8 +192,8 @@ export const eventi: EventItem[] = [
     time: '18:00',
     genre: 'songwriter',
     blurb: {
-      it: 'OnTheCorner — voce e chitarra al tramonto della domenica.',
-      en: 'OnTheCorner — voice and guitar at Sunday sunset.',
+      it: 'OnTheCorner, voce e chitarra al tramonto della domenica.',
+      en: 'OnTheCorner, voice and guitar at Sunday sunset.',
     },
     poster: poster10,
   },
@@ -205,8 +205,8 @@ export const eventi: EventItem[] = [
     time: '18:00',
     genre: 'songwriter',
     blurb: {
-      it: 'OnTheCorner — sera di musica acustica, una voce sola e il microfono.',
-      en: 'OnTheCorner — an acoustic evening, one voice and the mic.',
+      it: 'OnTheCorner, sera di musica acustica, una voce sola e il microfono.',
+      en: 'OnTheCorner, an acoustic evening, one voice and the mic.',
     },
     poster: poster11,
   },
@@ -244,8 +244,8 @@ export const eventi: EventItem[] = [
     time: '18:00',
     genre: 'songwriter',
     blurb: {
-      it: 'OnTheCorner — voce intima fra le librerie.',
-      en: 'OnTheCorner — an intimate voice among the bookshelves.',
+      it: 'OnTheCorner, voce intima fra le librerie.',
+      en: 'OnTheCorner, an intimate voice among the bookshelves.',
     },
     poster: poster13,
   },

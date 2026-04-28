@@ -9,7 +9,7 @@ interface Props {
 const { lang } = Astro.props;
 
 // Oggi è passato lato server: gli eventi futuri/passati vengono congelati al build.
-// (Il sito è statico — perfettamente coerente con un calendario aggiornato a ogni deploy.)
+// (Il sito è statico, perfettamente coerente con un calendario aggiornato a ogni deploy.)
 const todayISO = new Date().toISOString().slice(0, 10);
 const { upcoming, past } = splitEventi(todayISO);
 ---
@@ -21,14 +21,9 @@ const { upcoming, past } = splitEventi(todayISO);
     <p class="lede">{t(lang, 'eventi.lede')}</p>
   </header>
 
-  {/* Programmazione settimanale fissa */}
+  {/* Programmazione settimanale fissa: card prima, tagline dopo. */}
   <section class="eventi-weekly bg-paper-2">
     <div class="container">
-      <div class="section-head">
-        <span class="eyebrow">{t(lang, 'home.eventi.eyebrow')}</span>
-        <h2>{t(lang, 'eventi.weekly.title')}</h2>
-        <p>{t(lang, 'eventi.weekly.intro')}</p>
-      </div>
       <div class="events-grid">
         <article class="event-card reveal">
           <p class="day">{t(lang, 'evento.gio.day')}</p>
@@ -46,6 +41,7 @@ const { upcoming, past } = splitEventi(todayISO);
           <p class="note">{t(lang, 'evento.dom.note')}</p>
         </article>
       </div>
+      <p class="weekly-tagline">{t(lang, 'eventi.weekly.tagline')}</p>
     </div>
   </section>
 
@@ -67,7 +63,7 @@ const { upcoming, past } = splitEventi(todayISO);
                 <div class="poster-frame">
                   <Image
                     src={ev.poster}
-                    alt={`${t(lang, 'eventi.poster.alt')} — ${ev.artist}`}
+                    alt={`${t(lang, 'eventi.poster.alt')}, ${ev.artist}`}
                     widths={[320, 480, 720]}
                     sizes="(max-width: 640px) 90vw, (max-width: 1024px) 45vw, 32vw"
                     loading="lazy"
@@ -106,7 +102,7 @@ const { upcoming, past } = splitEventi(todayISO);
               <div class="poster-frame">
                 <Image
                   src={ev.poster}
-                  alt={`${t(lang, 'eventi.poster.alt')} — ${ev.artist}`}
+                  alt={`${t(lang, 'eventi.poster.alt')}, ${ev.artist}`}
                   widths={[280, 480, 640]}
                   sizes="(max-width: 640px) 45vw, (max-width: 1024px) 30vw, 22vw"
                   loading="lazy"

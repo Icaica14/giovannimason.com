@@ -4,11 +4,11 @@ import { type Lang, t, routeMap } from '../i18n/ui';
 
 interface Props {
   lang: Lang;
-  currentRoute: 'home' | 'menu' | 'eventi' | 'prenota' | 'contatti';
+  currentRoute: 'home' | 'menu' | 'eventi' | 'prenota' | 'contatti' | 'artisti';
 }
 
 const { lang, currentRoute } = Astro.props;
-const items = ['home', 'menu', 'eventi', 'prenota', 'contatti'] as const;
+const items = ['home', 'menu', 'eventi', 'prenota', 'contatti', 'artisti'] as const;
 
 const itHref = routeMap[currentRoute].it;
 const enHref = routeMap[currentRoute].en;
@@ -16,7 +16,7 @@ const enHref = routeMap[currentRoute].en;
 
 <nav class="nav" aria-label="Primary">
   <div class="container nav-inner">
-    <a class="brand" href={routeMap.home[lang]} aria-label="Biblio — home">
+    <a class="brand" href={routeMap.home[lang]} aria-label="Biblio, home">
       <span class="brand-logo" set:html={logoSvg}></span>
     </a>
 

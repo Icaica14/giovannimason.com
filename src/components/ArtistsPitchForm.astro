@@ -1,0 +1,352 @@
+---
+import { type Lang, t, routeMap } from '../i18n/ui';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+
+// Endpoint Formspree placeholder (stesso pattern di BookingForm).
+// Sostituire con quello reale prima del lancio.
+const FORMSPREE_ENDPOINT = 'https://formspree.io/f/PLACEHOLDER';
+---
+
+<section class="artisti-page">
+  <header class="artisti-hero container">
+    <span class="eyebrow">{t(lang, 'artisti.tagline')}</span>
+    <h1>{t(lang, 'artisti.title')}</h1>
+    <p class="lede">{t(lang, 'artisti.lede')}</p>
+  </header>
+
+  {/* Tre punti, prima del form: cosa cerchiamo / cosa serve / cosa offriamo */}
+  <section class="artisti-howitworks">
+    <div class="container">
+      <div class="howitworks-grid">
+        <article class="howitworks-card reveal">
+          <p class="day">{t(lang, 'artisti.intro.point1.title')}</p>
+          <p class="note">{t(lang, 'artisti.intro.point1.body')}</p>
+        </article>
+        <article class="howitworks-card reveal" style="--reveal-delay:.1s">
+          <p class="day">{t(lang, 'artisti.intro.point2.title')}</p>
+          <p class="note">{t(lang, 'artisti.intro.point2.body')}</p>
+        </article>
+        <article class="howitworks-card reveal" style="--reveal-delay:.2s">
+          <p class="day">{t(lang, 'artisti.intro.point3.title')}</p>
+          <p class="note">{t(lang, 'artisti.intro.point3.body')}</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  {/* Form vero e proprio, sezioni multiple */}
+  <section class="artisti-form-wrap bg-paper-2">
+    <div class="container">
+      <form
+        class="artisti-form"
+        id="artistiForm"
+        action={FORMSPREE_ENDPOINT}
+        method="POST"
+        novalidate
+      >
+        {/* Honeypot anti-spam */}
+        <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" style="display:none" />
+        <input type="hidden" name="_subject" value={`Nuova proposta artisti, Biblio (${lang.toUpperCase()})`} />
+        <input type="hidden" name="lang" value={lang} />
+
+        {/* SEZIONE 1: chi siete */}
+        <fieldset class="form-section">
+          <legend class="form-section-title">{t(lang, 'artisti.form.section.who')}</legend>
+          <div class="form-grid">
+            <label class="field field-full">
+              <span class="field-label">
+                {t(lang, 'artisti.form.artist.name')} <em class="req" aria-hidden="true">*</em>
+              </span>
+              <input
+                type="text"
+                name="artist_name"
+                required
+                placeholder={t(lang, 'artisti.form.artist.placeholder')}
+              />
+            </label>
+
+            <label class="field">
+              <span class="field-label">
+                {t(lang, 'artisti.form.contact.name')} <em class="req" aria-hidden="true">*</em>
+              </span>
+              <input
+                type="text"
+                name="contact_name"
+                required
+                autocomplete="name"
+                placeholder={t(lang, 'artisti.form.contact.placeholder')}
+              />
+            </label>
+
+            <label class="field">
+              <span class="field-label">
+                {t(lang, 'artisti.form.email')} <em class="req" aria-hidden="true">*</em>
+              </span>
+              <input
+                type="email"
+                name="email"
+                required
+                autocomplete="email"
+                inputmode="email"
+                placeholder="email@example.com"
+              />
+            </label>
+
+            <label class="field">
+              <span class="field-label">
+                {t(lang, 'artisti.form.phone')} <span class="opt">{t(lang, 'artisti.form.optional')}</span>
+              </span>
+              <input
+                type="tel"
+                name="phone"
+                autocomplete="tel"
+                inputmode="tel"
+                placeholder="+39 …"
+              />
+            </label>
+
+            <label class="field">
+              <span class="field-label">
+                {t(lang, 'artisti.form.city')} <span class="opt">{t(lang, 'artisti.form.optional')}</span>
+              </span>
+              <input
+                type="text"
+                name="city"
+                placeholder={t(lang, 'artisti.form.city.placeholder')}
+              />
+            </label>
+          </div>
+        </fieldset>
+
+        {/* SEZIONE 2: la proposta artistica */}
+        <fieldset class="form-section">
+          <legend class="form-section-title">{t(lang, 'artisti.form.section.act')}</legend>
+          <div class="form-grid">
+            <label class="field">
+              <span class="field-label">
+                {t(lang, 'artisti.form.lineup')} <em class="req" aria-hidden="true">*</em>
+              </span>
+              <select name="lineup" required>
+                <option value="">…</option>
+                <option value="solo">{t(lang, 'artisti.form.lineup.solo')}</option>
+                <option value="duo">{t(lang, 'artisti.form.lineup.duo')}</option>
+                <option value="trio">{t(lang, 'artisti.form.lineup.trio')}</option>
+                <option value="band">{t(lang, 'artisti.form.lineup.band')}</option>
+              </select>
+            </label>
+
+            <label class="field">
+              <span class="field-label">
+                {t(lang, 'artisti.form.genre')} <em class="req" aria-hidden="true">*</em>
+              </span>
+              <select name="genre" required>
+                <option value="">…</option>
+                <option value="jazz">{t(lang, 'artisti.form.genre.jazz')}</option>
+                <option value="blues">{t(lang, 'artisti.form.genre.blues')}</option>
+                <option value="soul">{t(lang, 'artisti.form.genre.soul')}</option>
+                <option value="songwriter">{t(lang, 'artisti.form.genre.songwriter')}</option>
+                <option value="indie">{t(lang, 'artisti.form.genre.indie')}</option>
+                <option value="classical">{t(lang, 'artisti.form.genre.classical')}</option>
+                <option value="other">{t(lang, 'artisti.form.genre.other')}</option>
+              </select>
+            </label>
+
+            <label class="field">
+              <span class="field-label">
+                {t(lang, 'artisti.form.repertoire')} <em class="req" aria-hidden="true">*</em>
+              </span>
+              <select name="repertoire" required>
+                <option value="">…</option>
+                <option value="original">{t(lang, 'artisti.form.repertoire.original')}</option>
+                <option value="cover">{t(lang, 'artisti.form.repertoire.cover')}</option>
+                <option value="mixed">{t(lang, 'artisti.form.repertoire.mixed')}</option>
+              </select>
+            </label>
+
+            <label class="field field-full">
+              <span class="field-label">
+                {t(lang, 'artisti.form.bio')} <em class="req" aria-hidden="true">*</em>
+              </span>
+              <textarea
+                name="bio"
+                rows="4"
+                required
+                maxlength="600"
+                placeholder={t(lang, 'artisti.form.bio.placeholder')}
+              ></textarea>
+            </label>
+          </div>
+        </fieldset>
+
+        {/* SEZIONE 3: materiali */}
+        <fieldset class="form-section">
+          <legend class="form-section-title">{t(lang, 'artisti.form.section.media')}</legend>
+          <div class="form-grid">
+            <label class="field field-full">
+              <span class="field-label">
+                {t(lang, 'artisti.form.link1')} <em class="req" aria-hidden="true">*</em>
+              </span>
+              <input
+                type="url"
+                name="link1"
+                required
+                inputmode="url"
+                placeholder={t(lang, 'artisti.form.link1.placeholder')}
+              />
+            </label>
+
+            <label class="field field-full">
+              <span class="field-label">
+                {t(lang, 'artisti.form.link2')} <span class="opt">{t(lang, 'artisti.form.optional')}</span>
+              </span>
+              <input
+                type="url"
+                name="link2"
+                inputmode="url"
+                placeholder="https://"
+              />
+            </label>
+
+            <label class="field field-full">
+              <span class="field-label">
+                {t(lang, 'artisti.form.link3')} <span class="opt">{t(lang, 'artisti.form.optional')}</span>
+              </span>
+              <input
+                type="url"
+                name="link3"
+                inputmode="url"
+                placeholder="https://"
+              />
+            </label>
+
+            <label class="field field-full">
+              <span class="field-label">
+                {t(lang, 'artisti.form.epk')} <span class="opt">{t(lang, 'artisti.form.optional')}</span>
+              </span>
+              <input
+                type="url"
+                name="epk"
+                inputmode="url"
+                placeholder={t(lang, 'artisti.form.epk.placeholder')}
+              />
+            </label>
+
+            <label class="field field-full">
+              <span class="field-label">
+                {t(lang, 'artisti.form.experience')} <span class="opt">{t(lang, 'artisti.form.optional')}</span>
+              </span>
+              <textarea
+                name="experience"
+                rows="3"
+                placeholder={t(lang, 'artisti.form.experience.placeholder')}
+              ></textarea>
+            </label>
+          </div>
+        </fieldset>
+
+        {/* SEZIONE 4: logistica */}
+        <fieldset class="form-section">
+          <legend class="form-section-title">{t(lang, 'artisti.form.section.logistics')}</legend>
+          <div class="form-grid">
+            <label class="field field-full">
+              <span class="field-label">
+                {t(lang, 'artisti.form.availability')} <span class="opt">{t(lang, 'artisti.form.optional')}</span>
+              </span>
+              <textarea
+                name="availability"
+                rows="2"
+                placeholder={t(lang, 'artisti.form.availability.placeholder')}
+              ></textarea>
+            </label>
+
+            <label class="field">
+              <span class="field-label">
+                {t(lang, 'artisti.form.fee')} <span class="opt">{t(lang, 'artisti.form.optional')}</span>
+              </span>
+              <input
+                type="text"
+                name="fee"
+                placeholder={t(lang, 'artisti.form.fee.placeholder')}
+              />
+            </label>
+
+            <label class="field field-full">
+              <span class="field-label">
+                {t(lang, 'artisti.form.note')} <span class="opt">{t(lang, 'artisti.form.optional')}</span>
+              </span>
+              <textarea
+                name="note"
+                rows="3"
+                placeholder={t(lang, 'artisti.form.note.placeholder')}
+              ></textarea>
+            </label>
+          </div>
+        </fieldset>
+
+        <p class="form-privacy">{t(lang, 'artisti.form.privacy')}</p>
+
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary" id="artistiSubmit">
+            {t(lang, 'artisti.form.submit')}
+          </button>
+        </div>
+
+        <div class="form-success" id="artistiSuccess" hidden>
+          <h3>{t(lang, 'artisti.success.title')}</h3>
+          <p>{t(lang, 'artisti.success.body')}</p>
+        </div>
+        <p class="form-error" id="artistiError" hidden role="alert">
+          {t(lang, 'artisti.error')}
+        </p>
+      </form>
+    </div>
+  </section>
+
+  {/* CTA finale: vieni a vedere il locale */}
+  <section class="cta-banner">
+    <span class="eyebrow">{t(lang, 'artisti.cta.title')}</span>
+    <h2>{t(lang, 'artisti.cta.title')}</h2>
+    <p>{t(lang, 'artisti.cta.body')}</p>
+    <a class="btn" href={routeMap.eventi[lang]}>{t(lang, 'artisti.cta.btn')}</a>
+  </section>
+</section>
+
+<script>
+  // Submit AJAX a Formspree, niente redirect, mostra inline success/error.
+  // Stesso pattern di BookingForm.astro.
+  const form = document.getElementById('artistiForm') as HTMLFormElement | null;
+  const submitBtn = document.getElementById('artistiSubmit') as HTMLButtonElement | null;
+  const successEl = document.getElementById('artistiSuccess') as HTMLElement | null;
+  const errorEl   = document.getElementById('artistiError') as HTMLElement | null;
+
+  form?.addEventListener('submit', async (e) => {
+    if (!form.action.includes('PLACEHOLDER')) {
+      e.preventDefault();
+      submitBtn?.setAttribute('disabled', 'true');
+      errorEl?.setAttribute('hidden', '');
+      try {
+        const data = new FormData(form);
+        const res = await fetch(form.action, {
+          method: 'POST',
+          body: data,
+          headers: { Accept: 'application/json' },
+        });
+        if (res.ok) {
+          form.hidden = true;
+          successEl?.removeAttribute('hidden');
+        } else {
+          errorEl?.removeAttribute('hidden');
+        }
+      } catch {
+        errorEl?.removeAttribute('hidden');
+      } finally {
+        submitBtn?.removeAttribute('disabled');
+      }
+    }
+    // Se l'endpoint è ancora il placeholder, lasciamo il submit nativo (no-op).
+  });
+</script>
