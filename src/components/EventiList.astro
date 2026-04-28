@@ -1,0 +1,143 @@
+---
+import { Image } from 'astro:assets';
+import { type Lang, t, routeMap } from '../i18n/ui';
+import { genreLabel, splitEventi, tx } from '../data/eventi';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+
+// Oggi è passato lato server: gli eventi futuri/passati vengono congelati al build.
+// (Il sito è statico, perfettamente coerente con un calendario aggiornato a ogni deploy.)
+const todayISO = new Date().toISOString().slice(0, 10);
+const { upcoming, past } = splitEventi(todayISO);
+---
+
+<section class="eventi-page">
+  <header class="eventi-hero container">
+    <span class="eyebrow">{t(lang, 'hero.tagline')}</span>
+    <h1>{t(lang, 'eventi.title')}</h1>
+    <p class="lede">{t(lang, 'eventi.lede')}</p>
+  </header>
+
+  {/* Programmazione settimanale fissa: card prima, tagline dopo. */}
+  <section class="eventi-weekly bg-paper-2">
+    <div class="container">
+      <div class="events-grid">
+        <article class="event-card reveal">
+          <p class="day">{t(lang, 'evento.gio.day')}</p>
+          <h3>{t(lang, 'evento.gio.title')}</h3>
+          <p class="note">{t(lang, 'evento.gio.note')}</p>
+        </article>
+        <article class="event-card reveal" style="--reveal-delay:.1s">
+          <p class="day">{t(lang, 'evento.ven.day')}</p>
+          <h3>{t(lang, 'evento.ven.title')}</h3>
+          <p class="note">{t(lang, 'evento.ven.note')}</p>
+        </article>
+        <article class="event-card reveal" style="--reveal-delay:.2s">
+          <p class="day">{t(lang, 'evento.dom.day')}</p>
+          <h3>{t(lang, 'evento.dom.title')}</h3>
+          <p class="note">{t(lang, 'evento.dom.note')}</p>
+        </article>
+      </div>
+      <p class="weekly-tagline">{t(lang, 'eventi.weekly.tagline')}</p>
+    </div>
+  </section>
+
+  {/* In arrivo */}
+  <section class="eventi-upcoming">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow">{t(lang, 'eventi.upcoming.title')}</span>
+        <h2>{t(lang, 'eventi.upcoming.title')}</h2>
+      </div>
+
+      {upcoming.length === 0 ? (
+        <p class="eventi-empty">{t(lang, 'eventi.upcoming.empty')}</p>
+      ) : (
+        <ul class="poster-grid poster-grid-featured">
+          {upcoming.map((ev, i) => (
+            <li class="poster-card reveal" style={`--reveal-delay:${(i % 6) * 0.08}s`} id={ev.id}>
+              <a class="poster-link" href={`#${ev.id}`} aria-label={ev.artist}>
+                <div class="poster-frame">
+                  <Image
+                    src={ev.poster}
+                    alt={`${t(lang, 'eventi.poster.alt')}, ${ev.artist}`}
+                    widths={[320, 480, 720]}
+                    sizes="(max-width: 640px) 90vw, (max-width: 1024px) 45vw, 32vw"
+                    loading="lazy"
+                  />
+                </div>
+                <div class="poster-meta">
+                  <span class={`genre-badge genre-${ev.genre}`}>{tx(genreLabel[ev.genre], lang)}</span>
+                  <h3>{ev.artist}</h3>
+                  <p class="poster-when">
+                    <span>{tx(ev.dateLabel, lang)}</span>
+                    <span class="dot" aria-hidden="true">·</span>
+                    <span>{ev.time}</span>
+                  </p>
+                  {ev.blurb && <p class="poster-blurb">{tx(ev.blurb, lang)}</p>}
+                </div>
+              </a>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  </section>
+
+  {/* Già passati */}
+  {past.length > 0 && (
+    <section class="eventi-past bg-paper-2">
+      <div class="container">
+        <div class="section-head">
+          <span class="eyebrow">{t(lang, 'eventi.past.title')}</span>
+          <h2>{t(lang, 'eventi.past.title')}</h2>
+          <p>{t(lang, 'eventi.past.intro')}</p>
+        </div>
+        <ul class="poster-grid">
+          {past.map((ev, i) => (
+            <li class="poster-card reveal" style={`--reveal-delay:${(i % 6) * 0.07}s`} id={ev.id}>
+              <div class="poster-frame">
+                <Image
+                  src={ev.poster}
+                  alt={`${t(lang, 'eventi.poster.alt')}, ${ev.artist}`}
+                  widths={[280, 480, 640]}
+                  sizes="(max-width: 640px) 45vw, (max-width: 1024px) 30vw, 22vw"
+                  loading="lazy"
+                />
+              </div>
+              <div class="poster-meta">
+                <span class={`genre-badge genre-${ev.genre}`}>{tx(genreLabel[ev.genre], lang)}</span>
+                <h3>{ev.artist}</h3>
+                <p class="poster-when">
+                  <span>{tx(ev.dateLabel, lang)}</span>
+                  <span class="dot" aria-hidden="true">·</span>
+                  <span>{ev.time}</span>
+                </p>
+              </div>
+            </li>
+          ))}
+        </ul>
+
+        <p class="follow-line">
+          <a href="https://www.instagram.com/bookcafebiblio/" target="_blank" rel="noopener noreferrer">
+            {t(lang, 'eventi.follow')} →
+          </a>
+        </p>
+      </div>
+    </section>
+  )}
+
+  {/* CTA finale */}
+  <section class="cta-banner">
+    <span class="eyebrow">{t(lang, 'eventi.cta.title')}</span>
+    <h2>{t(lang, 'eventi.cta.title')}</h2>
+    <p>{t(lang, 'eventi.cta.body')}</p>
+    <a class="btn" href={routeMap.prenota[lang]}>{t(lang, 'eventi.cta.btn')}</a>
+  </section>
+</section>
+
+<!-- Scroll-reveal è gestito globalmente dal Base layout. -->
+

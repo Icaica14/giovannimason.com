@@ -1,0 +1,16 @@
+---
+import Base from '../../layouts/Base.astro';
+import EventiList from '../../components/EventiList.astro';
+import { t } from '../../i18n/ui';
+
+const lang = 'en' as const;
+---
+
+<Base
+  lang={lang}
+  currentRoute="eventi"
+  title={t(lang, 'eventi.meta.title')}
+  description={t(lang, 'eventi.meta.description')}
+>
+  <EventiList lang={lang} />
+</Base>

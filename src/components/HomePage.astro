@@ -1,0 +1,197 @@
+---
+import { Image } from 'astro:assets';
+import Hero from './Hero.astro';
+import { type Lang, t, routeMap } from '../i18n/ui';
+
+// Foto nuove caricate dal titolare.
+// L'hero di sfondo resta quello già impostato in Hero.astro (non si tocca).
+import musicalive from '../assets/img/foto-nuove/locale/musicalive.jpg';
+
+// Galleria "Atmosfera": 4 scatti dell'interno del locale.
+import gal1 from '../assets/img/foto-nuove/locale/interno.jpg';
+import gal2 from '../assets/img/foto-nuove/locale/lampada.jpg';
+import gal3 from '../assets/img/foto-nuove/locale/libri.jpg';
+import gal4 from '../assets/img/foto-nuove/locale/locale.jpg';
+
+// Mosaic "Cucina & bancone": 5 scatti (1 hero grande + 4 small).
+// L'hero è cocktail.jpg, formato landscape che si presta bene al tile 2x2.
+import cucina1 from '../assets/img/foto-nuove/cibo/cocktail.jpg';
+import cucina2 from '../assets/img/foto-nuove/cibo/piatto.jpg';
+import cucina3 from '../assets/img/foto-nuove/cibo/insalata.jpg';
+import cucina4 from '../assets/img/foto-nuove/cibo/sandwich.jpg';
+import cucina5 from '../assets/img/foto-nuove/cibo/sandwich2.jpg';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+
+// Alt-text del cucina-mosaic: 5 per IT/EN, descrittive ma sintetiche.
+const cucinaAlts = lang === 'it'
+  ? [
+      'Cocktail d\'autore servito al bancone',
+      'Piatto firmato della cucina di Biblio',
+      'Insalata fresca con ingredienti di stagione',
+      'Sandwich gourmet, pane artigianale',
+      'Sandwich farcito, dettaglio dal bancone',
+    ]
+  : [
+      'Signature cocktail served at the counter',
+      'Signature plate from Biblio\'s kitchen',
+      'Fresh seasonal salad',
+      'Gourmet sandwich on artisan bread',
+      'Filled sandwich, counter detail',
+    ];
+const cucinaImgs = [cucina1, cucina2, cucina3, cucina4, cucina5];
+---
+
+<Hero lang={lang} />
+
+{/* Intro: chi siamo */}
+<section class="container">
+  <div class="intro-grid">
+    <Image
+      class="reveal"
+      src={musicalive}
+      alt={lang === 'it'
+        ? 'Musica dal vivo a Biblio: il palco al primo piano'
+        : 'Live music at Biblio: the upstairs stage'}
+      widths={[480, 800, 1200, 1600, 2000]}
+      sizes="(max-width: 820px) 100vw, 540px"
+      loading="eager"
+    />
+    <div class="prose reveal" style="--reveal-delay:.1s">
+      <span class="eyebrow">{t(lang, 'home.intro.eyebrow')}</span>
+      <h2>{t(lang, 'home.intro.title')}</h2>
+      <p>{t(lang, 'home.intro.body')}</p>
+      <p>{t(lang, 'home.intro.body2')}</p>
+    </div>
+  </div>
+</section>
+
+<div class="divider"><span>· · ·</span></div>
+
+{/* Cucina & bancone, gallery editoriale */}
+<section class="cucina-section">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="eyebrow">{t(lang, 'home.cucina.eyebrow')}</span>
+      <h2>{t(lang, 'home.cucina.title')}</h2>
+      <p>{t(lang, 'home.cucina.intro')}</p>
+    </div>
+
+    {/* Layout editoriale "mosaic": una grande, quattro più piccole.
+        Su mobile collassa a 2 colonne uniformi. */}
+    <div class="cucina-mosaic">
+      <figure class="cucina-tile cucina-tile-hero reveal">
+        <Image
+          src={cucinaImgs[0]}
+          alt={cucinaAlts[0]}
+          widths={[600, 900, 1200, 1600]}
+          sizes="(max-width: 820px) 100vw, 600px"
+          loading="lazy"
+        />
+      </figure>
+      {cucinaImgs.slice(1).map((img, i) => (
+        <figure class="cucina-tile reveal" style={`--reveal-delay:${(i + 1) * 0.06}s`}>
+          <Image
+            src={img}
+            alt={cucinaAlts[i + 1]}
+            widths={[320, 480, 720, 960]}
+            sizes="(max-width: 820px) 50vw, 280px"
+            loading="lazy"
+          />
+        </figure>
+      ))}
+    </div>
+
+    <p class="cucina-cta reveal">
+      <a class="btn btn-dark" href={routeMap.menu[lang]}>{t(lang, 'home.cucina.cta')}</a>
+    </p>
+  </div>
+</section>
+
+{/* Eventi della settimana */}
+<section class="bg-paper-2">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="eyebrow">{t(lang, 'home.eventi.eyebrow')}</span>
+      <h2>{t(lang, 'home.eventi.title')}</h2>
+      <p>{t(lang, 'home.eventi.intro')}</p>
+    </div>
+    <div class="events-grid">
+      <article class="event-card reveal">
+        <p class="day">{t(lang, 'evento.gio.day')}</p>
+        <h3>{t(lang, 'evento.gio.title')}</h3>
+        <p class="note">{t(lang, 'evento.gio.note')}</p>
+      </article>
+      <article class="event-card reveal" style="--reveal-delay:.08s">
+        <p class="day">{t(lang, 'evento.ven.day')}</p>
+        <h3>{t(lang, 'evento.ven.title')}</h3>
+        <p class="note">{t(lang, 'evento.ven.note')}</p>
+      </article>
+      <article class="event-card reveal" style="--reveal-delay:.16s">
+        <p class="day">{t(lang, 'evento.dom.day')}</p>
+        <h3>{t(lang, 'evento.dom.title')}</h3>
+        <p class="note">{t(lang, 'evento.dom.note')}</p>
+      </article>
+    </div>
+    <p class="reveal" style="text-align:center; margin-top: 2.5rem;">
+      <a class="btn btn-dark" href={routeMap.eventi[lang]}>{t(lang, 'home.eventi.cta')}</a>
+    </p>
+  </div>
+</section>
+
+{/* Galleria atmosfera */}
+<section class="container">
+  <div class="section-head reveal">
+    <span class="eyebrow">{t(lang, 'home.gallery.eyebrow')}</span>
+    <h2>{t(lang, 'home.gallery.title')}</h2>
+  </div>
+  <div class="gallery">
+    <div class="reveal">
+      <Image
+        src={gal1}
+        alt={lang === 'it' ? 'Interno di Biblio: la sala' : 'Inside Biblio: the room'}
+        widths={[320, 480, 720, 960]}
+        sizes="(max-width: 820px) 50vw, 280px"
+        loading="lazy"
+      />
+    </div>
+    <div class="reveal" style="--reveal-delay:.06s">
+      <Image
+        src={gal2}
+        alt={lang === 'it' ? 'Lampada d\'epoca: dettaglio caldo' : 'Vintage lamp: warm detail'}
+        widths={[320, 480, 720, 960]}
+        sizes="(max-width: 820px) 50vw, 280px"
+        loading="lazy"
+      />
+    </div>
+    <div class="reveal" style="--reveal-delay:.12s">
+      <Image
+        src={gal3}
+        alt={lang === 'it' ? 'Le librerie del locale' : 'The bookshelves'}
+        widths={[320, 480, 720, 960]}
+        sizes="(max-width: 820px) 50vw, 280px"
+        loading="lazy"
+      />
+    </div>
+    <div class="reveal" style="--reveal-delay:.18s">
+      <Image
+        src={gal4}
+        alt={lang === 'it' ? 'Vista d\'insieme del locale' : 'Wide view of the room'}
+        widths={[320, 480, 720, 960]}
+        sizes="(max-width: 820px) 50vw, 280px"
+        loading="lazy"
+      />
+    </div>
+  </div>
+</section>
+
+{/* CTA prenota */}
+<section class="cta-banner reveal">
+  <span class="eyebrow">{t(lang, 'home.cta.eyebrow')}</span>
+  <h2>{t(lang, 'home.cta.title')}</h2>
+  <p>{t(lang, 'home.cta.body')}</p>
+  <a class="btn" href={routeMap.prenota[lang]}>{t(lang, 'home.cta.btn')}</a>
+</section>

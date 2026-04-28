@@ -14,5 +14,10 @@
   "dependencies": {
     "astro": "^5.0.0",
     "sharp": "^0.33.5"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.8",
+    "@astrojs/sitemap": "^3.7.2",
+    "typescript": "^5.9.3"
   }
 }

@@ -1,0 +1,16 @@
+---
+import Base from '../../layouts/Base.astro';
+import ArtistsPitchForm from '../../components/ArtistsPitchForm.astro';
+import { t } from '../../i18n/ui';
+
+const lang = 'en' as const;
+---
+
+<Base
+  lang={lang}
+  currentRoute="artisti"
+  title={t(lang, 'artisti.meta.title')}
+  description={t(lang, 'artisti.meta.description')}
+>
+  <ArtistsPitchForm lang={lang} />
+</Base>

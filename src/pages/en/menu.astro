@@ -1,0 +1,17 @@
+---
+import Base from '../../layouts/Base.astro';
+import MenuList from '../../components/MenuList.astro';
+import { t } from '../../i18n/ui';
+
+const lang = 'en' as const;
+---
+
+<Base
+  lang={lang}
+  currentRoute="menu"
+  title={t(lang, 'menu.meta.title')}
+  description={t(lang, 'menu.meta.description')}
+>
+  <span id="top"></span>
+  <MenuList lang={lang} />
+</Base>

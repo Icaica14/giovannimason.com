@@ -1,0 +1,104 @@
+---
+import { type Lang, t, routeMap } from '../i18n/ui';
+import { menu, tx } from '../data/menu';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+---
+
+<section class="menu-page">
+  <header class="menu-hero container">
+    <span class="eyebrow">{t(lang, 'hero.tagline')}</span>
+    <h1>{t(lang, 'menu.title')}</h1>
+    <p class="lede">{t(lang, 'menu.lede')}</p>
+    <p class="menu-cover-note">{t(lang, 'menu.note')}</p>
+  </header>
+
+  <!-- Indice -->
+  <nav class="menu-toc container" aria-label={t(lang, 'menu.toc.title')}>
+    <p class="toc-title">{t(lang, 'menu.toc.title')}</p>
+    <ul>
+      {menu.map((chapter) => (
+        <li><a href={`#${chapter.id}`}>{tx(chapter.title, lang)}</a></li>
+      ))}
+    </ul>
+  </nav>
+
+  <!-- Capitoli -->
+  {menu.map((chapter) => (
+    <section class="menu-chapter" id={chapter.id}>
+      <div class="container">
+        <header class="chapter-head">
+          <h2>{tx(chapter.title, lang)}</h2>
+          {chapter.intro && <p class="chapter-intro">{tx(chapter.intro, lang)}</p>}
+        </header>
+
+        {chapter.sections.map((section) => (
+          <div class="menu-section" id={section.id}>
+            <header class="section-head">
+              <h3>
+                {tx(section.title, lang)}
+                {section.defaultPrice && (
+                  <span class="section-price"
+                        aria-label={`${t(lang, 'menu.section.from')} ${section.defaultPrice}`}>
+                    € {section.defaultPrice}
+                  </span>
+                )}
+              </h3>
+              {section.intro && <p class="section-intro">{tx(section.intro, lang)}</p>}
+            </header>
+
+            {/* Voci semplici (vini, birre, bibite), label + prezzo */}
+            {section.rows && (
+              <ul class="menu-rows">
+                {section.rows.map((row) => (
+                  <li class="menu-row">
+                    <span class="row-label">{row.label}</span>
+                    <span class="row-dots" aria-hidden="true"></span>
+                    <span class="row-price">€ {row.price ?? section.defaultPrice}</span>
+                  </li>
+                ))}
+              </ul>
+            )}
+
+            {/* Voci con descrizione (negroni, americani, gin tonic, piatti) */}
+            {section.items && (
+              <ul class="menu-items">
+                {section.items.map((item) => (
+                  <li class="menu-item">
+                    <div class="item-line">
+                      <h4 class="item-name">
+                        {item.name}
+                        {item.origin && <span class="item-origin">&nbsp;{item.origin}</span>}
+                      </h4>
+                      {(item.price || section.defaultPrice) && (
+                        <>
+                          <span class="item-dots" aria-hidden="true"></span>
+                          <span class="item-price">€ {item.price ?? section.defaultPrice}</span>
+                        </>
+                      )}
+                    </div>
+                    {item.profile && <p class="item-profile">{tx(item.profile, lang)}</p>}
+                    {item.desc && <p class="item-desc">{tx(item.desc, lang)}</p>}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        ))}
+
+        <p class="back-to-top"><a href="#top">{t(lang, 'menu.back')}</a></p>
+      </div>
+    </section>
+  ))}
+
+  <!-- CTA finale -->
+  <section class="cta-banner">
+    <span class="eyebrow">{t(lang, 'menu.cta.title')}</span>
+    <h2>{t(lang, 'menu.cta.title')}</h2>
+    <p>{t(lang, 'menu.cta.body')}</p>
+    <a class="btn" href={routeMap.prenota[lang]}>{t(lang, 'menu.cta.btn')}</a>
+  </section>
+</section>
