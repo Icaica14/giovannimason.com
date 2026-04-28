@@ -160,15 +160,7 @@ export const ui = {
 
     'artisti.title':              'Per gli artisti',
     'artisti.tagline':            'Suona a Biblio',
-    'artisti.lede':               'Cerchiamo musicisti per le serate live di Biblio: jazz al giovedì, blues e soul al venerdì, voci emergenti la domenica. Mandaci la tua proposta: ascoltiamo tutti i materiali e rispondiamo personalmente.',
-    'artisti.intro.eyebrow':      'Come funziona',
-    'artisti.intro.title':        'Tre cose, prima di compilare',
-    'artisti.intro.point1.title': 'Cosa cerchiamo',
-    'artisti.intro.point1.body':  'Musica acustica o amplificata, formazioni dal solista alla band di 4 o 5 elementi. Il palco è al primo piano: l\'impianto è essenziale, perfetto per chi suona vicino alle persone.',
-    'artisti.intro.point2.title': 'Cosa serve',
-    'artisti.intro.point2.body':  'Almeno un link a un audio o video recente (YouTube, Spotify, SoundCloud, Instagram). Una breve presentazione e i tuoi contatti diretti. Se hai un press kit o un EPK, ancora meglio.',
-    'artisti.intro.point3.title': 'Cosa offriamo',
-    'artisti.intro.point3.body':  'Una serata curata, un pubblico attento, due set live, cachet concordato di volta in volta. Spesso veniamo a vederti dal vivo prima di confermare: ti diciamo noi quando siamo in zona.',
+    'artisti.lede':               'Mandaci la tua proposta: ascoltiamo tutti i materiali e rispondiamo personalmente.',
 
     'artisti.form.section.who':       'Chi siete',
     'artisti.form.artist.name':       'Nome d\'arte / band',
@@ -387,15 +379,7 @@ export const ui = {
 
     'artisti.title':              'For artists',
     'artisti.tagline':            'Play at Biblio',
-    'artisti.lede':               'We\'re always looking for new musicians for Biblio\'s live nights: jazz on Thursdays, blues and soul on Fridays, emerging voices on Sundays. Send us your pitch: we listen to every submission and reply personally.',
-    'artisti.intro.eyebrow':      'How it works',
-    'artisti.intro.title':        'Three things, before you fill out the form',
-    'artisti.intro.point1.title': 'What we\'re looking for',
-    'artisti.intro.point1.body':  'Acoustic or amplified music, line-ups from solo to four or five-piece bands. The stage is upstairs; the PA is essential, perfect for playing close to the room.',
-    'artisti.intro.point2.title': 'What we need',
-    'artisti.intro.point2.body':  'At least one link to a recent video or audio (YouTube, Spotify, SoundCloud, Instagram). A short bio and your direct contact. If you have a press kit or EPK, even better.',
-    'artisti.intro.point3.title': 'What we offer',
-    'artisti.intro.point3.body':  'A curated evening, an attentive audience, two live sets, and a fee agreed each time. We often come and see you live before confirming: we\'ll let you know when we\'re in the area.',
+    'artisti.lede':               'Send us your pitch: we listen to every submission and reply personally.',
 
     'artisti.form.section.who':       'Who you are',
     'artisti.form.artist.name':       'Stage name / band name',

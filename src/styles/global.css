@@ -1754,55 +1754,6 @@ section { padding: 5rem 0; }
   margin: 0 auto;
 }
 
-/* Tre card "come funziona" — riusano l'estetica di .event-card */
-.artisti-howitworks { padding: 3rem 0 1rem; }
-.howitworks-grid {
-  display: grid;
-  gap: 1.5rem;
-  grid-template-columns: repeat(3, 1fr);
-  align-items: start;
-}
-.howitworks-grid .howitworks-card:nth-child(2) {
-  transform: translateY(1.5rem);
-}
-.howitworks-card {
-  background: var(--paper);
-  border: none;
-  border-left: 3px solid var(--brass);
-  border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
-  padding: 1.75rem 1.6rem;
-  text-align: left;
-  box-shadow: var(--shadow-card);
-  transition: transform .35s var(--ease), box-shadow .35s var(--ease), border-color .25s var(--ease);
-}
-.howitworks-card:hover {
-  transform: translateY(-3px);
-  box-shadow: var(--shadow-warm);
-  border-left-color: var(--vino);
-}
-.howitworks-grid .howitworks-card:nth-child(2):hover {
-  transform: translateY(calc(1.5rem - 3px));
-}
-.howitworks-card .day {
-  font-family: var(--font-brand);
-  font-size: .8rem;
-  letter-spacing: .35em;
-  text-transform: uppercase;
-  color: var(--brass-deep);
-  margin: 0 0 .55rem;
-}
-.howitworks-card .note {
-  color: var(--ink-soft);
-  font-size: .98rem;
-  line-height: 1.6;
-  margin: 0;
-}
-@media (max-width: 820px) {
-  .howitworks-grid { grid-template-columns: 1fr; }
-  .howitworks-grid .howitworks-card:nth-child(2) { transform: none; }
-  .howitworks-grid .howitworks-card:nth-child(2):hover { transform: translateY(-3px); }
-}
-
 /* Form a sezioni: fieldset/legend semantici, niente border default */
 .artisti-form-wrap { padding: 3rem 0 4rem; }
 .artisti-form {
