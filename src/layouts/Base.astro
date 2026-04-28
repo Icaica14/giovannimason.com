@@ -2,7 +2,7 @@
 import '../styles/global.css';
 import Nav from '../components/Nav.astro';
 import Footer from '../components/Footer.astro';
-import { type Lang, t } from '../i18n/ui';
+import { type Lang, t, routeMap } from '../i18n/ui';
 
 interface Props {
   lang: Lang;
@@ -15,6 +15,43 @@ interface Props {
 const { lang, currentRoute, title, description } = Astro.props;
 const pageTitle = title ?? t(lang, 'site.title');
 const pageDesc  = description ?? t(lang, 'site.description');
+
+// URL assoluti per canonical, hreflang e Open Graph.
+// Astro.site è settato in astro.config.mjs (placeholder fino al go-live).
+const siteOrigin = Astro.site ? Astro.site.origin : '';
+const itPath = routeMap[currentRoute].it;
+const enPath = routeMap[currentRoute].en;
+const itUrl  = `${siteOrigin}${itPath}`;
+const enUrl  = `${siteOrigin}${enPath}`;
+const canonicalUrl = lang === 'it' ? itUrl : enUrl;
+const ogImage = `${siteOrigin}/og-default.jpg`;
+
+// Dati strutturati: il LocalBusiness rimane lo stesso su ogni pagina,
+// così Google ne ha una scheda coerente.
+const ldJson = {
+  '@context': 'https://schema.org',
+  '@type': 'BarOrPub',
+  name: 'Biblio',
+  url: siteOrigin || undefined,
+  image: siteOrigin ? ogImage : undefined,
+  telephone: '+390422270575',
+  email: 'biblio.bookcafe@gmail.com',
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: 'Via Armando Diaz 3/A',
+    postalCode: '31100',
+    addressLocality: 'Treviso',
+    addressRegion: 'TV',
+    addressCountry: 'IT',
+  },
+  servesCuisine: ['Italian', 'Cocktails', 'Wine'],
+  priceRange: '€€',
+  sameAs: ['https://www.instagram.com/bookcafebiblio/'],
+};
+
+// Toggle labels mobile menu — passati al client via data attribute.
+const menuOpenLabel  = t(lang, 'nav.menu.toggle');
+const menuCloseLabel = t(lang, 'nav.menu.close');
 ---
 
 <!doctype html>
@@ -24,10 +61,24 @@ const pageDesc  = description ?? t(lang, 'site.description');
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{pageTitle}</title>
     <meta name="description" content={pageDesc} />
+    <link rel="canonical" href={canonicalUrl} />
+    <link rel="alternate" hreflang="it" href={itUrl} />
+    <link rel="alternate" hreflang="en" href={enUrl} />
+    <link rel="alternate" hreflang="x-default" href={itUrl} />
     <meta property="og:title" content={pageTitle} />
     <meta property="og:description" content={pageDesc} />
     <meta property="og:type" content="website" />
     <meta property="og:locale" content={lang === 'it' ? 'it_IT' : 'en_US'} />
+    <meta property="og:locale:alternate" content={lang === 'it' ? 'en_US' : 'it_IT'} />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:site_name" content="Biblio" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:description" content={pageDesc} />
+    <meta name="twitter:image" content={ogImage} />
     <meta name="theme-color" content="#f6efe1" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <!-- Google Fonts: Cormorant Garamond (display) + Lora (body) + Cinzel (brand) -->
@@ -37,20 +88,30 @@ const pageDesc  = description ?? t(lang, 'site.description');
       href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Lora:ital,wght@0,400;0,500;0,600;1,400&display=swap"
       rel="stylesheet"
     />
+    <script
+      type="application/ld+json"
+      is:inline
+      set:html={JSON.stringify(ldJson)}
+    ></script>
   </head>
-  <body>
+  <body data-menu-open-label={menuOpenLabel} data-menu-close-label={menuCloseLabel}>
+    <a class="skip-link" href="#main">{t(lang, 'a11y.skip')}</a>
     <Nav lang={lang} currentRoute={currentRoute} />
     <main id="main">
       <slot />
     </main>
     <Footer lang={lang} />
     <script>
-      // Toggle mobile nav
+      // Toggle mobile nav — anche aria-label commuta fra "apri" / "chiudi".
       const navEl = document.querySelector<HTMLElement>('.nav');
       const toggle = document.querySelector<HTMLButtonElement>('.nav-toggle');
+      const body = document.body;
+      const openLabel  = body.dataset.menuOpenLabel  ?? 'Open menu';
+      const closeLabel = body.dataset.menuCloseLabel ?? 'Close menu';
       toggle?.addEventListener('click', () => {
-        const open = navEl?.classList.toggle('is-open');
-        toggle.setAttribute('aria-expanded', String(open ?? false));
+        const open = navEl?.classList.toggle('is-open') ?? false;
+        toggle.setAttribute('aria-expanded', String(open));
+        toggle.setAttribute('aria-label', open ? closeLabel : openLabel);
       });
 
       // Scroll-reveal globale: ogni elemento con `.reveal` riceve `.is-visible`

@@ -1,10 +1,16 @@
 ---
 import Base from '../layouts/Base.astro';
 import ContactsPage from '../components/ContactsPage.astro';
+import { t } from '../i18n/ui';
 
 const lang = 'it' as const;
 ---
 
-<Base lang={lang} currentRoute="contatti">
+<Base
+  lang={lang}
+  currentRoute="contatti"
+  title={t(lang, 'contatti.meta.title')}
+  description={t(lang, 'contatti.meta.description')}
+>
   <ContactsPage lang={lang} />
 </Base>

@@ -22,8 +22,21 @@ export const ui = {
     'nav.menu.toggle':'Apri il menu',
     'nav.menu.close': 'Chiudi il menu',
 
+    'a11y.skip':      'Salta al contenuto',
+
     'site.title':     'Biblio — musica dal vivo · cicchetti & drink · Treviso',
     'site.description': 'Tre sere a settimana di musica dal vivo a Treviso: jazz, blues, soul e voci emergenti. Cicchetti gourmet, vini selezionati e drink d\'autore in una cornice antiquaria.',
+
+    'home.meta.title':       'Biblio — Musica dal vivo, drink & cicchetti · Treviso',
+    'home.meta.description': 'Bar Biblio: tre sere a settimana di musica dal vivo a Treviso. Drink d\'autore, cicchetti gourmet e una sala antiquaria a pochi passi da Piazza dei Signori.',
+    'menu.meta.title':       'Il menù — Biblio Treviso',
+    'menu.meta.description': 'Il menù di Biblio: drink d\'autore, vini di territorio e cicchetti gourmet. Una proposta che evolve con le stagioni e accompagna la musica dal vivo.',
+    'eventi.meta.title':     'Eventi & musica dal vivo — Biblio Treviso',
+    'eventi.meta.description': 'Calendario di Biblio: jazz il giovedì, blues e soul il venerdì, voci emergenti la domenica. Locandine in arrivo e archivio delle serate recenti.',
+    'prenota.meta.title':    'Prenota un tavolo — Biblio Treviso',
+    'prenota.meta.description': 'Prenota un tavolo da Biblio: rispondiamo personalmente in poche ore. Nelle sere live conviene anticipare — il primo piano si riempie in fretta.',
+    'contatti.meta.title':   'Contatti & come arrivare — Biblio Treviso',
+    'contatti.meta.description': 'Biblio si trova in Via Armando Diaz 3/A, nel cuore di Treviso. Orari, telefono, indicazioni e recensioni dei nostri ospiti.',
 
     'hero.tagline':   'art · food · drink',
     'hero.lede':      'Tre sere a settimana il palco si accende. Sotto le lampade d\'epoca, drink d\'autore e cicchetti gourmet — a Treviso, dietro la quinta di un antiquario.',
@@ -160,8 +173,21 @@ export const ui = {
     'nav.menu.toggle':'Open menu',
     'nav.menu.close': 'Close menu',
 
+    'a11y.skip':      'Skip to content',
+
     'site.title':     'Biblio — live music · small plates & drinks · Treviso',
     'site.description': 'Three nights a week of live music in Treviso: jazz, blues, soul and emerging voices. Gourmet small plates, hand-picked wines and signature drinks in an antique-shop setting.',
+
+    'home.meta.title':       'Biblio — Live music, drinks & small plates · Treviso',
+    'home.meta.description': 'Bar Biblio: three nights a week of live music in Treviso. Signature drinks, gourmet small plates, and an antique-shop setting steps from Piazza dei Signori.',
+    'menu.meta.title':       'The menu — Biblio Treviso',
+    'menu.meta.description': 'The Biblio menu: signature drinks, regional wines and gourmet small plates. A list that follows the seasons and walks alongside the live music.',
+    'eventi.meta.title':     'Events & live music — Biblio Treviso',
+    'eventi.meta.description': 'Biblio\'s calendar: jazz on Thursdays, blues and soul on Fridays, emerging voices on Sundays. Upcoming posters and a recent archive.',
+    'prenota.meta.title':    'Reserve a table — Biblio Treviso',
+    'prenota.meta.description': 'Book a table at Biblio: we reply personally within a few hours. On live nights it pays to book ahead — the upstairs floor fills up fast.',
+    'contatti.meta.title':   'Contact & how to find us — Biblio Treviso',
+    'contatti.meta.description': 'Biblio is at Via Armando Diaz 3/A in the heart of Treviso. Hours, phone, directions and reviews from our guests.',
 
     'hero.tagline':   'art · food · drink',
     'hero.lede':      'Three nights a week the stage lights up. Under vintage lamps, signature drinks and gourmet small plates — in Treviso, behind the curtain of an antique shop.',
