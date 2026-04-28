@@ -334,8 +334,8 @@ export const menu: MenuChapter[] = [
         items: [
           { name: 'No. 3',                origin: '(UK)',                price: '10', profile: { it: 'Secco, citrico, tagliente',          en: 'Dry, citric, sharp' } },
           { name: '50 Pounds',            origin: '(UK)',                price: '10', profile: { it: 'Secco, morbido, elegante',           en: 'Dry, soft, elegant' } },
-          { name: 'Hayman\u2019s Royal Dock', origin: '(UK)',             price: '12', profile: { it: 'Secco, alcolico, pungente',          en: 'Dry, high-proof, pungent' } },
-          { name: 'Junipero',             origin: '(USA)',               price: '10', profile: { it: 'Secco, intenso, pungente',           en: 'Dry, intense, pungent' } },
+          { name: 'Hayman\u2019s Royal Dock', origin: '(UK)',             price: '10', profile: { it: 'Secco, alcolico, pungente',          en: 'Dry, high-proof, pungent' } },
+          { name: 'Junipero',             origin: '(USA)',               price: '12', profile: { it: 'Secco, intenso, pungente',           en: 'Dry, intense, pungent' } },
           { name: 'Roku',                 origin: '(Giappone)',          price: '10', profile: { it: 'Secco, pepato, setoso',              en: 'Dry, peppery, silky' } },
           { name: 'Ukiyo Yuzu',           origin: '(Giappone)',          price: '12', profile: { it: 'Agrumato, acidulo, fresco',          en: 'Citric, tart, fresh' } },
           { name: 'Marconi 42',           origin: '(Italia, Veneto)',   price: '10', profile: { it: 'Mediterraneo, erbaceo, balsamico',   en: 'Mediterranean, herbal, balsamic' } },
@@ -343,7 +343,7 @@ export const menu: MenuChapter[] = [
           { name: 'Ukiyo Blossom',        origin: '(Giappone)',          price: '12', profile: { it: 'Morbido, floreale, fresco',          en: 'Soft, floral, fresh' } },
           { name: 'Mellifera',            origin: '(Francia)',           price: '10', profile: { it: 'Floreale, balsamico, setoso',        en: 'Floral, balsamic, silky' } },
           { name: 'Bobby\u2019s',         origin: '(Olanda)',            price: '10', profile: { it: 'Speziato, fresco, secco',            en: 'Spiced, fresh, dry' } },
-          { name: 'Elephant',             origin: '(Germania)',          price: '10', profile: { it: 'Terroso, erbaceo, strutturato',      en: 'Earthy, herbal, structured' } },
+          { name: 'Elephant',             origin: '(Germania)',          price: '12', profile: { it: 'Terroso, erbaceo, strutturato',      en: 'Earthy, herbal, structured' } },
           { name: 'Sahena',               origin: '(Thailandia)',        price: '12', profile: { it: 'Fruttato, speziato, esotico',        en: 'Fruity, spiced, exotic' } },
           { name: 'Crafter\u2019s Wild Forest', origin: '(Estonia)',     price: '12', profile: { it: 'Boschivo, resinoso, fresco',         en: 'Forest, resinous, fresh' } },
           { name: 'Old Man Project 3',    origin: '(Germania)',          price: '12', profile: { it: 'Fruttato, morbido, vivace',          en: 'Fruity, soft, lively' } },
@@ -376,19 +376,19 @@ export const menu: MenuChapter[] = [
             it: 'Su letto di valeriana con chutney all\u2019albicocca.',
             en: 'On a bed of lamb\u2019s lettuce with apricot chutney.',
           } },
-          { name: 'Tagliata di Pollo', desc: {
+          { name: 'Tagliata di Pollo', price: '18', desc: {
             it: 'Sous vide e affumicata, con patate al forno e salsa allo yogurt.',
             en: 'Sous vide and smoked, with roast potatoes and yoghurt sauce.',
           } },
-          { name: 'Carpaccio di Pesce Spada', desc: {
+          { name: 'Carpaccio di Pesce Spada', price: '18', desc: {
             it: 'Affumicato, su letto di valeriana con chutney di mango.',
             en: 'Smoked, on a bed of lamb\u2019s lettuce with mango chutney.',
           } },
-          { name: 'Carpaccio di Tonno', desc: {
+          { name: 'Carpaccio di Tonno', price: '18', desc: {
             it: 'Affumicato, su letto di valeriana con chutney al fico.',
             en: 'Smoked, on a bed of lamb\u2019s lettuce with fig chutney.',
           } },
-          { name: 'Gazpacho', desc: {
+          { name: 'Gazpacho', price: '16', desc: {
             it: 'Con burrata artigianale e alici del Mar Cantabrico.',
             en: 'With artisanal burrata and Cantabrian anchovies.',
           } },
