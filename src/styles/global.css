@@ -16,13 +16,15 @@
   --line:         #c9b994;
   --shadow-soft:  0 6px 24px rgba(43, 29, 18, 0.12);
   --shadow-warm:  0 18px 60px rgba(122, 88, 40, 0.18);
+  --shadow-card:  0 1px 2px rgba(43, 29, 18, .04), 0 8px 24px -16px rgba(43, 29, 18, .18);
 
   --font-display: "Cormorant Garamond", "Cormorant", Georgia, serif;
   --font-brand:   "Cinzel", "Cormorant Garamond", Georgia, serif;
   --font-body:    "Lora", Georgia, "Times New Roman", serif;
 
   --container:    72rem;
-  --radius:       2px;
+  --radius:       8px;
+  --radius-lg:    14px;
   --ease:         cubic-bezier(.2,.7,.2,1);
 }
 
@@ -278,16 +280,30 @@ section { padding: 5rem 0; }
 .events-grid {
   display: grid; gap: 1.5rem;
   grid-template-columns: repeat(3, 1fr);
+  align-items: start;
+}
+.events-grid .event-card:nth-child(2) {
+  transform: translateY(1.5rem);
+}
+.events-grid .event-card:nth-child(2):hover {
+  transform: translateY(calc(1.5rem - 4px));
 }
 .event-card {
   background: var(--paper);
-  border: 1px solid var(--line);
-  padding: 2rem 1.6rem;
-  text-align: center;
+  border: none;
+  border-left: 3px solid var(--vino);
+  border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
+  padding: 2rem 1.8rem;
+  text-align: left;
   position: relative;
-  transition: transform .3s var(--ease), box-shadow .3s var(--ease);
+  box-shadow: var(--shadow-card);
+  transition: transform .35s var(--ease), box-shadow .35s var(--ease), border-color .25s var(--ease);
 }
-.event-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-warm); }
+.event-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-warm);
+  border-left-color: var(--brass);
+}
 .event-card .day {
   font-family: var(--font-brand);
   font-size: .8rem; letter-spacing: .35em;
@@ -297,7 +313,11 @@ section { padding: 5rem 0; }
 }
 .event-card h3 { margin-bottom: .5rem; }
 .event-card .note { color: var(--ink-soft); font-size: .95rem; }
-@media (max-width: 820px) { .events-grid { grid-template-columns: 1fr; } }
+@media (max-width: 820px) {
+  .events-grid { grid-template-columns: 1fr; }
+  .events-grid .event-card:nth-child(2) { transform: none; }
+  .events-grid .event-card:nth-child(2):hover { transform: translateY(-4px); }
+}
 
 /* gallery preview */
 .gallery {
@@ -808,13 +828,14 @@ section { padding: 5rem 0; }
   flex-direction: column;
   background: var(--paper);
   border: 1px solid rgba(20, 12, 6, .08);
-  border-radius: 8px;
+  border-radius: var(--radius-lg);
   overflow: hidden;
+  box-shadow: var(--shadow-card);
   transition: transform .35s var(--ease), box-shadow .35s var(--ease);
 }
 .poster-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 18px 40px -22px rgba(20, 12, 6, .35);
+  box-shadow: var(--shadow-warm);
 }
 
 .poster-link {
@@ -938,6 +959,9 @@ section { padding: 5rem 0; }
   }
   .poster-card:hover { transform: none; }
   .poster-card:hover .poster-frame img { transform: none; }
+  .event-card:hover,
+  .review-card:hover,
+  .live-chip:hover { transform: none; }
 }
 
 /* Mobile */
@@ -1023,23 +1047,26 @@ section { padding: 5rem 0; }
   gap: .8rem;
   align-items: center;
   text-align: left;
-  background: var(--paper-2);
-  border: 1px solid transparent;
-  border-radius: 12px;
+  background: var(--paper);
+  border: 1px solid rgba(43, 29, 18, .06);
+  border-left: 3px solid transparent;
+  border-radius: var(--radius);
   padding: .65rem .8rem;
   cursor: pointer;
   font: inherit;
   color: var(--ink);
-  transition: border-color .2s var(--ease), transform .2s var(--ease), background .2s var(--ease);
+  box-shadow: var(--shadow-card);
+  transition: border-color .2s var(--ease), transform .2s var(--ease), background .2s var(--ease), box-shadow .2s var(--ease);
 }
 .live-chip:hover {
-  border-color: var(--vino);
-  transform: translateY(-1px);
+  border-left-color: var(--brass);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-warm);
 }
 .live-chip.is-active {
-  border-color: var(--vino);
-  background: #f5e9d6;
-  box-shadow: 0 0 0 3px rgba(122, 46, 46, .08);
+  border-left-color: var(--vino);
+  background: var(--paper);
+  box-shadow: var(--shadow-warm);
 }
 .live-chip-poster {
   flex: none;
@@ -1243,11 +1270,13 @@ section { padding: 5rem 0; }
 /* --- Side card: alt actions ----------------------------- */
 .alt-card {
   background: var(--paper);
-  border: 1px solid rgba(43, 29, 18, .08);
-  border-radius: 14px;
-  padding: 1.5rem 1.25rem;
+  border: none;
+  border-left: 3px solid var(--vino);
+  border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
+  padding: 1.75rem 1.5rem;
   position: sticky;
   top: 5rem;
+  box-shadow: var(--shadow-card);
 }
 .alt-card h3 {
   font-family: var(--font-display, Georgia, serif);
@@ -1486,7 +1515,7 @@ section { padding: 5rem 0; }
 /* --- Reviews section ----------------------------------- */
 .contatti-reviews {
   padding: 4.5rem 0 4rem;
-  background: var(--paper);
+  background: var(--paper-2);
 }
 .reviews-grid {
   list-style: none;
@@ -1500,15 +1529,33 @@ section { padding: 5rem 0; }
   display: flex;
   flex-direction: column;
   gap: 1rem;
-  padding: 1.75rem 1.6rem;
-  background: var(--paper-2);
-  border: 1px solid rgba(43, 29, 18, .08);
-  border-radius: 14px;
-  transition: transform .25s var(--ease), box-shadow .25s var(--ease);
+  padding: 2rem 1.75rem 1.75rem;
+  background: var(--paper);
+  border: none;
+  border-left: 3px solid var(--brass);
+  border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
+  box-shadow: var(--shadow-card);
+  position: relative;
+  overflow: hidden;
+  transition: transform .25s var(--ease), box-shadow .25s var(--ease), border-color .25s var(--ease);
+}
+.review-card::before {
+  content: "\201C";
+  position: absolute;
+  top: -1.6rem;
+  right: 1rem;
+  font-family: var(--font-display);
+  font-size: 7rem;
+  line-height: 1;
+  color: var(--brass);
+  opacity: .14;
+  pointer-events: none;
+  user-select: none;
 }
 .review-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 18px 32px -18px rgba(43, 29, 18, .35);
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-warm);
+  border-left-color: var(--vino);
 }
 .review-stars {
   margin: 0;
