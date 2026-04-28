@@ -49,7 +49,7 @@ export const ui = {
 
     'home.intro.eyebrow':  'L\'anima del locale',
     'home.intro.title':    'Prima di tutto, la musica',
-    'home.intro.body':     'Biblio nasce per ascoltare. Tre sere a settimana, dal giovedì alla domenica, sul palco al primo piano salgono musicisti veri: jazz, blues, soul e voci emergenti che si raccontano dal vivo, due set ogni serata. Il pubblico si distribuisce fra il bancone e i divanetti, qualcuno resta in piedi vicino al palco.',
+    'home.intro.body':     'Biblio nasce per ascoltare. Tre sere a settimana, dal giovedì alla domenica, sul palco al primo piano salgono musicisti veri: jazz, blues, soul e voci emergenti che si raccontano dal vivo. Il pubblico si distribuisce fra il bancone e i divanetti, qualcuno resta in piedi vicino al palco.',
     'home.intro.body2':    'La cornice è un antiquario raccolto: lampade d\'epoca, legno scuro, tappeti che smorzano i rumori della via. Le librerie ci sono, il nome non è un caso, ma sono lo sfondo, non il protagonista. Al bancone, drink d\'autore figli della grande tradizione italiana; in cucina, cicchetti gourmet pensati per non interrompere la conversazione.',
 
     'home.eventi.eyebrow': 'La settimana di Biblio',
@@ -68,7 +68,7 @@ export const ui = {
 
     'home.cta.eyebrow':     'Prenota un tavolo',
     'home.cta.title':       'Trova il tuo posto',
-    'home.cta.body':        'Tavoli al bancone, divanetti vicino alle librerie, posti riservati al primo piano per le serate live. Dicci tu come ti immagini la sera, troviamo lo spazio giusto.',
+    'home.cta.body':        'Sgabelli al bancone, tavolini vicino alle librerie, posti riservati al primo piano per le serate live. Dicci tu come ti immagini la sera, troviamo lo spazio giusto.',
     'home.cta.btn':         'Prenota ora',
 
     'evento.gio.day':       'Giovedì',
@@ -269,7 +269,7 @@ export const ui = {
 
     'home.intro.eyebrow':  'The soul of the place',
     'home.intro.title':    'Music first',
-    'home.intro.body':     'Biblio was built for listening. Three nights a week, from Thursday to Sunday, real musicians take the upstairs stage: jazz, blues, soul and emerging voices, two live sets each evening. The crowd splits between the counter and the sofas; some stand close to the stage.',
+    'home.intro.body':     'Biblio was built for listening. Three nights a week, from Thursday to Sunday, real musicians take the upstairs stage: jazz, blues, soul and emerging voices. The crowd splits between the counter and the sofas; some stand close to the stage.',
     'home.intro.body2':    'The setting is a tucked-away antique shop: vintage lamps, dark wood, rugs that soften the noise of the street. The bookshelves are there, the name isn\'t accidental, but they\'re the backdrop, not the protagonist. At the counter, signature drinks rooted in Italian tradition; from the kitchen, gourmet small plates designed not to interrupt the conversation.',
 
     'home.eventi.eyebrow': 'A week at Biblio',
@@ -288,7 +288,7 @@ export const ui = {
 
     'home.cta.eyebrow':     'Book a table',
     'home.cta.title':       'Find your spot',
-    'home.cta.body':        'Counter stools, sofas tucked beside the shelves, reserved tables upstairs for live nights. Tell us how you picture the evening and we\'ll find the right space.',
+    'home.cta.body':        'Counter stools, small tables beside the shelves, reserved tables upstairs for live nights. Tell us how you picture the evening and we\'ll find the right space.',
     'home.cta.btn':         'Book now',
 
     'evento.gio.day':       'Thursday',
