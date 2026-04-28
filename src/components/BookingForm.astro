@@ -353,7 +353,7 @@ const liveDataset = upcomingLiveNights.map((n) => ({
   </section>
 </section>
 
-<script type="application/json" id="liveDataset" set:html={JSON.stringify(liveDataset)}></script>
+<script is:inline type="application/json" id="liveDataset" set:html={JSON.stringify(liveDataset)}></script>
 
 <script>
   type LiveEntry = {

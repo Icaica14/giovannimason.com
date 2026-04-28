@@ -224,8 +224,8 @@ export const eventi: EventItem[] = [
     poster: poster14,
   },
   {
-    id: 'calgaro-biblio-rythmic-2026-02-19',
-    artist: 'Michele Calgaro & The Biblio Rythmic Ensemble',
+    id: 'calgaro-biblio-rhythmic-2026-02-19',
+    artist: 'Michele Calgaro & The Biblio Rhythmic Ensemble',
     date: '2026-02-19',
     dateLabel: { it: 'Giovedì 19 febbraio',    en: 'Thursday 19 February' },
     time: '20:00',

@@ -1,7 +1,7 @@
 ---
 import { Image } from 'astro:assets';
 import { type Lang, t, routeMap } from '../i18n/ui';
-import { eventi, genreLabel, splitEventi, tx } from '../data/eventi';
+import { genreLabel, splitEventi, tx } from '../data/eventi';
 
 interface Props {
   lang: Lang;
@@ -62,7 +62,7 @@ const { upcoming, past } = splitEventi(todayISO);
       ) : (
         <ul class="poster-grid poster-grid-featured">
           {upcoming.map((ev, i) => (
-            <li class="poster-card reveal" style={`--reveal-delay:${(i % 6) * 0.08}s`}>
+            <li class="poster-card reveal" style={`--reveal-delay:${(i % 6) * 0.08}s`} id={ev.id}>
               <a class="poster-link" href={`#${ev.id}`} aria-label={ev.artist}>
                 <div class="poster-frame">
                   <Image

@@ -382,6 +382,7 @@ section { padding: 5rem 0; }
   margin-bottom: 1rem;
 }
 .footer .brand { color: var(--paper); margin-bottom: .8rem; display: inline-block; }
+.brand-footer .brand-logo { height: 44px; }
 .footer-bottom {
   padding-top: 1.5rem;
   border-top: 1px solid rgba(201, 185, 148, .2);

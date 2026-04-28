@@ -123,9 +123,9 @@ export const menu: MenuChapter[] = [
   // =========================================================================
   {
     id: 'negroni',
-    title: { it: 'I nostri Negroni', en: 'Our Negroni' },
+    title: { it: 'I nostri Negroni', en: 'Our Negronis' },
     intro: {
-      it: 'Dal 1919, il bilanciamento tra amaro e vermouth ha reso il Negroni il cocktail italiano per eccellenza. In questa carta celebriamo la straordinaria flessibilità della sua ricetta: una struttura immutata che cambia anima a seconda del distillato principale.',
+      it: 'Dal 1919, il bilanciamento tra amaro e vermouth ha reso il Negroni il cocktail italiano per eccellenza. In questo menù celebriamo la straordinaria flessibilità della sua ricetta: una struttura immutata che cambia anima a seconda del distillato principale.',
       en: 'Since 1919 the balance between bitter and vermouth has made the Negroni the quintessential Italian cocktail. Here we celebrate the recipe\u2019s remarkable flexibility — an unchanged structure whose soul shifts with the spirit at its core.',
     },
     sections: [
@@ -257,7 +257,7 @@ export const menu: MenuChapter[] = [
   // =========================================================================
   {
     id: 'americani',
-    title: { it: 'I nostri Americani', en: 'Our Americano' },
+    title: { it: 'I nostri Americani', en: 'Our Americanos' },
     intro: {
       it: 'L\u2019evoluzione del Milano-Torino che ha fatto la storia a cavallo del Novecento. La semplicità dell\u2019Americano viene reinterpretata attraverso bitter moderni e vermouth di carattere, per scoprire ogni possibile declinazione dell\u2019aperitivo.',
       en: 'The evolution of the Milano-Torino that shaped a century of Italian aperitivo. The simplicity of the Americano is rewritten through modern bitters and characterful vermouth, exploring every possible reading of the cocktail.',
@@ -265,7 +265,7 @@ export const menu: MenuChapter[] = [
     sections: [
       {
         id: 'americani-list',
-        title: { it: 'La carta', en: 'The list' },
+        title: { it: 'Il menù', en: 'The list' },
         defaultPrice: '8',
         items: [
           { name: 'Opulento', desc: {
@@ -340,7 +340,7 @@ export const menu: MenuChapter[] = [
           { name: 'Ukiyo Yuzu',           origin: '(Giappone)',          price: '12', profile: { it: 'Agrumato, acidulo, fresco',          en: 'Citric, tart, fresh' } },
           { name: 'Marconi 42',           origin: '(Italia — Veneto)',   price: '10', profile: { it: 'Mediterraneo, erbaceo, balsamico',   en: 'Mediterranean, herbal, balsamic' } },
           { name: 'Clandestino',          origin: '(Italia — Emilia)',   price: '10', profile: { it: 'Aromatico, resinoso, speziato',      en: 'Aromatic, resinous, spiced' } },
-          { name: 'Ukiya Blossom',        origin: '(Giappone)',          price: '12', profile: { it: 'Morbido, floreale, fresco',          en: 'Soft, floral, fresh' } },
+          { name: 'Ukiyo Blossom',        origin: '(Giappone)',          price: '12', profile: { it: 'Morbido, floreale, fresco',          en: 'Soft, floral, fresh' } },
           { name: 'Mellifera',            origin: '(Francia)',           price: '10', profile: { it: 'Floreale, balsamico, setoso',        en: 'Floral, balsamic, silky' } },
           { name: 'Bobby\u2019s',         origin: '(Olanda)',            price: '10', profile: { it: 'Speziato, fresco, secco',            en: 'Spiced, fresh, dry' } },
           { name: 'Elephant',             origin: '(Germania)',          price: '10', profile: { it: 'Terroso, erbaceo, strutturato',      en: 'Earthy, herbal, structured' } },
@@ -365,7 +365,7 @@ export const menu: MenuChapter[] = [
     sections: [
       {
         id: 'cucina-list',
-        title: { it: 'La carta', en: 'The list' },
+        title: { it: 'Il menù', en: 'The list' },
         defaultPrice: '15',
         items: [
           { name: 'Tartare di Fassona', desc: {
@@ -392,8 +392,8 @@ export const menu: MenuChapter[] = [
             it: 'Con burrata artigianale e alici del Mar Cantabrico.',
             en: 'With artisanal burrata and Cantabrian anchovies.',
           } },
-          { name: 'Humus e Friarielli', desc: {
-            it: 'Humus di ceci, friarielli napoletani e pomodorini semi-secchi.',
+          { name: 'Hummus e Friarielli', desc: {
+            it: 'Hummus di ceci, friarielli napoletani e pomodorini semi-secchi.',
             en: 'Chickpea hummus, Neapolitan friarielli greens and semi-dried cherry tomatoes.',
           } },
         ],
