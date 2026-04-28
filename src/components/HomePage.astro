@@ -3,41 +3,42 @@ import { Image } from 'astro:assets';
 import Hero from './Hero.astro';
 import { type Lang, t, routeMap } from '../i18n/ui';
 
-import interno from '../assets/img/interni/interni-1.png';
+// Foto nuove caricate dal titolare.
+// L'hero di sfondo resta quello già impostato in Hero.astro (non si tocca).
+import musicalive from '../assets/img/foto-nuove/locale/musicalive.jpg';
 
-import gal1 from '../assets/img/interni/interni-2.png';
-import gal2 from '../assets/img/cibo/cibo-1.png';
-import gal3 from '../assets/img/interni/interni-3.png';
-import gal4 from '../assets/img/cibo/cibo-3.png';
+// Galleria "Atmosfera": 4 scatti dell'interno del locale.
+import gal1 from '../assets/img/foto-nuove/locale/interno.jpg';
+import gal2 from '../assets/img/foto-nuove/locale/lampada.jpg';
+import gal3 from '../assets/img/foto-nuove/locale/libri.jpg';
+import gal4 from '../assets/img/foto-nuove/locale/locale.jpg';
 
-import cucina1 from '../assets/img/cibo/cibo-1.png';
-import cucina2 from '../assets/img/cibo/cibo-2.png';
-import cucina3 from '../assets/img/cibo/cibo-3.png';
-import cucina4 from '../assets/img/cibo/cibo-4.png';
-import cucina5 from '../assets/img/cibo/cibo-5.png';
+// Mosaic "Cucina & bancone": 4 piatti (1 hero grande + 3 small).
+import cucina1 from '../assets/img/foto-nuove/cibo/piatto.jpg';
+import cucina2 from '../assets/img/foto-nuove/cibo/insalata.jpg';
+import cucina3 from '../assets/img/foto-nuove/cibo/sandwich.jpg';
+import cucina4 from '../assets/img/foto-nuove/cibo/sandwich2.jpg';
 
 interface Props {
   lang: Lang;
 }
 const { lang } = Astro.props;
 
-// Alt-text del cucina-grid: tre per IT/EN, descrittive ma sintetiche.
+// Alt-text del cucina-mosaic: 4 per IT/EN, descrittive ma sintetiche.
 const cucinaAlts = lang === 'it'
   ? [
-      'Cicchetto gourmet servito al bancone',
-      'Drink d\'autore in luce ambrata',
-      'Tagliere e calice, tradizione veneta',
-      'Antipasto firmato in piatto scuro',
-      'Dettaglio dal bancone: vetro e ottone',
+      'Piatto firmato della cucina di Biblio',
+      'Insalata fresca con ingredienti di stagione',
+      'Sandwich gourmet, pane artigianale',
+      'Sandwich farcito, dettaglio dal bancone',
     ]
   : [
-      'Gourmet small plate at the counter',
-      'Signature drink in warm amber light',
-      'Board and glass, Veneto tradition',
-      'Signature starter on a dark plate',
-      'Counter detail: glass and brass',
+      'Signature plate from Biblio\'s kitchen',
+      'Fresh seasonal salad',
+      'Gourmet sandwich on artisan bread',
+      'Filled sandwich, counter detail',
     ];
-const cucinaImgs = [cucina1, cucina2, cucina3, cucina4, cucina5];
+const cucinaImgs = [cucina1, cucina2, cucina3, cucina4];
 ---
 
 <Hero lang={lang} />
@@ -47,10 +48,10 @@ const cucinaImgs = [cucina1, cucina2, cucina3, cucina4, cucina5];
   <div class="intro-grid">
     <Image
       class="reveal"
-      src={interno}
+      src={musicalive}
       alt={lang === 'it'
-        ? 'Interni di Biblio: librerie, lampade dorate, legno antico'
-        : 'Inside Biblio: bookshelves, golden lamps, antique wood'}
+        ? 'Musica dal vivo a Biblio: il palco al primo piano'
+        : 'Live music at Biblio: the upstairs stage'}
       widths={[480, 800, 1200]}
       sizes="(max-width: 820px) 100vw, 540px"
     />
@@ -144,16 +145,16 @@ const cucinaImgs = [cucina1, cucina2, cucina3, cucina4, cucina5];
   </div>
   <div class="gallery">
     <div class="reveal">
-      <Image src={gal1} alt={lang === 'it' ? 'Interno di Biblio' : 'Inside Biblio'} widths={[300, 600]} sizes="(max-width: 820px) 50vw, 280px" />
+      <Image src={gal1} alt={lang === 'it' ? 'Interno di Biblio: la sala' : 'Inside Biblio: the room'} widths={[300, 600]} sizes="(max-width: 820px) 50vw, 280px" />
     </div>
     <div class="reveal" style="--reveal-delay:.06s">
-      <Image src={gal2} alt={lang === 'it' ? 'Un cicchetto gourmet' : 'A gourmet small plate'} widths={[300, 600]} sizes="(max-width: 820px) 50vw, 280px" />
+      <Image src={gal2} alt={lang === 'it' ? 'Lampada d\'epoca: dettaglio caldo' : 'Vintage lamp: warm detail'} widths={[300, 600]} sizes="(max-width: 820px) 50vw, 280px" />
     </div>
     <div class="reveal" style="--reveal-delay:.12s">
-      <Image src={gal3} alt={lang === 'it' ? 'Soppalco con palco' : 'The mezzanine and stage'} widths={[300, 600]} sizes="(max-width: 820px) 50vw, 280px" />
+      <Image src={gal3} alt={lang === 'it' ? 'Le librerie del locale' : 'The bookshelves'} widths={[300, 600]} sizes="(max-width: 820px) 50vw, 280px" />
     </div>
     <div class="reveal" style="--reveal-delay:.18s">
-      <Image src={gal4} alt={lang === 'it' ? 'Dettaglio dal bancone' : 'Detail from the counter'} widths={[300, 600]} sizes="(max-width: 820px) 50vw, 280px" />
+      <Image src={gal4} alt={lang === 'it' ? 'Vista d\'insieme del locale' : 'Wide view of the room'} widths={[300, 600]} sizes="(max-width: 820px) 50vw, 280px" />
     </div>
   </div>
 </section>

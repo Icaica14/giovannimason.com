@@ -1671,11 +1671,11 @@ section { padding: 5rem 0; }
   margin-bottom: 2.5rem;
 }
 
-/* Mosaic editoriale: 1 hero a sinistra (2 colonne / 2 righe), 4 small a destra. */
+/* Mosaic editoriale: 1 hero (2 colonne, 3 righe) + 3 small in colonna a destra. */
 .cucina-mosaic {
   display: grid;
   gap: 1rem;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   grid-auto-rows: minmax(160px, 1fr);
 }
 .cucina-tile {
@@ -1699,7 +1699,7 @@ section { padding: 5rem 0; }
 }
 .cucina-tile-hero {
   grid-column: span 2;
-  grid-row: span 2;
+  grid-row: span 3;
 }
 .cucina-cta {
   text-align: center;
