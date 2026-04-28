@@ -21,7 +21,8 @@ const heroOpt = await getImage({
 <section class="hero" style={`--hero-bg: url("${heroOpt.src}")`}>
   <div class="hero-inner">
     <h1 class="hero-logo" set:html={logoSvg} aria-label="Biblio"></h1>
-    <p class="lede">{t(lang, 'hero.lede')}</p>
+    <p class="lede">{t(lang, 'hero.lede1')}</p>
+    <p class="lede">{t(lang, 'hero.lede2')}</p>
     <div class="hero-cta">
       <a class="btn" href={routeMap.prenota[lang]}>{t(lang, 'hero.cta.book')}</a>
       <a class="btn btn-ghost" href={routeMap.menu[lang]}>{t(lang, 'hero.cta.menu')}</a>

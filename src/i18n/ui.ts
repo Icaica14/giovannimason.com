@@ -42,7 +42,8 @@ export const ui = {
     'artisti.meta.description': 'Sei un musicista o una band? Proponiti per suonare a Biblio: presentazione, materiali audio o video, disponibilità e cachet.',
 
     'hero.tagline':   'art · food · drink',
-    'hero.lede':      'Tre sere a settimana il palco si accende. Sotto le lampade d\'epoca, drink d\'autore e cicchetti gourmet nel cuore antiquario di Treviso.',
+    'hero.lede1':     'Tre sere a settimana il palco si accende.',
+    'hero.lede2':     'Tra lampade d\'epoca, drink d\'autore e cicchetti gourmet i cuori si scaldano nel centro di Treviso.',
     'hero.cta.book':  'Prenota un tavolo',
     'hero.cta.menu':  'Sfoglia il menu',
 
@@ -261,7 +262,8 @@ export const ui = {
     'artisti.meta.description': 'Are you a musician or a band? Pitch a live night at Biblio: bio, audio or video links, availability and fee.',
 
     'hero.tagline':   'art · food · drink',
-    'hero.lede':      'Three nights a week the stage lights up. Under vintage lamps, signature drinks and gourmet small plates in the heart of antique-shop Treviso.',
+    'hero.lede1':     'Three nights a week the stage lights up.',
+    'hero.lede2':     'Among vintage lamps, signature drinks and gourmet small plates, hearts warm up in the centre of Treviso.',
     'hero.cta.book':  'Book a table',
     'hero.cta.menu':  'See the menu',
 

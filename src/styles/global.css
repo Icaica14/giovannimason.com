@@ -291,9 +291,16 @@ section { padding: 5rem 0; }
 .intro-grid img {
   border-radius: var(--radius);
   box-shadow: var(--shadow-warm);
-  aspect-ratio: 4/5;
+  /* 3/2 matcha le foto landscape sorgenti (es. musicalive 6000x4000).
+     L'aspect-ratio fisso evita CLS e tiene il layout ancorato anche
+     mentre la foto carica. height:auto è obbligatorio: senza, gli
+     attributi intrinsici width/height dell'<Image> di Astro vincono
+     e il layout esplode. */
+  aspect-ratio: 3/2;
   object-fit: cover;
   width: 100%;
+  height: auto;
+  display: block;
 }
 .intro-grid .prose p { font-size: 1.05rem; }
 @media (max-width: 820px) {
@@ -345,13 +352,28 @@ section { padding: 5rem 0; }
   .events-grid .event-card:nth-child(2):hover { transform: translateY(-4px); }
 }
 
-/* gallery preview */
+/* gallery preview
+   I 4 wrapper hanno aspect-ratio 1/1 fisso e le <Image> di Astro vengono
+   forzate a width/height 100% + object-fit cover. Necessario per battere
+   gli attributi inline width="X" height="Y" che Astro mette sull'<img>
+   sorgente: senza questo override il browser usa le dimensioni intrinseche
+   dell'immagine originale e il layout salta. */
 .gallery {
   display: grid; gap: .6rem;
   grid-template-columns: repeat(4, 1fr);
 }
+.gallery > div {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--radius);
+  aspect-ratio: 1/1;
+  background: var(--paper-2);
+}
 .gallery img {
-  aspect-ratio: 1/1; object-fit: cover;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
   filter: saturate(.95);
   transition: transform .4s var(--ease), filter .3s var(--ease);
 }
@@ -1671,12 +1693,14 @@ section { padding: 5rem 0; }
   margin-bottom: 2.5rem;
 }
 
-/* Mosaic editoriale: 1 hero (2 colonne, 3 righe) + 3 small in colonna a destra. */
+/* Mosaic editoriale: 1 hero a sinistra (2 colonne, 2 righe) + 4 small a destra.
+   Ogni tile ha aspect-ratio fisso (image-side responsive cover) per evitare
+   che foto landscape/portrait sorgenti spaginino il layout. */
 .cucina-mosaic {
   display: grid;
   gap: 1rem;
-  grid-template-columns: repeat(3, 1fr);
-  grid-auto-rows: minmax(160px, 1fr);
+  grid-template-columns: repeat(4, 1fr);
+  grid-auto-rows: minmax(180px, 1fr);
 }
 .cucina-tile {
   margin: 0;
@@ -1699,7 +1723,7 @@ section { padding: 5rem 0; }
 }
 .cucina-tile-hero {
   grid-column: span 2;
-  grid-row: span 3;
+  grid-row: span 2;
 }
 .cucina-cta {
   text-align: center;
