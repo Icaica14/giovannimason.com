@@ -150,11 +150,10 @@ p { margin: 0 0 1em; }
 }
 .nav-links a:hover, .nav-links a.is-active { color: var(--paper); }
 .nav-links a.is-active {
-  position: relative;
-}
-.nav-links a.is-active::after {
-  content: ""; position: absolute; left: 0; right: 0; bottom: -.4rem;
-  height: 2px; background: var(--vino);
+  text-decoration: underline;
+  text-decoration-color: var(--vino);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 6px;
 }
 .lang-switch {
   display: flex; gap: .35rem; align-items: center;
