@@ -1,7 +1,7 @@
 ---
-import { Image } from 'astro:assets';
+import { getCollection } from 'astro:content';
 import { type Lang, t, routeMap } from '../i18n/ui';
-import { genreLabel, splitEventi, tx } from '../data/eventi';
+import { genreLabel, splitEventi, tx, eventDateLabel, eventBlurb } from '../data/eventi';
 
 interface Props {
   lang: Lang;
@@ -10,8 +10,9 @@ const { lang } = Astro.props;
 
 // Oggi è passato lato server: gli eventi futuri/passati vengono congelati al build.
 // (Il sito è statico, perfettamente coerente con un calendario aggiornato a ogni deploy.)
+const entries = await getCollection('eventi');
 const todayISO = new Date().toISOString().slice(0, 10);
-const { upcoming, past } = splitEventi(todayISO);
+const { upcoming, past } = splitEventi(entries, todayISO);
 ---
 
 <section class="eventi-page">
@@ -59,25 +60,24 @@ const { upcoming, past } = splitEventi(todayISO);
         <ul class="poster-grid poster-grid-featured">
           {upcoming.map((ev, i) => (
             <li class="poster-card reveal" style={`--reveal-delay:${(i % 6) * 0.08}s`} id={ev.id}>
-              <a class="poster-link" href={`#${ev.id}`} aria-label={ev.artist}>
+              <a class="poster-link" href={`#${ev.id}`} aria-label={ev.data.artist}>
                 <div class="poster-frame">
-                  <Image
-                    src={ev.poster}
-                    alt={`${t(lang, 'eventi.poster.alt')}, ${ev.artist}`}
-                    widths={[320, 480, 720]}
-                    sizes="(max-width: 640px) 90vw, (max-width: 1024px) 45vw, 32vw"
+                  <img
+                    src={ev.data.poster}
+                    alt={`${t(lang, 'eventi.poster.alt')}, ${ev.data.artist}`}
                     loading="lazy"
+                    decoding="async"
                   />
                 </div>
                 <div class="poster-meta">
-                  <span class={`genre-badge genre-${ev.genre}`}>{tx(genreLabel[ev.genre], lang)}</span>
-                  <h3>{ev.artist}</h3>
+                  <span class={`genre-badge genre-${ev.data.genre}`}>{tx(genreLabel[ev.data.genre], lang)}</span>
+                  <h3>{ev.data.artist}</h3>
                   <p class="poster-when">
-                    <span>{tx(ev.dateLabel, lang)}</span>
+                    <span>{eventDateLabel(ev.data, lang)}</span>
                     <span class="dot" aria-hidden="true">·</span>
-                    <span>{ev.time}</span>
+                    <span>{ev.data.time}</span>
                   </p>
-                  {ev.blurb && <p class="poster-blurb">{tx(ev.blurb, lang)}</p>}
+                  {eventBlurb(ev.data, lang) && <p class="poster-blurb">{eventBlurb(ev.data, lang)}</p>}
                 </div>
               </a>
             </li>
@@ -100,21 +100,20 @@ const { upcoming, past } = splitEventi(todayISO);
           {past.map((ev, i) => (
             <li class="poster-card reveal" style={`--reveal-delay:${(i % 6) * 0.07}s`} id={ev.id}>
               <div class="poster-frame">
-                <Image
-                  src={ev.poster}
-                  alt={`${t(lang, 'eventi.poster.alt')}, ${ev.artist}`}
-                  widths={[280, 480, 640]}
-                  sizes="(max-width: 640px) 45vw, (max-width: 1024px) 30vw, 22vw"
+                <img
+                  src={ev.data.poster}
+                  alt={`${t(lang, 'eventi.poster.alt')}, ${ev.data.artist}`}
                   loading="lazy"
+                  decoding="async"
                 />
               </div>
               <div class="poster-meta">
-                <span class={`genre-badge genre-${ev.genre}`}>{tx(genreLabel[ev.genre], lang)}</span>
-                <h3>{ev.artist}</h3>
+                <span class={`genre-badge genre-${ev.data.genre}`}>{tx(genreLabel[ev.data.genre], lang)}</span>
+                <h3>{ev.data.artist}</h3>
                 <p class="poster-when">
-                  <span>{tx(ev.dateLabel, lang)}</span>
+                  <span>{eventDateLabel(ev.data, lang)}</span>
                   <span class="dot" aria-hidden="true">·</span>
-                  <span>{ev.time}</span>
+                  <span>{ev.data.time}</span>
                 </p>
               </div>
             </li>

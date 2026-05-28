@@ -38,6 +38,30 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      # Rileva se TinaCloud è configurato (segreti presenti) senza stamparne il valore.
+      # Finché non lo è, il sito si pubblica comunque: cambia solo che /admin non c'è ancora.
+      - name: Detect TinaCloud config
+        id: tina
+        env:
+          TINA_PUBLIC_CLIENT_ID: ${{ secrets.TINA_PUBLIC_CLIENT_ID }}
+          TINA_TOKEN: ${{ secrets.TINA_TOKEN }}
+        run: |
+          if [ -n "$TINA_PUBLIC_CLIENT_ID" ] && [ -n "$TINA_TOKEN" ]; then
+            echo "configured=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "configured=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::TinaCloud non configurato — pubblico il sito senza /admin. Aggiungi i segreti TINA_PUBLIC_CLIENT_ID e TINA_TOKEN per attivare l'area riservata."
+          fi
+
+      # Compila la SPA dell'area riservata in public/admin/ (servita poi da Astro).
+      # Deve girare PRIMA di astro build, così public/admin finisce in dist/.
+      - name: Build admin (TinaCMS)
+        if: steps.tina.outputs.configured == 'true'
+        env:
+          TINA_PUBLIC_CLIENT_ID: ${{ secrets.TINA_PUBLIC_CLIENT_ID }}
+          TINA_TOKEN: ${{ secrets.TINA_TOKEN }}
+        run: npx tinacms build
+
       - name: Build with Astro
         run: npx astro build
 

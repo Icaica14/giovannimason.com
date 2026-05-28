@@ -2,6 +2,10 @@
 dist/
 .astro/
 
+# tina (generati a ogni build; il sito legge i JSON in src/content/eventi)
+tina/__generated__/
+public/admin/
+
 # deps
 node_modules/
 
