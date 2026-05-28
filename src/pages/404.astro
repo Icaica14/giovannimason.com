@@ -1,0 +1,94 @@
+---
+import '../styles/global.css';
+import logoSvg from '../assets/img/logo/logo.svg?raw';
+import Footer from '../components/Footer.astro';
+
+// Pagina servita da GitHub Pages come /404.html per qualsiasi URL inesistente,
+// indipendentemente dalla lingua: per questo è bilingue e standalone (non passa
+// per Base, così può essere noindex e non forzare un canonical/route fittizio).
+---
+
+<!doctype html>
+<html lang="it">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Pagina non trovata · Biblio</title>
+    <meta name="robots" content="noindex" />
+    <meta name="theme-color" content="#f6efe1" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Lora:ital,wght@0,400;0,500;0,600;1,400&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Vai al contenuto</a>
+    <header class="notfound-header">
+      <div class="container">
+        <a class="brand" href="/" aria-label="Biblio, home">
+          <span class="brand-logo" set:html={logoSvg}></span>
+        </a>
+      </div>
+    </header>
+
+    <main id="main" class="notfound-main">
+      <div class="container notfound-inner">
+        <p class="notfound-code" aria-hidden="true">404</p>
+        <h1>Pagina non trovata</h1>
+        <p class="notfound-lede">La pagina che cerchi non esiste o è stata spostata.</p>
+        <p class="notfound-lede notfound-en">
+          <strong>Page not found.</strong> The page you’re looking for doesn’t exist or has moved.
+        </p>
+        <div class="notfound-actions">
+          <a class="btn" href="/">Torna alla home</a>
+          <a class="btn btn-ghost" href="/en/">English home</a>
+        </div>
+      </div>
+    </main>
+
+    <Footer lang="it" />
+
+    <style>
+      .notfound-header {
+        padding: 1.4rem 0;
+        border-bottom: 1px solid var(--paper-3);
+      }
+      .notfound-main {
+        display: flex;
+        align-items: center;
+        min-height: 60vh;
+        padding: 4rem 0;
+        text-align: center;
+      }
+      .notfound-inner {
+        max-width: 36rem;
+      }
+      .notfound-code {
+        font-family: 'Cinzel', serif;
+        font-size: clamp(4rem, 14vw, 7rem);
+        line-height: 1;
+        margin: 0 0 0.5rem;
+        color: var(--brass);
+        letter-spacing: 0.04em;
+      }
+      .notfound-lede {
+        color: var(--ink-soft);
+        margin: 0.4rem 0;
+      }
+      .notfound-en {
+        font-size: 0.95rem;
+        color: var(--ink-mute);
+      }
+      .notfound-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.8rem;
+        justify-content: center;
+        margin-top: 1.8rem;
+      }
+    </style>
+  </body>
+</html>

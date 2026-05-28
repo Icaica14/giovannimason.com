@@ -46,6 +46,12 @@ const ldJson = {
   },
   servesCuisine: ['Italian', 'Cocktails', 'Wine'],
   priceRange: '€€',
+  // Orari coerenti con contatti.hours.body (lunedì chiuso → assente).
+  openingHoursSpecification: [
+    { '@type': 'OpeningHoursSpecification', dayOfWeek: ['Tuesday', 'Wednesday'], opens: '18:00', closes: '01:00' },
+    { '@type': 'OpeningHoursSpecification', dayOfWeek: ['Thursday', 'Friday', 'Saturday'], opens: '18:00', closes: '02:00' },
+    { '@type': 'OpeningHoursSpecification', dayOfWeek: 'Sunday', opens: '18:00', closes: '01:00' },
+  ],
   sameAs: ['https://www.instagram.com/biblio_treviso/'],
 };
 

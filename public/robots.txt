@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://biblio-treviso.example/sitemap-index.xml
+Sitemap: https://masoninnovation.it/sitemap-index.xml

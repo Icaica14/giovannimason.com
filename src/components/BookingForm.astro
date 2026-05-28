@@ -132,6 +132,7 @@ const liveDataset = upcomingLiveNights.map((n) => ({
                     type="button"
                     class="live-chip"
                     data-live-date={n.date}
+                    aria-label={`${lang === 'it' ? 'Prenota per la serata di' : 'Book the night with'} ${n.artist} — ${tx(n.weekday, lang)} ${tx(n.dateLabel, lang)}`}
                   >
                     <span class="live-chip-poster">
                       <Image
