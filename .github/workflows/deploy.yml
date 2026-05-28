@@ -20,6 +20,10 @@ concurrency:
 
 jobs:
   build:
+    # Solo il repo che ospita GitHub Pages (giovannimason.com → masoninnovation.it)
+    # deve deployare. Sul mirror "origin" (biblio-treviso) Pages non è abilitato: qui
+    # il workflow si salta da solo (skipped) invece di fallire sul passo di deploy.
+    if: github.repository == 'Icaica14/giovannimason.com'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
