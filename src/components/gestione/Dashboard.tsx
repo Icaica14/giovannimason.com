@@ -5,14 +5,16 @@ import logoSvg from '../../assets/img/logo/logo.svg?raw';
 import LoginPanel from './LoginPanel';
 import BookingsList from './BookingsList';
 import ApplicationsList from './ApplicationsList';
+import ArtistsRegistry from './ArtistsRegistry';
 import MenuEditor from './MenuEditor';
 import EventsEditor from './EventsEditor';
 
-type TabId = 'prenotazioni' | 'candidature' | 'menu' | 'eventi';
+type TabId = 'prenotazioni' | 'candidature' | 'artisti' | 'menu' | 'eventi';
 
 const TABS: { id: TabId; label: string }[] = [
   { id: 'prenotazioni', label: 'Prenotazioni' },
   { id: 'candidature', label: 'Candidature' },
+  { id: 'artisti', label: 'Artisti' },
   { id: 'menu', label: 'Menu' },
   { id: 'eventi', label: 'Eventi' },
 ];
@@ -134,6 +136,7 @@ export default function Dashboard() {
       <main class="g-main">
         {tab === 'prenotazioni' && <BookingsList onUnreadChange={refreshCounts} />}
         {tab === 'candidature' && <ApplicationsList onUnreadChange={refreshCounts} />}
+        {tab === 'artisti' && <ArtistsRegistry />}
         {tab === 'menu' && <MenuEditor />}
         {tab === 'eventi' && <EventsEditor />}
       </main>

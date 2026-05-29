@@ -31,6 +31,31 @@ const fmtReceived = (iso: string): string => {
     ' · ' + d.toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' });
 };
 
+/**
+ * Numero in formato wa.me: solo cifre, con prefisso internazionale.
+ * Gestisce "+39 333…", "0039 333…" e numeri italiani senza prefisso ("333…").
+ * Ritorna null se non sembra un numero valido (in tal caso niente bottone WhatsApp).
+ */
+const waNumber = (raw: string | null): string | null => {
+  if (!raw) return null;
+  let d = raw.replace(/[^\d+]/g, '');
+  if (d.startsWith('+')) d = d.slice(1);
+  else if (d.startsWith('00')) d = d.slice(2);
+  else if (/^3\d{8,9}$/.test(d)) d = '39' + d; // cellulare IT senza prefisso
+  return d.length >= 8 ? d : null;
+};
+
+/** Link "Rispondi su WhatsApp" con messaggio precompilato, o null se manca il numero. */
+const waLink = (b: Booking): string | null => {
+  const num = waNumber(b.phone);
+  if (!num) return null;
+  const nome = (b.name || '').trim().split(/\s+/)[0] || '';
+  const msg =
+    `Ciao ${nome}, grazie per la richiesta di prenotazione al Biblio ` +
+    `per ${fmtDate(b.booking_date)} alle ${b.booking_time} (${b.guests} persone). `;
+  return `https://wa.me/${num}?text=${encodeURIComponent(msg)}`;
+};
+
 export default function BookingsList({ onUnreadChange }: { onUnreadChange?: () => void }) {
   const [rows, setRows] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(true);
@@ -171,9 +196,20 @@ export default function BookingsList({ onUnreadChange }: { onUnreadChange?: () =
             </dl>
 
             <div class="g-drawer-actions">
-              <a class="g-btn" href={`mailto:${selected.email}`}>
-                Rispondi via email
-              </a>
+              {waLink(selected) ? (
+                <a
+                  class="g-btn g-btn-wa"
+                  href={waLink(selected)!}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Rispondi su WhatsApp
+                </a>
+              ) : (
+                <a class="g-btn" href={`mailto:${selected.email}`}>
+                  Rispondi via email
+                </a>
+              )}
               <button class="g-btn g-btn-danger" type="button" onClick={() => remove(selected.id)}>
                 Elimina
               </button>
