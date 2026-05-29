@@ -68,6 +68,13 @@ jobs:
         run: npx tinacms build
 
       - name: Build with Astro
+        # Variabili pubbliche (NON segrete): la anon key è pubblica per design, il
+        # confine di sicurezza è la RLS di Supabase. Servono sia al fetch a
+        # build-time (eventi/menu) sia al bundle della dashboard /gestione.
+        # Se non impostate, il sito builda comunque col fallback ai contenuti del repo.
+        env:
+          PUBLIC_SUPABASE_URL: ${{ vars.PUBLIC_SUPABASE_URL }}
+          PUBLIC_SUPABASE_ANON_KEY: ${{ vars.PUBLIC_SUPABASE_ANON_KEY }}
         run: npx astro build
 
       - name: Upload artifact
