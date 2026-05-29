@@ -1,4 +1,5 @@
 User-agent: *
 Allow: /
+Disallow: /gestione/
 
 Sitemap: https://masoninnovation.it/sitemap-index.xml

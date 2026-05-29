@@ -1,0 +1,130 @@
+/* Biblio — dashboard gestore /gestione
+   Stile minimale, elegante, coerente col brand. Indipendente da global.css. */
+
+:root {
+  --paper: #f6efe1;
+  --paper-2: #ece1ca;
+  --paper-3: #d9c89f;
+  --ink: #2b1d12;
+  --ink-soft: #5a4530;
+  --ink-mute: #8a7553;
+  --brass: #b08a3e;
+  --brass-deep: #8a6824;
+  --vino: #7a2e2e;
+  --line: #c9b994;
+  --ok: #2f7a4d;
+  --radius: 10px;
+  --radius-lg: 16px;
+  --shadow-card: 0 1px 2px rgba(43, 29, 18, 0.04), 0 10px 28px -18px rgba(43, 29, 18, 0.22);
+  --font-display: "Cormorant Garamond", Georgia, serif;
+  --font-body: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+.g-wrap { min-height: 100vh; display: flex; flex-direction: column; }
+
+/* ── Header ── */
+.g-header {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 1rem; padding: 0.9rem 1.25rem;
+  background: var(--paper-2); border-bottom: 1px solid var(--line);
+  position: sticky; top: 0; z-index: 10;
+}
+.g-brand { font-family: var(--font-display); font-weight: 600; font-size: 1.35rem; letter-spacing: .02em; }
+.g-brand small { display: block; font-family: var(--font-body); font-size: .7rem; color: var(--ink-mute); letter-spacing: .12em; text-transform: uppercase; }
+.g-userbox { display: flex; align-items: center; gap: .75rem; font-size: .85rem; color: var(--ink-soft); }
+
+/* ── Tabs ── */
+.g-tabs { display: flex; gap: .25rem; padding: 0 1rem; background: var(--paper-2); border-bottom: 1px solid var(--line); overflow-x: auto; }
+.g-tab {
+  appearance: none; border: 0; background: transparent; cursor: pointer;
+  font-family: var(--font-body); font-size: .92rem; color: var(--ink-soft);
+  padding: .7rem .9rem; border-bottom: 2px solid transparent; white-space: nowrap;
+  display: inline-flex; align-items: center; gap: .45rem;
+}
+.g-tab:hover { color: var(--ink); }
+.g-tab[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--brass); font-weight: 600; }
+.g-badge {
+  min-width: 1.25rem; height: 1.25rem; padding: 0 .35rem; border-radius: 999px;
+  background: var(--vino); color: #fff; font-size: .72rem; font-weight: 700;
+  display: inline-flex; align-items: center; justify-content: center;
+}
+
+/* ── Main ── */
+.g-main { flex: 1; width: 100%; max-width: 60rem; margin: 0 auto; padding: 1.5rem 1.25rem 4rem; }
+.g-h2 { font-family: var(--font-display); font-size: 1.7rem; margin: 0 0 .25rem; font-weight: 600; }
+.g-sub { color: var(--ink-mute); margin: 0 0 1.25rem; font-size: .9rem; }
+
+/* ── Cards (prenotazioni / candidature) ── */
+.g-cards { display: grid; gap: .85rem; }
+.g-card {
+  position: relative; background: #fffdf8; border: 1px solid var(--line);
+  border-radius: var(--radius); padding: 1rem 1.1rem; box-shadow: var(--shadow-card);
+  cursor: pointer; transition: transform .12s ease, box-shadow .12s ease;
+}
+.g-card:hover { transform: translateY(-1px); box-shadow: 0 4px 10px rgba(43,29,18,.08), 0 16px 36px -20px rgba(43,29,18,.3); }
+.g-card.is-unread { border-left: 3px solid var(--vino); }
+.g-dot {
+  position: absolute; top: 1rem; right: 1rem; width: .7rem; height: .7rem;
+  border-radius: 999px; background: var(--vino); box-shadow: 0 0 0 3px rgba(122,46,46,.15);
+}
+.g-card-title { font-family: var(--font-display); font-size: 1.25rem; font-weight: 600; margin: 0 0 .15rem; padding-right: 1.5rem; }
+.g-card-meta { font-size: .82rem; color: var(--ink-mute); display: flex; flex-wrap: wrap; gap: .25rem .75rem; }
+.g-card-body { margin-top: .6rem; font-size: .9rem; color: var(--ink-soft); line-height: 1.45; }
+.g-chiprow { display: flex; flex-wrap: wrap; gap: .4rem; margin-top: .6rem; }
+.g-chip { font-size: .75rem; background: var(--paper-2); border: 1px solid var(--line); border-radius: 999px; padding: .15rem .6rem; color: var(--ink-soft); }
+
+/* ── Forms / buttons ── */
+.g-field { display: flex; flex-direction: column; gap: .3rem; margin-bottom: .9rem; }
+.g-field label { font-size: .82rem; color: var(--ink-soft); font-weight: 600; }
+.g-input, .g-textarea, .g-select {
+  font: inherit; padding: .6rem .7rem; border: 1px solid var(--line);
+  border-radius: 8px; background: #fffdf8; color: var(--ink); width: 100%;
+}
+.g-input:focus, .g-textarea:focus, .g-select:focus { outline: 2px solid var(--brass); outline-offset: 1px; }
+.g-textarea { min-height: 4.5rem; resize: vertical; }
+.g-btn {
+  appearance: none; cursor: pointer; font: inherit; font-weight: 600;
+  border-radius: 8px; padding: .6rem 1.1rem; border: 1px solid var(--brass-deep);
+  background: var(--brass); color: #fff; transition: background .12s ease;
+}
+.g-btn:hover { background: var(--brass-deep); }
+.g-btn:disabled { opacity: .55; cursor: not-allowed; }
+.g-btn-ghost { background: transparent; color: var(--ink-soft); border-color: var(--line); }
+.g-btn-ghost:hover { background: var(--paper-2); color: var(--ink); }
+.g-btn-danger { background: transparent; color: var(--vino); border-color: var(--vino); }
+.g-btn-danger:hover { background: var(--vino); color: #fff; }
+.g-btn-sm { padding: .35rem .7rem; font-size: .82rem; }
+
+/* ── Login ── */
+.g-login { max-width: 22rem; margin: 8vh auto 0; background: #fffdf8; border: 1px solid var(--line); border-radius: var(--radius-lg); padding: 2rem 1.75rem; box-shadow: var(--shadow-card); }
+.g-login .g-brand { text-align: center; margin-bottom: 1.25rem; }
+.g-login .g-btn { width: 100%; margin-top: .25rem; }
+
+/* ── States ── */
+.g-empty { text-align: center; color: var(--ink-mute); padding: 3rem 1rem; border: 1px dashed var(--line); border-radius: var(--radius); }
+.g-msg { padding: .65rem .8rem; border-radius: 8px; font-size: .88rem; margin: .5rem 0; }
+.g-msg-err { background: #f7e3e3; color: var(--vino); border: 1px solid #e3b9b9; }
+.g-msg-ok { background: #e3f1e8; color: var(--ok); border: 1px solid #b9dcc6; }
+.g-center { display: grid; place-items: center; min-height: 60vh; color: var(--ink-mute); }
+
+/* ── Detail drawer ── */
+.g-overlay { position: fixed; inset: 0; background: rgba(43,29,18,.35); display: grid; place-items: end center; z-index: 50; }
+.g-drawer { background: var(--paper); width: 100%; max-width: 40rem; max-height: 90vh; overflow-y: auto; border-radius: var(--radius-lg) var(--radius-lg) 0 0; padding: 1.5rem; }
+@media (min-width: 40rem) { .g-overlay { place-items: center; } .g-drawer { border-radius: var(--radius-lg); } }
+.g-drawer h3 { font-family: var(--font-display); font-size: 1.6rem; margin: 0 0 .25rem; }
+.g-dl { display: grid; grid-template-columns: max-content 1fr; gap: .3rem 1rem; font-size: .9rem; margin: 1rem 0; }
+.g-dl dt { color: var(--ink-mute); }
+.g-dl dd { margin: 0; color: var(--ink); }
+.g-files { display: grid; gap: .4rem; margin-top: .5rem; }
+.g-file { display: flex; align-items: center; gap: .5rem; font-size: .88rem; }
+.g-drawer-actions { display: flex; gap: .5rem; flex-wrap: wrap; margin-top: 1.25rem; padding-top: 1rem; border-top: 1px solid var(--line); }
