@@ -132,6 +132,8 @@ html, body {
 .g-btn-ghost:hover { background: var(--paper-2); color: var(--ink); }
 .g-btn-danger { background: transparent; color: var(--vino); border-color: var(--vino); }
 .g-btn-danger:hover { background: var(--vino); color: #fff; }
+.g-btn-wa { background: #25d366; border-color: #1da851; color: #06351b; }
+.g-btn-wa:hover { background: #1da851; color: #fff; }
 .g-btn-sm { padding: .4rem .8rem; font-size: .9rem; }
 
 /* ── Login ── */
@@ -203,6 +205,43 @@ html, body {
 .ev-group-title:first-of-type { margin-top: .4rem; }
 .ev-group-past { color: var(--ink-mute); }
 .ev-divider { border: 0; border-top: 1px solid var(--line); margin: 2rem 0 0; }
+
+/* ── Artisti (registro / anagrafica) ── */
+.g-toolbar { display: flex; gap: .6rem; flex-wrap: wrap; margin-bottom: 1.25rem; }
+.g-toolbar .g-input[type="search"] { flex: 1 1 16rem; }
+.g-toolbar .g-select { flex: 0 1 12rem; width: auto; }
+@media (max-width: 34rem) { .g-toolbar .g-select { flex: 1 1 100%; } }
+
+.g-list { list-style: none; margin: 0; padding: 0; display: grid; gap: .55rem; }
+.g-list-row {
+  display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+  background: #fffdf8; border: 1px solid var(--line); border-radius: var(--radius);
+  padding: .85rem 1.1rem; box-shadow: var(--shadow-card);
+  cursor: pointer; transition: transform .12s ease, box-shadow .12s ease;
+}
+.g-list-row:hover { transform: translateY(-1px); box-shadow: 0 4px 10px rgba(43,29,18,.08), 0 16px 36px -20px rgba(43,29,18,.3); }
+.g-list-row:focus-visible { outline: 2px solid var(--brass); outline-offset: 2px; }
+.g-list-main { min-width: 0; display: flex; flex-direction: column; gap: .1rem; }
+.g-list-name { font-family: var(--font-display); font-size: 1.35rem; font-weight: 600; line-height: 1.2; }
+.g-list-meta { font-size: .92rem; color: var(--ink-mute); }
+.g-list-side { display: flex; align-items: center; gap: .5rem; flex: 0 0 auto; }
+.g-list-arrow { color: var(--ink-mute); font-size: 1.4rem; line-height: 1; }
+
+.g-profile-head { margin: 1rem 0 1.25rem; }
+.g-profile-head .g-h2 { margin-bottom: .4rem; }
+.g-profile-block { margin-top: 1.75rem; }
+.g-h3 {
+  font-family: var(--font-display); font-size: 1.4rem; font-weight: 600;
+  margin: 0 0 .6rem; padding-bottom: .3rem; border-bottom: 2px solid var(--brass);
+}
+.g-timeline { list-style: none; margin: 0; padding: 0; display: grid; gap: .5rem; }
+.g-timeline li {
+  display: flex; align-items: center; gap: .5rem; flex-wrap: wrap;
+  background: #fffdf8; border: 1px solid var(--line); border-radius: 8px; padding: .55rem .8rem;
+  font-size: 1rem; color: var(--ink-soft);
+}
+.g-timeline li strong { color: var(--ink); }
+.g-chip-sm { font-size: .74rem; padding: .1rem .5rem; margin-left: auto; }
 
 /* ── Detail drawer ── */
 .g-overlay { position: fixed; inset: 0; background: rgba(43,29,18,.35); display: grid; place-items: end center; z-index: 50; }
