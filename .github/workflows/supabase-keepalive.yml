@@ -4,9 +4,9 @@
 # può non succedere nulla per più di una settimana. Questo cron fa una query
 # leggerissima ogni ~3 giorni per mantenere il progetto attivo.
 #
-# Usa le Actions *Variables* pubbliche (non Secrets): la anon key è pubblica per
-# design e la query colpisce solo tabelle leggibili da anon (events). Se le
-# variabili non sono configurate, il workflow esce senza errori.
+# Usa la config Supabase pubblica tenuta tra i Secrets del repo: la anon key è
+# pubblica per design e la query colpisce solo tabelle leggibili da anon (events).
+# Se i valori non sono configurati, il workflow esce senza errori.
 name: Supabase keep-alive
 
 on:
@@ -24,11 +24,11 @@ jobs:
     steps:
       - name: Light read to keep the project warm
         env:
-          SUPABASE_URL: ${{ vars.PUBLIC_SUPABASE_URL }}
-          SUPABASE_ANON_KEY: ${{ vars.PUBLIC_SUPABASE_ANON_KEY }}
+          SUPABASE_URL: ${{ secrets.PUBLIC_SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.PUBLIC_SUPABASE_ANON_KEY }}
         run: |
           if [ -z "$SUPABASE_URL" ] || [ -z "$SUPABASE_ANON_KEY" ]; then
-            echo "::notice::Variabili Supabase non configurate — ping saltato."
+            echo "::notice::Config Supabase non presente — ping saltato."
             exit 0
           fi
           code=$(curl -sS -o /dev/null -w '%{http_code}' \
