@@ -117,6 +117,40 @@ html, body {
 .g-msg-ok { background: #e3f1e8; color: var(--ok); border: 1px solid #b9dcc6; }
 .g-center { display: grid; place-items: center; min-height: 60vh; color: var(--ink-mute); }
 
+/* ── Menu editor ── */
+.me-bar { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; margin-bottom: .5rem; }
+.me-bar .g-h2 { margin-bottom: .15rem; }
+.me-chapter { margin-top: 2rem; }
+.me-chapter-title {
+  font-family: var(--font-display); font-size: 1.5rem; font-weight: 600;
+  margin: 0 0 .5rem; padding-bottom: .35rem; border-bottom: 2px solid var(--brass);
+}
+.me-section {
+  background: #fffdf8; border: 1px solid var(--line); border-radius: var(--radius);
+  padding: 1rem 1.1rem; margin-bottom: 1rem; box-shadow: var(--shadow-card);
+}
+.me-section-head {
+  display: flex; align-items: flex-end; justify-content: space-between; gap: 1rem;
+  margin-bottom: .75rem; flex-wrap: wrap;
+}
+.me-section-head h4 { font-family: var(--font-display); font-size: 1.2rem; font-weight: 600; margin: 0; }
+.me-price-label { display: flex; flex-direction: column; gap: .2rem; font-size: .72rem; color: var(--ink-mute); text-align: right; }
+.me-price-input { width: 6rem; text-align: right; padding: .35rem .5rem; }
+.me-items { display: grid; gap: .6rem; margin-bottom: .75rem; }
+.me-item { border: 1px solid var(--line); border-radius: 8px; padding: .6rem; background: var(--paper); }
+.me-row-main { display: flex; gap: .4rem; align-items: center; }
+.me-row-main .me-name { flex: 1 1 auto; }
+.me-row-main .me-origin { flex: 0 0 9rem; }
+.me-row-main .me-price { flex: 0 0 5rem; text-align: right; }
+.me-del { flex: 0 0 auto; padding: .35rem .55rem; }
+.me-row-detail { display: grid; grid-template-columns: 1fr 1fr; gap: .4rem; margin-top: .4rem; }
+.me-row-detail .g-textarea { min-height: 3rem; }
+@media (max-width: 34rem) {
+  .me-row-main { flex-wrap: wrap; }
+  .me-row-main .me-origin, .me-row-main .me-price { flex: 1 1 8rem; }
+  .me-row-detail { grid-template-columns: 1fr; }
+}
+
 /* ── Detail drawer ── */
 .g-overlay { position: fixed; inset: 0; background: rgba(43,29,18,.35); display: grid; place-items: end center; z-index: 50; }
 .g-drawer { background: var(--paper); width: 100%; max-width: 40rem; max-height: 90vh; overflow-y: auto; border-radius: var(--radius-lg) var(--radius-lg) 0 0; padding: 1.5rem; }

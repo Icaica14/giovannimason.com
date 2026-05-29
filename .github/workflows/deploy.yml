@@ -7,6 +7,11 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
+  # Rebuild on-demand quando il proprietario pubblica contenuti dalla dashboard
+  # /gestione: un DB webhook Supabase → Edge Function trigger-rebuild → questo
+  # evento (POST /repos/.../dispatches con event_type: content-changed).
+  repository_dispatch:
+    types: [content-changed]
 
 permissions:
   contents: read
