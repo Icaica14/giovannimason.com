@@ -115,7 +115,7 @@ export default function Dashboard() {
 
       <main class="g-main">
         {tab === 'prenotazioni' && <BookingsList onUnreadChange={refreshCounts} />}
-        {tab === 'candidature' && <ApplicationsList />}
+        {tab === 'candidature' && <ApplicationsList onUnreadChange={refreshCounts} />}
         {tab === 'menu' && <MenuEditor />}
         {tab === 'eventi' && <EventsEditor />}
       </main>

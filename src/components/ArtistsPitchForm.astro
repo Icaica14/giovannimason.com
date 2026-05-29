@@ -6,9 +6,14 @@ interface Props {
 }
 const { lang } = Astro.props;
 
-// Endpoint Formspree placeholder (stesso pattern di BookingForm).
-// Sostituire con quello reale prima del lancio.
-const FORMSPREE_ENDPOINT = 'https://formspree.io/f/PLACEHOLDER';
+// Invio tramite Edge Function Supabase `submit-application` (Turnstile +
+// validazione + insert + URL di upload firmati per il bucket privato + email).
+// I file vengono caricati dal client direttamente sullo storage usando i token
+// firmati restituiti dalla function. Anon key e URL sono pubblici per design.
+const SUPABASE_URL = import.meta.env.PUBLIC_SUPABASE_URL as string | undefined;
+const SUPABASE_ANON_KEY = import.meta.env.PUBLIC_SUPABASE_ANON_KEY as string | undefined;
+const TURNSTILE_SITE_KEY = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY as string | undefined;
+const submitEndpoint = SUPABASE_URL ? `${SUPABASE_URL}/functions/v1/submit-application` : '';
 ---
 
 <section class="artisti-page">
@@ -24,13 +29,15 @@ const FORMSPREE_ENDPOINT = 'https://formspree.io/f/PLACEHOLDER';
       <form
         class="artisti-form"
         id="artistiForm"
-        action={FORMSPREE_ENDPOINT}
+        action={submitEndpoint}
+        data-endpoint={submitEndpoint}
+        data-supabase-url={SUPABASE_URL ?? ''}
+        data-supabase-key={SUPABASE_ANON_KEY ?? ''}
         method="POST"
         novalidate
       >
         {/* Honeypot anti-spam */}
         <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" style="display:none" />
-        <input type="hidden" name="_subject" value={`Nuova proposta artisti, Biblio (${lang.toUpperCase()})`} />
         <input type="hidden" name="lang" value={lang} />
 
         {/* SEZIONE 1: chi siete */}
@@ -123,7 +130,7 @@ const FORMSPREE_ENDPOINT = 'https://formspree.io/f/PLACEHOLDER';
               <span class="field-label">
                 {t(lang, 'artisti.form.genre')} <em class="req" aria-hidden="true">*</em>
               </span>
-              <select name="genre" required>
+              <select name="genre" id="genreSelect" required>
                 <option value="">…</option>
                 <option value="jazz">{t(lang, 'artisti.form.genre.jazz')}</option>
                 <option value="blues">{t(lang, 'artisti.form.genre.blues')}</option>
@@ -133,6 +140,19 @@ const FORMSPREE_ENDPOINT = 'https://formspree.io/f/PLACEHOLDER';
                 <option value="classical">{t(lang, 'artisti.form.genre.classical')}</option>
                 <option value="other">{t(lang, 'artisti.form.genre.other')}</option>
               </select>
+            </label>
+
+            {/* Campo libero, visibile solo quando si sceglie "Altro" */}
+            <label class="field" id="genreOtherField" hidden>
+              <span class="field-label">
+                {t(lang, 'artisti.form.genre.other.label')} <em class="req" aria-hidden="true">*</em>
+              </span>
+              <input
+                type="text"
+                name="genre_other"
+                id="genreOtherInput"
+                placeholder={t(lang, 'artisti.form.genre.other.placeholder')}
+              />
             </label>
 
             <label class="field">
@@ -225,6 +245,23 @@ const FORMSPREE_ENDPOINT = 'https://formspree.io/f/PLACEHOLDER';
                 placeholder={t(lang, 'artisti.form.experience.placeholder')}
               ></textarea>
             </label>
+
+            {/* Upload file: audio/foto/PDF verso il bucket privato (max 5, 20MB l'uno) */}
+            <label class="field field-full">
+              <span class="field-label">
+                {t(lang, 'artisti.form.files')} <span class="opt">{t(lang, 'artisti.form.optional')}</span>
+              </span>
+              <input
+                type="file"
+                name="files"
+                id="artistiFiles"
+                multiple
+                accept=".jpg,.jpeg,.png,.webp,.pdf,.mp3,.m4a,.wav,image/jpeg,image/png,image/webp,application/pdf,audio/mpeg,audio/mp4,audio/wav"
+              />
+              <small class="field-hint">{t(lang, 'artisti.form.files.hint')}</small>
+              <ul class="file-list" id="artistiFileList" role="list"></ul>
+              <p class="form-error" id="artistiFileError" hidden role="alert"></p>
+            </label>
           </div>
         </fieldset>
 
@@ -269,6 +306,15 @@ const FORMSPREE_ENDPOINT = 'https://formspree.io/f/PLACEHOLDER';
 
         <p class="form-privacy">{t(lang, 'artisti.form.privacy')}</p>
 
+        {/* Widget anti-spam Cloudflare Turnstile (reso solo se configurato) */}
+        {TURNSTILE_SITE_KEY && (
+          <div
+            class="cf-turnstile artisti-turnstile"
+            data-sitekey={TURNSTILE_SITE_KEY}
+            data-theme="light"
+          ></div>
+        )}
+
         <div class="form-actions">
           <button type="submit" class="btn btn-primary" id="artistiSubmit">
             {t(lang, 'artisti.form.submit')}
@@ -295,38 +341,162 @@ const FORMSPREE_ENDPOINT = 'https://formspree.io/f/PLACEHOLDER';
   </section>
 </section>
 
+{/* Script Turnstile: caricato solo se la site key è configurata. */}
+{TURNSTILE_SITE_KEY && (
+  <script is:inline src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+)}
+
 <script>
-  // Submit AJAX a Formspree, niente redirect, mostra inline success/error.
-  // Stesso pattern di BookingForm.astro.
   const form = document.getElementById('artistiForm') as HTMLFormElement | null;
   const submitBtn = document.getElementById('artistiSubmit') as HTMLButtonElement | null;
   const successEl = document.getElementById('artistiSuccess') as HTMLElement | null;
-  const errorEl   = document.getElementById('artistiError') as HTMLElement | null;
+  const errorEl = document.getElementById('artistiError') as HTMLElement | null;
 
-  form?.addEventListener('submit', async (e) => {
-    if (!form.action.includes('PLACEHOLDER')) {
-      e.preventDefault();
-      submitBtn?.setAttribute('disabled', 'true');
-      errorEl?.setAttribute('hidden', '');
-      try {
-        const data = new FormData(form);
-        const res = await fetch(form.action, {
-          method: 'POST',
-          body: data,
-          headers: { Accept: 'application/json' },
-        });
-        if (res.ok) {
-          form.hidden = true;
-          successEl?.removeAttribute('hidden');
-        } else {
-          errorEl?.removeAttribute('hidden');
-        }
-      } catch {
-        errorEl?.removeAttribute('hidden');
-      } finally {
-        submitBtn?.removeAttribute('disabled');
+  // Lingua corrente, per i messaggi lato client.
+  const lang = (form?.querySelector('input[name="lang"]') as HTMLInputElement | null)?.value === 'en' ? 'en' : 'it';
+  const M = {
+    tooMany: lang === 'en' ? 'Up to 5 files.' : 'Massimo 5 file.',
+    tooBig: lang === 'en' ? 'Each file must be ≤ 20MB.' : 'Ogni file deve essere ≤ 20MB.',
+    badType: lang === 'en' ? 'Unsupported format.' : 'Formato non supportato.',
+    uploading: lang === 'en' ? 'Uploading your files…' : 'Caricamento dei file in corso…',
+  };
+
+  // ── Genere "Altro": mostra/nasconde il campo libero ──────────────────────
+  const genreSelect = document.getElementById('genreSelect') as HTMLSelectElement | null;
+  const genreOtherField = document.getElementById('genreOtherField') as HTMLElement | null;
+  const genreOtherInput = document.getElementById('genreOtherInput') as HTMLInputElement | null;
+  const syncGenreOther = () => {
+    const isOther = genreSelect?.value === 'other';
+    if (genreOtherField) genreOtherField.hidden = !isOther;
+    if (genreOtherInput) {
+      genreOtherInput.required = !!isOther;
+      if (!isOther) genreOtherInput.value = '';
+    }
+  };
+  genreSelect?.addEventListener('change', syncGenreOther);
+  syncGenreOther();
+
+  // ── Validazione file lato client ─────────────────────────────────────────
+  const MAX_FILES = 5;
+  const MAX_BYTES = 20 * 1024 * 1024;
+  const ALLOWED_EXT = /\.(jpe?g|png|webp|pdf|mp3|m4a|wav)$/i;
+  const fileInput = document.getElementById('artistiFiles') as HTMLInputElement | null;
+  const fileList = document.getElementById('artistiFileList') as HTMLUListElement | null;
+  const fileError = document.getElementById('artistiFileError') as HTMLElement | null;
+
+  const fmtSize = (b: number) => (b < 1024 * 1024 ? `${Math.round(b / 1024)} KB` : `${(b / 1024 / 1024).toFixed(1)} MB`);
+
+  const validateFiles = (): File[] => {
+    const files = Array.from(fileInput?.files ?? []);
+    if (fileError) {
+      fileError.hidden = true;
+      fileError.textContent = '';
+    }
+    if (fileList) fileList.innerHTML = '';
+    let err = '';
+    if (files.length > MAX_FILES) err = M.tooMany;
+    for (const f of files) {
+      if (!ALLOWED_EXT.test(f.name)) err = M.badType;
+      else if (f.size > MAX_BYTES) err = M.tooBig;
+      if (fileList) {
+        const li = document.createElement('li');
+        li.textContent = `${f.name} — ${fmtSize(f.size)}`;
+        fileList.appendChild(li);
       }
     }
-    // Se l'endpoint è ancora il placeholder, lasciamo il submit nativo (no-op).
+    if (err && fileError) {
+      fileError.textContent = err;
+      fileError.hidden = false;
+    }
+    return files;
+  };
+  fileInput?.addEventListener('change', validateFiles);
+
+  // ── Carica i file direttamente sullo storage via signed upload URL ───────
+  type Upload = { path: string; token: string };
+  async function uploadFiles(uploads: Upload[], files: File[]) {
+    if (!uploads.length) return;
+    const url = form?.dataset.supabaseUrl;
+    const key = form?.dataset.supabaseKey;
+    if (!url || !key) return;
+    const { createClient } = await import('@supabase/supabase-js');
+    const sb = createClient(url, key);
+    for (let i = 0; i < uploads.length; i++) {
+      const up = uploads[i];
+      const file = files[i];
+      if (!up?.token || !file) continue; // URL firmato fallito → salta
+      const { error } = await sb.storage
+        .from('applications')
+        .uploadToSignedUrl(up.path, up.token, file, { contentType: file.type || undefined });
+      if (error) throw error;
+    }
+  }
+
+  // ── Submit ───────────────────────────────────────────────────────────────
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const endpoint = form.dataset.endpoint;
+    if (!endpoint) {
+      errorEl?.removeAttribute('hidden');
+      return;
+    }
+
+    const files = validateFiles();
+    if (fileError && !fileError.hidden) return; // errori file → blocca
+
+    submitBtn?.setAttribute('disabled', 'true');
+    errorEl?.setAttribute('hidden', '');
+
+    const fd = new FormData(form);
+    const tokenEl = form.querySelector('[name="cf-turnstile-response"]') as HTMLTextAreaElement | null;
+    const payload = {
+      artist_name: String(fd.get('artist_name') ?? ''),
+      contact_name: String(fd.get('contact_name') ?? ''),
+      email: String(fd.get('email') ?? ''),
+      phone: String(fd.get('phone') ?? ''),
+      city: String(fd.get('city') ?? ''),
+      lineup: String(fd.get('lineup') ?? ''),
+      genre: String(fd.get('genre') ?? ''),
+      genre_other: String(fd.get('genre_other') ?? ''),
+      repertoire: String(fd.get('repertoire') ?? ''),
+      bio: String(fd.get('bio') ?? ''),
+      link1: String(fd.get('link1') ?? ''),
+      link2: String(fd.get('link2') ?? ''),
+      link3: String(fd.get('link3') ?? ''),
+      epk: String(fd.get('epk') ?? ''),
+      experience: String(fd.get('experience') ?? ''),
+      availability: String(fd.get('availability') ?? ''),
+      fee: String(fd.get('fee') ?? ''),
+      note: String(fd.get('note') ?? ''),
+      lang,
+      _gotcha: String(fd.get('_gotcha') ?? ''),
+      turnstileToken: tokenEl?.value ?? '',
+      files: files.map((f) => ({ name: f.name, size: f.size, type: f.type })),
+    };
+
+    try {
+      const res = await fetch(endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      const out = (await res.json().catch(() => ({}))) as { ok?: boolean; uploads?: Upload[] };
+      if (res.ok && out.ok) {
+        if (out.uploads?.length) {
+          if (submitBtn) submitBtn.textContent = M.uploading;
+          await uploadFiles(out.uploads, files);
+        }
+        form.hidden = true;
+        successEl?.removeAttribute('hidden');
+      } else {
+        errorEl?.removeAttribute('hidden');
+        submitBtn?.removeAttribute('disabled');
+        (window as unknown as { turnstile?: { reset?: () => void } }).turnstile?.reset?.();
+      }
+    } catch {
+      errorEl?.removeAttribute('hidden');
+      submitBtn?.removeAttribute('disabled');
+      (window as unknown as { turnstile?: { reset?: () => void } }).turnstile?.reset?.();
+    }
   });
 </script>
