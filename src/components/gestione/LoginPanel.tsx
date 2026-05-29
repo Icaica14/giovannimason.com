@@ -31,7 +31,19 @@ export default function LoginPanel() {
     setBusy(false);
 
     if (error) {
-      setError('Credenziali non valide. Riprova.');
+      // Messaggio specifico per causa: il generico "credenziali non valide"
+      // nascondeva problemi reali (es. account creato ma email non confermata).
+      const code = (error as { code?: string }).code ?? '';
+      const msg = error.message ?? '';
+      if (code === 'email_not_confirmed' || /not confirmed/i.test(msg)) {
+        setError('Account non ancora confermato. Confermalo in Supabase (Authentication → Users) e riprova.');
+      } else if (code === 'invalid_credentials' || /invalid login/i.test(msg)) {
+        setError('Email o password non corretti.');
+      } else if (/rate limit|too many/i.test(msg)) {
+        setError('Troppi tentativi. Attendi un minuto e riprova.');
+      } else {
+        setError(`Accesso non riuscito: ${msg || 'errore sconosciuto'}.`);
+      }
       return;
     }
     // La sessione viene gestita da onAuthStateChange in Dashboard.
