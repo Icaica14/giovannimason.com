@@ -6,6 +6,9 @@ dist/
 tina/__generated__/
 public/admin/
 
+# supabase CLI (stato locale del link al progetto, non versionare)
+supabase/.temp/
+
 # deps
 node_modules/
 

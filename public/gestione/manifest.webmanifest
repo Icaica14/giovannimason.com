@@ -1,0 +1,33 @@
+{
+  "name": "Biblio Gestione",
+  "short_name": "Biblio",
+  "description": "Pannello di gestione del Biblio: prenotazioni, candidature, menu ed eventi.",
+  "lang": "it",
+  "dir": "ltr",
+  "start_url": "/gestione/",
+  "scope": "/gestione/",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#f6efe1",
+  "theme_color": "#ece1ca",
+  "icons": [
+    {
+      "src": "/gestione/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/gestione/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/gestione/icon-512-maskable.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
