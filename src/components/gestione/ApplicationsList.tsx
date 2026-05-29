@@ -38,6 +38,16 @@ const GENRE_LABEL: Record<string, string> = {
   classical: 'Classica / acustica',
   other: 'Altro',
 };
+const GENRES = Object.entries(GENRE_LABEL);
+
+const STATUS_LABEL: Record<string, string> = {
+  new: 'Nuova',
+  read: 'Letta',
+  contacted: 'Contattata',
+  booked: 'Confermata',
+  archived: 'Archiviata',
+};
+const STATUSES = Object.entries(STATUS_LABEL);
 
 const fmtReceived = (iso: string): string => {
   const d = new Date(iso);
@@ -51,11 +61,21 @@ const genreText = (a: Application): string =>
 
 const fileName = (path: string): string => path.split('/').pop() ?? path;
 
+const orNull = (s: string | null): string | null => {
+  const t = (s ?? '').trim();
+  return t ? t : null;
+};
+
 export default function ApplicationsList({ onUnreadChange }: { onUnreadChange?: () => void }) {
   const [rows, setRows] = useState<Application[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [selected, setSelected] = useState<Application | null>(null);
+
+  // draft = copia editabile della candidatura aperta nel drawer.
+  const [draft, setDraft] = useState<Application | null>(null);
+  const [saving, setSaving] = useState(false);
+  const [formError, setFormError] = useState<string | null>(null);
+  const [formOk, setFormOk] = useState<string | null>(null);
 
   async function load() {
     const supabase = getSupabase();
@@ -82,27 +102,94 @@ export default function ApplicationsList({ onUnreadChange }: { onUnreadChange?: 
     const supabase = getSupabase();
     if (!supabase) return;
     const now = new Date().toISOString();
-    setRows((prev) => prev.map((r) => (r.id === id && !r.read_at ? { ...r, read_at: now } : r)));
-    await supabase.from('applications').update({ read_at: now, status: 'read' }).eq('id', id);
+    setRows((prev) =>
+      prev.map((r) => (r.id === id && !r.read_at ? { ...r, read_at: now, status: r.status === 'new' ? 'read' : r.status } : r)),
+    );
+    await supabase
+      .from('applications')
+      .update({ read_at: now, status: 'read' })
+      .eq('id', id)
+      .eq('status', 'new'); // non sovrascrive uno stato avanzato (contattata/confermata…)
     onUnreadChange?.();
   }
 
   function openCard(a: Application) {
-    setSelected(a);
-    if (!a.read_at) markRead(a.id);
+    const willRead = !a.read_at;
+    const now = new Date().toISOString();
+    setDraft(
+      willRead
+        ? { ...a, read_at: now, status: a.status === 'new' ? 'read' : a.status }
+        : { ...a },
+    );
+    setFormError(null);
+    setFormOk(null);
+    if (willRead) markRead(a.id);
   }
 
-  async function remove(id: string) {
+  function closeDrawer() {
+    setDraft(null);
+    setFormError(null);
+    setFormOk(null);
+  }
+
+  function patch(p: Partial<Application>) {
+    setDraft((d) => (d ? { ...d, ...p } : d));
+    setFormOk(null);
+  }
+
+  async function saveDraft() {
     const supabase = getSupabase();
-    if (!supabase) return;
+    if (!supabase || !draft) return;
+    if (!draft.artist_name.trim() || !draft.contact_name.trim() || !draft.email.trim()) {
+      setFormError('Artista, referente ed email sono obbligatori.');
+      return;
+    }
+    setSaving(true);
+    setFormError(null);
+    setFormOk(null);
+    const payload = {
+      artist_name: draft.artist_name.trim(),
+      contact_name: draft.contact_name.trim(),
+      email: draft.email.trim(),
+      phone: orNull(draft.phone),
+      city: orNull(draft.city),
+      lineup: orNull(draft.lineup),
+      genre: draft.genre,
+      genre_other: draft.genre === 'other' ? orNull(draft.genre_other) : null,
+      repertoire: orNull(draft.repertoire),
+      bio: draft.bio.trim(),
+      link1: draft.link1.trim(),
+      link2: orNull(draft.link2),
+      link3: orNull(draft.link3),
+      epk: orNull(draft.epk),
+      experience: orNull(draft.experience),
+      availability: orNull(draft.availability),
+      fee: orNull(draft.fee),
+      note: orNull(draft.note),
+      status: draft.status,
+    };
+    const { error } = await supabase.from('applications').update(payload).eq('id', draft.id);
+    setSaving(false);
+    if (error) {
+      setFormError('Salvataggio non riuscito. Riprova.');
+      return;
+    }
+    setRows((prev) => prev.map((r) => (r.id === draft.id ? ({ ...r, ...payload } as Application) : r)));
+    setFormOk('Modifiche salvate.');
+    onUnreadChange?.();
+  }
+
+  async function remove() {
+    const supabase = getSupabase();
+    if (!supabase || !draft) return;
     if (!confirm('Eliminare questa candidatura? L’azione è definitiva.')) return;
     // Rimuove anche i file dal bucket privato (best-effort).
-    const app = rows.find((r) => r.id === id);
-    if (app?.file_paths?.length) {
-      await supabase.storage.from('applications').remove(app.file_paths);
+    if (draft.file_paths?.length) {
+      await supabase.storage.from('applications').remove(draft.file_paths);
     }
+    const id = draft.id;
     setRows((prev) => prev.filter((r) => r.id !== id));
-    setSelected(null);
+    closeDrawer();
     await supabase.from('applications').delete().eq('id', id);
     onUnreadChange?.();
   }
@@ -162,93 +249,231 @@ export default function ApplicationsList({ onUnreadChange }: { onUnreadChange?: 
               {a.city && <span>{a.city}</span>}
             </div>
             <div class="g-chiprow">
-              {a.file_paths.length > 0 && (
-                <span class="g-chip">
-                  {a.file_paths.length} file
-                </span>
+              {!['new', 'read'].includes(a.status) && (
+                <span class="g-chip g-chip-ok">{STATUS_LABEL[a.status] ?? a.status}</span>
               )}
+              {a.file_paths.length > 0 && <span class="g-chip">{a.file_paths.length} file</span>}
               <span class="g-chip">{a.contact_name}</span>
             </div>
           </article>
         ))}
       </div>
 
-      {selected && (
-        <div class="g-overlay" onClick={() => setSelected(null)}>
+      {draft && (
+        <div class="g-overlay" onClick={closeDrawer}>
           <div class="g-drawer" onClick={(e) => e.stopPropagation()}>
-            <h3>{selected.artist_name}</h3>
-            <p class="g-sub">Ricevuta il {fmtReceived(selected.created_at)}</p>
+            <h3>Scheda candidatura</h3>
+            <p class="g-sub">Ricevuta il {fmtReceived(draft.created_at)} · puoi modificare e salvare i dati</p>
 
-            <dl class="g-dl">
-              <dt>Referente</dt>
-              <dd>{selected.contact_name}</dd>
-              <dt>Email</dt>
-              <dd>
-                <a href={`mailto:${selected.email}`}>{selected.email}</a>
-              </dd>
-              {selected.phone && (
-                <>
-                  <dt>Telefono</dt>
-                  <dd>
-                    <a href={`tel:${selected.phone}`}>{selected.phone}</a>
-                  </dd>
-                </>
-              )}
-              {selected.city && (
-                <>
-                  <dt>Città</dt>
-                  <dd>{selected.city}</dd>
-                </>
-              )}
-              <dt>Genere</dt>
-              <dd>{genreText(selected)}</dd>
-              {selected.lineup && (
-                <>
-                  <dt>Formazione</dt>
-                  <dd>{selected.lineup}</dd>
-                </>
-              )}
-              {selected.repertoire && (
-                <>
-                  <dt>Repertorio</dt>
-                  <dd>{selected.repertoire}</dd>
-                </>
-              )}
-              {selected.fee && (
-                <>
-                  <dt>Cachet</dt>
-                  <dd>{selected.fee}</dd>
-                </>
-              )}
-              {selected.availability && (
-                <>
-                  <dt>Disponibilità</dt>
-                  <dd>{selected.availability}</dd>
-                </>
-              )}
-            </dl>
+            {formError && <div class="g-msg g-msg-err">{formError}</div>}
+            {formOk && <div class="g-msg g-msg-ok">{formOk}</div>}
 
-            <p class="g-card-body">{selected.bio}</p>
-            {selected.experience && <p class="g-card-body">{selected.experience}</p>}
-            {selected.note && <p class="g-card-body">{selected.note}</p>}
-
-            {/* Link esterni */}
-            <div class="g-files">
-              {[selected.link1, selected.link2, selected.link3, selected.epk]
-                .filter((l): l is string => !!l)
-                .map((l) => (
-                  <div class="g-file" key={l}>
-                    <a href={l} target="_blank" rel="noopener noreferrer">
-                      {l}
-                    </a>
-                  </div>
-                ))}
+            <div class="g-field">
+              <label>Artista / Band</label>
+              <input
+                class="g-input"
+                type="text"
+                value={draft.artist_name}
+                onInput={(e) => patch({ artist_name: (e.target as HTMLInputElement).value })}
+              />
             </div>
 
-            {/* File caricati: download via signed URL temporaneo */}
-            {selected.file_paths.length > 0 && (
+            <div class="g-grid-2">
+              <div class="g-field">
+                <label>Referente</label>
+                <input
+                  class="g-input"
+                  type="text"
+                  value={draft.contact_name}
+                  onInput={(e) => patch({ contact_name: (e.target as HTMLInputElement).value })}
+                />
+              </div>
+              <div class="g-field">
+                <label>Email</label>
+                <input
+                  class="g-input"
+                  type="email"
+                  value={draft.email}
+                  onInput={(e) => patch({ email: (e.target as HTMLInputElement).value })}
+                />
+              </div>
+              <div class="g-field">
+                <label>Telefono</label>
+                <input
+                  class="g-input"
+                  type="text"
+                  value={draft.phone ?? ''}
+                  onInput={(e) => patch({ phone: (e.target as HTMLInputElement).value })}
+                />
+              </div>
+              <div class="g-field">
+                <label>Città</label>
+                <input
+                  class="g-input"
+                  type="text"
+                  value={draft.city ?? ''}
+                  onInput={(e) => patch({ city: (e.target as HTMLInputElement).value })}
+                />
+              </div>
+              <div class="g-field">
+                <label>Genere</label>
+                <select
+                  class="g-select"
+                  value={draft.genre}
+                  onChange={(e) => patch({ genre: (e.target as HTMLSelectElement).value })}
+                >
+                  {GENRES.map(([value, label]) => (
+                    <option key={value} value={value}>
+                      {label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              {draft.genre === 'other' && (
+                <div class="g-field">
+                  <label>Genere (Altro)</label>
+                  <input
+                    class="g-input"
+                    type="text"
+                    value={draft.genre_other ?? ''}
+                    onInput={(e) => patch({ genre_other: (e.target as HTMLInputElement).value })}
+                  />
+                </div>
+              )}
+              <div class="g-field">
+                <label>Formazione</label>
+                <input
+                  class="g-input"
+                  type="text"
+                  value={draft.lineup ?? ''}
+                  onInput={(e) => patch({ lineup: (e.target as HTMLInputElement).value })}
+                />
+              </div>
+              <div class="g-field">
+                <label>Cachet</label>
+                <input
+                  class="g-input"
+                  type="text"
+                  value={draft.fee ?? ''}
+                  onInput={(e) => patch({ fee: (e.target as HTMLInputElement).value })}
+                />
+              </div>
+              <div class="g-field">
+                <label>Disponibilità</label>
+                <input
+                  class="g-input"
+                  type="text"
+                  value={draft.availability ?? ''}
+                  onInput={(e) => patch({ availability: (e.target as HTMLInputElement).value })}
+                />
+              </div>
+              <div class="g-field">
+                <label>Stato</label>
+                <select
+                  class="g-select"
+                  value={draft.status}
+                  onChange={(e) => patch({ status: (e.target as HTMLSelectElement).value })}
+                >
+                  {STATUSES.map(([value, label]) => (
+                    <option key={value} value={value}>
+                      {label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            <div class="g-field">
+              <label>Bio</label>
+              <textarea
+                class="g-textarea"
+                value={draft.bio}
+                onInput={(e) => patch({ bio: (e.target as HTMLTextAreaElement).value })}
+              />
+            </div>
+            <div class="g-field">
+              <label>Repertorio</label>
+              <textarea
+                class="g-textarea"
+                value={draft.repertoire ?? ''}
+                onInput={(e) => patch({ repertoire: (e.target as HTMLTextAreaElement).value })}
+              />
+            </div>
+            <div class="g-field">
+              <label>Esperienza</label>
+              <textarea
+                class="g-textarea"
+                value={draft.experience ?? ''}
+                onInput={(e) => patch({ experience: (e.target as HTMLTextAreaElement).value })}
+              />
+            </div>
+            <div class="g-field">
+              <label>Note</label>
+              <textarea
+                class="g-textarea"
+                value={draft.note ?? ''}
+                onInput={(e) => patch({ note: (e.target as HTMLTextAreaElement).value })}
+              />
+            </div>
+
+            <div class="g-grid-2">
+              <div class="g-field">
+                <label>Link principale</label>
+                <input
+                  class="g-input"
+                  type="text"
+                  value={draft.link1}
+                  onInput={(e) => patch({ link1: (e.target as HTMLInputElement).value })}
+                />
+              </div>
+              <div class="g-field">
+                <label>Link 2</label>
+                <input
+                  class="g-input"
+                  type="text"
+                  value={draft.link2 ?? ''}
+                  onInput={(e) => patch({ link2: (e.target as HTMLInputElement).value })}
+                />
+              </div>
+              <div class="g-field">
+                <label>Link 3</label>
+                <input
+                  class="g-input"
+                  type="text"
+                  value={draft.link3 ?? ''}
+                  onInput={(e) => patch({ link3: (e.target as HTMLInputElement).value })}
+                />
+              </div>
+              <div class="g-field">
+                <label>EPK / Press kit</label>
+                <input
+                  class="g-input"
+                  type="text"
+                  value={draft.epk ?? ''}
+                  onInput={(e) => patch({ epk: (e.target as HTMLInputElement).value })}
+                />
+              </div>
+            </div>
+
+            {/* Anteprima link cliccabili */}
+            {[draft.link1, draft.link2, draft.link3, draft.epk].some((l) => !!l && l.trim()) && (
               <div class="g-files">
-                {selected.file_paths.map((p) => (
+                {[draft.link1, draft.link2, draft.link3, draft.epk]
+                  .filter((l): l is string => !!l && l.trim().length > 0)
+                  .map((l) => (
+                    <div class="g-file" key={l}>
+                      <a href={l} target="_blank" rel="noopener noreferrer">
+                        ↗ {l}
+                      </a>
+                    </div>
+                  ))}
+              </div>
+            )}
+
+            {/* File caricati: download via signed URL temporaneo */}
+            {draft.file_paths.length > 0 && (
+              <div class="g-files">
+                {draft.file_paths.map((p) => (
                   <div class="g-file" key={p}>
                     <button class="g-btn g-btn-ghost g-btn-sm" type="button" onClick={() => openFile(p)}>
                       ⬇ {fileName(p)}
@@ -259,13 +484,16 @@ export default function ApplicationsList({ onUnreadChange }: { onUnreadChange?: 
             )}
 
             <div class="g-drawer-actions">
-              <a class="g-btn" href={`mailto:${selected.email}`}>
+              <button class="g-btn" type="button" onClick={saveDraft} disabled={saving}>
+                {saving ? 'Salvataggio…' : 'Salva modifiche'}
+              </button>
+              <a class="g-btn g-btn-ghost" href={`mailto:${draft.email}`}>
                 Rispondi via email
               </a>
-              <button class="g-btn g-btn-danger" type="button" onClick={() => remove(selected.id)}>
+              <button class="g-btn g-btn-danger" type="button" onClick={remove} disabled={saving}>
                 Elimina
               </button>
-              <button class="g-btn g-btn-ghost" type="button" onClick={() => setSelected(null)}>
+              <button class="g-btn g-btn-ghost" type="button" onClick={closeDrawer} disabled={saving}>
                 Chiudi
               </button>
             </div>

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'preact/hooks';
 import { getSupabase } from '../../lib/supabaseClient';
-import { genreLabel } from '../../data/eventi';
+import { genreLabel, venueLabel, VENUE_DEFAULT } from '../../data/eventi';
 
 /** Riga evento come arriva da Supabase. */
 type EventRow = {
@@ -14,6 +14,7 @@ type EventRow = {
   date_label: string | null;
   date_label_en: string | null;
   poster_url: string;
+  venue: string | null;
   published: boolean;
   sort_index: number | null;
 };
@@ -30,10 +31,12 @@ type Draft = {
   date_label: string;
   date_label_en: string;
   poster_url: string;
+  venue: string;
   published: boolean;
 };
 
 const GENRES = Object.entries(genreLabel) as [string, { it: string; en: string }][];
+const VENUES = Object.entries(venueLabel) as [string, { it: string; en: string }][];
 
 const POSTER_MAX = 8 * 1024 * 1024; // 8MB
 const POSTER_TYPES = new Set(['image/jpeg', 'image/png', 'image/webp']);
@@ -75,6 +78,7 @@ function emptyDraft(): Draft {
     date_label: '',
     date_label_en: '',
     poster_url: '',
+    venue: VENUE_DEFAULT,
     published: true,
   };
 }
@@ -132,6 +136,7 @@ export default function EventsEditor() {
       date_label: row.date_label ?? '',
       date_label_en: row.date_label_en ?? '',
       poster_url: row.poster_url,
+      venue: row.venue || VENUE_DEFAULT,
       published: row.published,
     });
     setPosterFile(null);
@@ -207,6 +212,7 @@ export default function EventsEditor() {
         date_label: orNull(draft.date_label),
         date_label_en: orNull(draft.date_label_en),
         poster_url: posterUrl,
+        venue: draft.venue || VENUE_DEFAULT,
         published: draft.published,
       };
 
@@ -246,6 +252,39 @@ export default function EventsEditor() {
   }
 
   const today = todayISO();
+  const day = (ev: EventRow) => ev.date.slice(0, 10);
+  const upcoming = rows.filter((ev) => day(ev) >= today).sort((a, b) => (day(a) < day(b) ? -1 : 1));
+  const past = rows.filter((ev) => day(ev) < today).sort((a, b) => (day(a) < day(b) ? 1 : -1));
+
+  const card = (ev: EventRow) => (
+    <article
+      key={ev.id}
+      class="g-card ev-card"
+      onClick={() => openEdit(ev)}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          openEdit(ev);
+        }
+      }}
+    >
+      {ev.poster_url && <img class="ev-thumb" src={ev.poster_url} alt="" loading="lazy" />}
+      <div class="ev-card-body">
+        <h3 class="g-card-title">{ev.artist}</h3>
+        <div class="g-card-meta">
+          <span>{fmtDate(ev.date)}</span>
+          <span>{ev.time}</span>
+          <span>{genreLabel[ev.genre as keyof typeof genreLabel]?.it ?? ev.genre}</span>
+        </div>
+        <div class="g-chiprow">
+          <span class="g-chip">{venueLabel[(ev.venue as keyof typeof venueLabel) || VENUE_DEFAULT]?.it ?? venueLabel[VENUE_DEFAULT].it}</span>
+          {!ev.published && <span class="g-chip g-chip-warn">Bozza</span>}
+        </div>
+      </div>
+    </article>
+  );
 
   return (
     <section>
@@ -269,40 +308,20 @@ export default function EventsEditor() {
         <div class="g-empty">Nessun evento. Usa “Nuovo evento” per crearne uno.</div>
       )}
 
-      <div class="g-cards">
-        {rows.map((ev) => {
-          const isPast = ev.date.slice(0, 10) < today;
-          return (
-            <article
-              key={ev.id}
-              class="g-card ev-card"
-              onClick={() => openEdit(ev)}
-              role="button"
-              tabIndex={0}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                  e.preventDefault();
-                  openEdit(ev);
-                }
-              }}
-            >
-              {ev.poster_url && <img class="ev-thumb" src={ev.poster_url} alt="" loading="lazy" />}
-              <div class="ev-card-body">
-                <h3 class="g-card-title">{ev.artist}</h3>
-                <div class="g-card-meta">
-                  <span>{fmtDate(ev.date)}</span>
-                  <span>{ev.time}</span>
-                  <span>{genreLabel[ev.genre as keyof typeof genreLabel]?.it ?? ev.genre}</span>
-                </div>
-                <div class="g-chiprow">
-                  {!ev.published && <span class="g-chip">Bozza</span>}
-                  {isPast && <span class="g-chip">Passato</span>}
-                </div>
-              </div>
-            </article>
-          );
-        })}
-      </div>
+      {upcoming.length > 0 && (
+        <>
+          <h3 class="ev-group-title">In programma</h3>
+          <div class="g-cards">{upcoming.map(card)}</div>
+        </>
+      )}
+
+      {past.length > 0 && (
+        <>
+          <hr class="ev-divider" />
+          <h3 class="ev-group-title ev-group-past">Eventi passati</h3>
+          <div class="g-cards">{past.map(card)}</div>
+        </>
+      )}
 
       {draft && (
         <div class="g-overlay" onClick={closeDrawer}>
@@ -355,6 +374,21 @@ export default function EventsEditor() {
                   ))}
                 </select>
               </div>
+            </div>
+
+            <div class="g-field">
+              <label>Luogo</label>
+              <select
+                class="g-select"
+                value={draft.venue}
+                onChange={(e) => patch({ venue: (e.target as HTMLSelectElement).value })}
+              >
+                {VENUES.map(([value, label]) => (
+                  <option key={value} value={value}>
+                    {label.it}
+                  </option>
+                ))}
+              </select>
             </div>
 
             <div class="g-field">

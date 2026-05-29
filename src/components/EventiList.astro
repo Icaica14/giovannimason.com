@@ -1,6 +1,6 @@
 ---
 import { type Lang, t, routeMap } from '../i18n/ui';
-import { genreLabel, splitEventi, tx, eventDateLabel, eventBlurb } from '../data/eventi';
+import { genreLabel, splitEventi, tx, eventDateLabel, eventBlurb, eventVenue, VENUE_DEFAULT } from '../data/eventi';
 import { getEvents } from '../data/eventiRemote';
 
 interface Props {
@@ -77,6 +77,12 @@ const { upcoming, past } = splitEventi(entries, todayISO);
                     <span>{eventDateLabel(ev.data, lang)}</span>
                     <span class="dot" aria-hidden="true">·</span>
                     <span>{ev.data.time}</span>
+                    {ev.data.venue && ev.data.venue !== VENUE_DEFAULT && (
+                      <>
+                        <span class="dot" aria-hidden="true">·</span>
+                        <span>{eventVenue(ev.data, lang)}</span>
+                      </>
+                    )}
                   </p>
                   {eventBlurb(ev.data, lang) && <p class="poster-blurb">{eventBlurb(ev.data, lang)}</p>}
                 </div>
@@ -115,6 +121,12 @@ const { upcoming, past } = splitEventi(entries, todayISO);
                   <span>{eventDateLabel(ev.data, lang)}</span>
                   <span class="dot" aria-hidden="true">·</span>
                   <span>{ev.data.time}</span>
+                  {ev.data.venue && ev.data.venue !== VENUE_DEFAULT && (
+                    <>
+                      <span class="dot" aria-hidden="true">·</span>
+                      <span>{eventVenue(ev.data, lang)}</span>
+                    </>
+                  )}
                 </p>
               </div>
             </li>

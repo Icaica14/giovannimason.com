@@ -23,6 +23,7 @@ type EventRow = {
   date_label: string | null;
   date_label_en: string | null;
   poster_url: string;
+  venue: string | null;
   published: boolean;
   sort_index: number | null;
 };
@@ -38,6 +39,7 @@ function rowToEntry(row: EventRow): EventEntry {
     dateLabel: row.date_label ?? undefined,
     dateLabelEn: row.date_label_en ?? undefined,
     poster: row.poster_url,
+    venue: row.venue ?? undefined,
     published: row.published,
   };
   return { id: row.id, data };

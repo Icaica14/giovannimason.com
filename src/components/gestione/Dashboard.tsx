@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'preact/hooks';
 import type { Session } from '@supabase/supabase-js';
 import { getSupabase } from '../../lib/supabaseClient';
+import logoSvg from '../../assets/img/logo/logo.svg?raw';
 import LoginPanel from './LoginPanel';
 import BookingsList from './BookingsList';
 import ApplicationsList from './ApplicationsList';
@@ -15,6 +16,10 @@ const TABS: { id: TabId; label: string }[] = [
   { id: 'menu', label: 'Menu' },
   { id: 'eventi', label: 'Eventi' },
 ];
+
+// Aree future (solo etichette, non cliccabili): idee da valutare insieme al
+// proprietario. Non fanno ancora nulla — mostrano dove potrebbe crescere l'app.
+const SOON: string[] = ['Cassa', 'Fatture', 'Scadenze', 'Dipendenti'];
 
 /**
  * Radice della dashboard /gestione.
@@ -82,8 +87,11 @@ export default function Dashboard() {
     <div class="g-wrap">
       <header class="g-header">
         <div class="g-brand">
-          Biblio
-          <small>Gestione</small>
+          <span class="g-logo" aria-hidden="true" dangerouslySetInnerHTML={{ __html: logoSvg }} />
+          <span>
+            Biblio
+            <small>Gestione</small>
+          </span>
         </div>
         <div class="g-userbox">
           <span>{session.user.email}</span>
@@ -111,6 +119,16 @@ export default function Dashboard() {
             </button>
           );
         })}
+
+        {/* Aree future: solo etichette, non interattive. */}
+        <span class="g-tabs-soon" aria-hidden="true">
+          {SOON.map((label) => (
+            <span key={label} class="g-tab-soon">
+              {label}
+              <em class="g-soon-badge">presto</em>
+            </span>
+          ))}
+        </span>
       </nav>
 
       <main class="g-main">

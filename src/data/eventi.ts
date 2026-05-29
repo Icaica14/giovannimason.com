@@ -26,6 +26,19 @@ export function tx(node: Bilingual, lang: Lang): string {
   return node[lang] ?? node.it;
 }
 
+// Luoghi dei concerti. Sono nomi propri: identici in IT/EN.
+export type EventVenue = 'biblio-bistrot' | 'giardinetti';
+export const VENUE_DEFAULT: EventVenue = 'biblio-bistrot';
+export const venueLabel: Record<EventVenue, Bilingual> = {
+  'biblio-bistrot': { it: 'Biblio Bistrot',              en: 'Biblio Bistrot' },
+  'giardinetti':    { it: 'Giardinetti di Sant’Andrea',  en: 'Giardinetti di Sant’Andrea' },
+};
+// Etichetta luogo localizzata, con fallback robusto al Bistrot.
+export function eventVenue(e: EventData, lang: Lang): string {
+  const key = (e.venue as EventVenue) || VENUE_DEFAULT;
+  return tx(venueLabel[key] ?? venueLabel[VENUE_DEFAULT], lang);
+}
+
 export type EventData = CollectionEntry<'eventi'>['data'];
 
 // Forma minima usata dalle funzioni di presentazione/split: id + data.
