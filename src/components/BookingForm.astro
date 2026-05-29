@@ -8,9 +8,12 @@ interface Props {
 }
 const { lang } = Astro.props;
 
-// Endpoint Formspree placeholder, sostituire con quello reale prima del lancio.
-// (https://formspree.io/forms, copia l'endpoint dal pannello e incolla qui)
-const FORMSPREE_ENDPOINT = 'https://formspree.io/f/PLACEHOLDER';
+// Invio tramite Edge Function Supabase `submit-booking` (verifica Turnstile +
+// validazione + insert con service role + email al proprietario). L'endpoint è
+// costruito dall'URL pubblico del progetto; il client non tocca mai la tabella.
+const SUPABASE_URL = import.meta.env.PUBLIC_SUPABASE_URL as string | undefined;
+const TURNSTILE_SITE_KEY = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY as string | undefined;
+const submitEndpoint = SUPABASE_URL ? `${SUPABASE_URL}/functions/v1/submit-booking` : '';
 
 // Numero e contatti del locale (dalla locandina ufficiale).
 const WA_NUMBER  = '+390422270575';
@@ -126,13 +129,13 @@ const liveDataset = liveNights.map((e) => ({
           <form
             class="booking-form"
             id="bookingForm"
-            action={FORMSPREE_ENDPOINT}
+            action={submitEndpoint}
+            data-endpoint={submitEndpoint}
             method="POST"
             novalidate
           >
             {/* Honeypot anti-spam, campo nascosto, deve restare vuoto */}
             <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" style="display:none" />
-            <input type="hidden" name="_subject" value={`${t(lang, 'prenota.email.subject')} (${lang.toUpperCase()})`} />
             <input type="hidden" name="lang" value={lang} />
             <input type="hidden" name="event" id="eventField" value="" />
 
@@ -236,6 +239,16 @@ const liveDataset = liveNights.map((e) => ({
 
             <p class="form-privacy">{t(lang, 'prenota.form.privacy')}</p>
 
+            {/* Widget anti-spam Cloudflare Turnstile (reso solo se la site key è
+                configurata; il token viene inviato all'Edge Function). */}
+            {TURNSTILE_SITE_KEY && (
+              <div
+                class="cf-turnstile booking-turnstile"
+                data-sitekey={TURNSTILE_SITE_KEY}
+                data-theme="light"
+              ></div>
+            )}
+
             <div class="form-actions">
               <button type="submit" class="btn btn-primary" id="submitBtn">
                 {t(lang, 'prenota.form.submit')}
@@ -297,6 +310,11 @@ const liveDataset = liveNights.map((e) => ({
     </div>
   </section>
 </section>
+
+{/* Script Turnstile: caricato solo se la site key è configurata. */}
+{TURNSTILE_SITE_KEY && (
+  <script is:inline src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+)}
 
 <script is:inline type="application/json" id="liveDataset" set:html={JSON.stringify(liveDataset)}></script>
 
@@ -378,7 +396,9 @@ const liveDataset = liveNights.map((e) => ({
     });
   });
 
-  // Submit AJAX a Formspree, niente redirect, mostra inline success/error.
+  // Submit AJAX all'Edge Function Supabase (JSON), niente redirect, mostra
+  // inline success/error. Il token Turnstile (se il widget è presente) viene
+  // letto dall'input nascosto che il widget inietta nel form.
   const form = document.getElementById('bookingForm') as HTMLFormElement | null;
   const success = document.getElementById('formSuccess') as HTMLElement | null;
   const error = document.getElementById('formError') as HTMLElement | null;
@@ -387,27 +407,51 @@ const liveDataset = liveNights.map((e) => ({
     form.addEventListener('submit', async (ev) => {
       ev.preventDefault();
       error.hidden = true;
+
+      const endpoint = form.dataset.endpoint;
+      if (!endpoint) {
+        // Supabase non ancora configurato: niente endpoint a cui inviare.
+        error.hidden = false;
+        return;
+      }
+
       btn.disabled = true;
-      const data = new FormData(form);
+      const fd = new FormData(form);
+      const tokenEl = form.querySelector<HTMLTextAreaElement>('[name="cf-turnstile-response"]');
+      const payload = {
+        name: String(fd.get('name') ?? ''),
+        email: String(fd.get('email') ?? ''),
+        phone: String(fd.get('phone') ?? ''),
+        date: String(fd.get('date') ?? ''),
+        time: String(fd.get('time') ?? ''),
+        guests: String(fd.get('guests') ?? ''),
+        note: String(fd.get('note') ?? ''),
+        event: String(fd.get('event') ?? ''),
+        lang: String(fd.get('lang') ?? 'it'),
+        _gotcha: String(fd.get('_gotcha') ?? ''),
+        turnstileToken: tokenEl?.value ?? '',
+      };
       try {
-        const res = await fetch(form.action, {
+        const res = await fetch(endpoint, {
           method: 'POST',
-          body: data,
-          headers: { Accept: 'application/json' },
+          headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+          body: JSON.stringify(payload),
         });
         if (res.ok) {
-          form.querySelectorAll<HTMLElement>('.field, .form-privacy, .form-actions').forEach(
-            (el) => (el.style.display = 'none'),
-          );
+          form
+            .querySelectorAll<HTMLElement>('.field, .form-privacy, .form-actions, .booking-turnstile')
+            .forEach((el) => (el.style.display = 'none'));
           success.hidden = false;
           success.scrollIntoView({ behavior: 'smooth', block: 'center' });
         } else {
           error.hidden = false;
           btn.disabled = false;
+          (window as unknown as { turnstile?: { reset?: () => void } }).turnstile?.reset?.();
         }
       } catch {
         error.hidden = false;
         btn.disabled = false;
+        (window as unknown as { turnstile?: { reset?: () => void } }).turnstile?.reset?.();
       }
     });
   }

@@ -1,0 +1,13 @@
+# Configurazione locale del progetto Supabase (CLI).
+# `project_id` è solo un identificativo locale; `supabase link` lo allinea al
+# progetto reale del proprietario.
+project_id = "biblio-treviso"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Edge Functions
+# I form pubblici chiamano queste function senza JWT utente: la sicurezza è data
+# da Turnstile + honeypot + CORS (allowlist di origin), non dal gateway JWT.
+# Per questo `verify_jwt = false` su quelle pubbliche.
+# ─────────────────────────────────────────────────────────────────────────────
+[functions.submit-booking]
+verify_jwt = false
