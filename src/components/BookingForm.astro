@@ -1,7 +1,7 @@
 ---
-import { getCollection } from 'astro:content';
 import { type Lang, t } from '../i18n/ui';
 import { genreLabel, tx, autoWeekday, autoShortDate, upcomingLive } from '../data/eventi';
+import { getEvents } from '../data/eventiRemote';
 
 interface Props {
   lang: Lang;
@@ -37,7 +37,7 @@ for (let h = 18; h <= 23; h++) {
 // Prossime serate live: derivate dagli eventi pubblicati (data ≥ oggi). Si
 // aggiornano da sole quando il manager pubblica un evento dall'area riservata.
 // Selezionando un chip, la data pre-compila il form e compare la preview.
-const entries = await getCollection('eventi');
+const entries = await getEvents();
 const liveNights = upcomingLive(entries, todayISO, 6);
 
 // Dataset compatto da serializzare nel DOM per il preview JS-side.

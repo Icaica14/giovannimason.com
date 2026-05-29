@@ -1,7 +1,7 @@
 ---
-import { getCollection } from 'astro:content';
 import { type Lang, t, routeMap } from '../i18n/ui';
 import { genreLabel, splitEventi, tx, eventDateLabel, eventBlurb } from '../data/eventi';
+import { getEvents } from '../data/eventiRemote';
 
 interface Props {
   lang: Lang;
@@ -10,7 +10,8 @@ const { lang } = Astro.props;
 
 // Oggi è passato lato server: gli eventi futuri/passati vengono congelati al build.
 // (Il sito è statico, perfettamente coerente con un calendario aggiornato a ogni deploy.)
-const entries = await getCollection('eventi');
+// Fonte: Supabase a build-time (fallback alla content collection del repo).
+const entries = await getEvents();
 const todayISO = new Date().toISOString().slice(0, 10);
 const { upcoming, past } = splitEventi(entries, todayISO);
 ---

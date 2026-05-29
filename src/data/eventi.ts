@@ -28,6 +28,12 @@ export function tx(node: Bilingual, lang: Lang): string {
 
 export type EventData = CollectionEntry<'eventi'>['data'];
 
+// Forma minima usata dalle funzioni di presentazione/split: id + data.
+// Sia gli entry della content collection (CollectionEntry<'eventi'>) sia gli
+// oggetti costruiti dall'adapter remoto (eventiRemote.getEvents) sono assegnabili
+// a questo tipo: così gli helper restano puri e funzionano con entrambe le fonti.
+export type EventEntry = { id: string; data: EventData };
+
 // Etichetta data localizzata e derivata dalla data ISO (es. "Giovedì 23 aprile").
 // Il manager non la digita: basta scegliere la data.
 const dateFmt: Record<Lang, Intl.DateTimeFormat> = {
@@ -72,8 +78,8 @@ export function eventBlurb(e: EventData, lang: Lang): string | undefined {
 
 // Suddivide gli eventi pubblicati in "in arrivo" e "passati" rispetto a today (ISO),
 // ordinati per data discendente. today è passato come stringa per evitare TZ surprise.
-export function splitEventi(entries: CollectionEntry<'eventi'>[], today: string) {
-  const day = (e: CollectionEntry<'eventi'>) => e.data.date.slice(0, 10);
+export function splitEventi(entries: EventEntry[], today: string) {
+  const day = (e: EventEntry) => e.data.date.slice(0, 10);
   const published = entries
     .filter((e) => e.data.published !== false)
     .sort((a, b) => (day(a) < day(b) ? 1 : -1));
@@ -85,7 +91,7 @@ export function splitEventi(entries: CollectionEntry<'eventi'>[], today: string)
 // Prossime serate live (pubblicate, data ≥ oggi), in ordine crescente. Usata dai
 // chip della pagina prenota, così si aggiornano da sole quando il manager pubblica.
 export function upcomingLive(
-  entries: CollectionEntry<'eventi'>[],
+  entries: EventEntry[],
   today: string,
   limit = 6,
 ) {
