@@ -16,6 +16,7 @@ const eventi = defineCollection({
     dateLabel: z.string().optional(),   // override IT (solo per casi tipo "Gio 23 + Ven 24")
     dateLabelEn: z.string().optional(), // override EN
     poster: z.string(),                 // path pubblico, es. /uploads/locandine-3.webp
+    venue: z.string().optional(),       // luogo: 'biblio-bistrot' | 'giardinetti' (default bistrot)
     published: z.boolean().default(true),
   }),
 });

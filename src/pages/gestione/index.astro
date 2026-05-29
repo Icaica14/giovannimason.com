@@ -1,0 +1,52 @@
+---
+// Dashboard gestore — area privata del proprietario.
+// NON usa Base.astro: layout minimale dedicato, fuori da nav/SEO.
+// Privacy: noindex/nofollow, esclusa da sitemap (astro.config.mjs) e
+// robots.txt (Disallow: /gestione/). Sicurezza reale = RLS Supabase.
+import Dashboard from '../../components/gestione/Dashboard';
+import '../../styles/gestione.css';
+
+const supabaseConfigured =
+  Boolean(import.meta.env.PUBLIC_SUPABASE_URL) &&
+  Boolean(import.meta.env.PUBLIC_SUPABASE_ANON_KEY);
+---
+
+<!doctype html>
+<html lang="it">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex,nofollow" />
+    <title>Gestione · Biblio</title>
+    <link rel="icon" href="/favicon.svg" />
+    <link
+      rel="preconnect"
+      href="https://fonts.googleapis.com"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&display=swap"
+    />
+  </head>
+  <body>
+    {
+      supabaseConfigured ? (
+        <Dashboard client:only="preact" />
+      ) : (
+        <div class="g-center">
+          <div class="g-login">
+            <div class="g-brand">
+              Biblio
+              <small>Gestione</small>
+            </div>
+            <div class="g-msg g-msg-err">
+              Supabase non è configurato. Imposta
+              <code>PUBLIC_SUPABASE_URL</code> e
+              <code>PUBLIC_SUPABASE_ANON_KEY</code> per attivare la dashboard.
+            </div>
+          </div>
+        </div>
+      )
+    }
+  </body>
+</html>

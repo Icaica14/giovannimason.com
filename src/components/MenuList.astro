@@ -1,11 +1,15 @@
 ---
 import { type Lang, t, routeMap } from '../i18n/ui';
-import { menu, tx } from '../data/menu';
+import { tx } from '../data/menu';
+import { getMenu } from '../data/menuRemote';
 
 interface Props {
   lang: Lang;
 }
 const { lang } = Astro.props;
+
+// Fonte dati: Supabase a build-time (fallback al menu statico del repo).
+const menu = await getMenu();
 ---
 
 <section class="menu-page">

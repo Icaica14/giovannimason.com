@@ -1,6 +1,7 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
+import preact from '@astrojs/preact';
 
 // Dominio di pubblicazione. Servito da GitHub Pages tramite il repo
 // Icaica14/giovannimason.com con CNAME masoninnovation.it (vedi public/CNAME).
@@ -16,7 +17,10 @@ export default defineConfig({
     },
   },
   integrations: [
+    preact(),
     sitemap({
+      // La dashboard gestore /gestione è privata: fuori dalla sitemap e dai crawler.
+      filter: (page) => !page.includes('/gestione'),
       // Mappa lingue per hreflang nel sitemap.
       i18n: {
         defaultLocale: 'it',

@@ -1353,6 +1353,29 @@ section { padding: 5rem 0; }
   font-size: .92rem;
 }
 
+/* --- Upload file candidature ---------------------------- */
+.field-hint {
+  color: var(--ink-mute);
+  font-size: .78rem;
+  line-height: 1.45;
+  margin-top: .35rem;
+}
+.file-list {
+  list-style: none;
+  margin: .5rem 0 0;
+  padding: 0;
+  display: grid;
+  gap: .3rem;
+}
+.file-list li {
+  font-size: .82rem;
+  color: var(--ink-soft);
+  background: var(--paper-2);
+  border-radius: 6px;
+  padding: .3rem .6rem;
+}
+.cf-turnstile { margin-top: 1.25rem; }
+
 /* --- Side card: alt actions ----------------------------- */
 .alt-card {
   background: var(--paper);
