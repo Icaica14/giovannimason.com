@@ -1,0 +1,45 @@
+# Ping anti-pausa per il progetto Supabase (free tier).
+# Il free tier mette in pausa il database dopo ~7 giorni di inattività: una build
+# del sito (o un invio dai form) lo terrebbe sveglio, ma nei periodi tranquilli
+# può non succedere nulla per più di una settimana. Questo cron fa una query
+# leggerissima ogni ~3 giorni per mantenere il progetto attivo.
+#
+# Usa le Actions *Variables* pubbliche (non Secrets): la anon key è pubblica per
+# design e la query colpisce solo tabelle leggibili da anon (events). Se le
+# variabili non sono configurate, il workflow esce senza errori.
+name: Supabase keep-alive
+
+on:
+  schedule:
+    # Ogni 3 giorni circa, alle 06:17 UTC. Gap massimo < 7 giorni.
+    - cron: '17 6 */3 * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Light read to keep the project warm
+        env:
+          SUPABASE_URL: ${{ vars.PUBLIC_SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ vars.PUBLIC_SUPABASE_ANON_KEY }}
+        run: |
+          if [ -z "$SUPABASE_URL" ] || [ -z "$SUPABASE_ANON_KEY" ]; then
+            echo "::notice::Variabili Supabase non configurate — ping saltato."
+            exit 0
+          fi
+          code=$(curl -sS -o /dev/null -w '%{http_code}' \
+            "$SUPABASE_URL/rest/v1/events?select=id&limit=1" \
+            -H "apikey: $SUPABASE_ANON_KEY" \
+            -H "Authorization: Bearer $SUPABASE_ANON_KEY" || echo "000")
+          echo "Supabase REST ha risposto: HTTP $code"
+          if [ "$code" = "000" ]; then
+            echo "::warning::Nessuna risposta da Supabase (rete?). Il ping ha comunque generato attività."
+          elif [ "$code" -ge 200 ] && [ "$code" -lt 300 ]; then
+            echo "Progetto attivo."
+          else
+            echo "::warning::Stato inatteso ($code). Verifica URL/chiave o lo stato del progetto."
+          fi
