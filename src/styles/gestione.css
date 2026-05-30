@@ -277,7 +277,8 @@ html, body {
 .g-select-sm { width: auto; padding: .35rem .5rem; font-size: .9rem; }
 .g-perf-edit { margin: .65rem 0 0; }
 .g-perf-edit .g-textarea { min-height: 3rem; }
-.g-perf-msg { font-size: .9rem; color: var(--ok); margin-bottom: .6rem; font-weight: 600; }
+.g-perf-actions { display: flex; align-items: center; justify-content: flex-end; gap: .6rem; margin-top: .55rem; }
+.g-perf-saved { font-size: .9rem; color: var(--ok); font-weight: 600; }
 
 /* ── Detail drawer ── */
 .g-overlay { position: fixed; inset: 0; background: rgba(43,29,18,.35); display: grid; place-items: end center; z-index: 50; }
