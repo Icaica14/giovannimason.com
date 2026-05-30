@@ -174,7 +174,10 @@ export default function ArtistsRegistry() {
   const [formError, setFormError] = useState<string | null>(null);
   const [formOk, setFormOk] = useState<string | null>(null);
 
-  // recensioni per esibizione (event_id → bozza locale di voto/commento)
+  // recensioni per esibizione: bozze locali (event_id → voto/commento in editing)
+  const [perfEdits, setPerfEdits] = useState<Record<string, { rating: number | null; comment: string | null }>>({});
+  const [perfSavingId, setPerfSavingId] = useState<string | null>(null);
+  const [perfSavedId, setPerfSavedId] = useState<string | null>(null);
   const [perfMsg, setPerfMsg] = useState<string | null>(null);
 
   async function load() {
@@ -354,30 +357,58 @@ export default function ArtistsRegistry() {
     setFormOk('Scheda salvata.');
   }
 
+  /** Valore in editing di un'esibizione: bozza locale se presente, altrimenti il salvato. */
+  function perfValue(p: Performance): { rating: number | null; comment: string | null } {
+    return perfEdits[p.id] ?? { rating: p.rating, comment: p.comment };
+  }
+  /** Aggiorna la bozza locale (voto o commento) senza scrivere sul DB. */
+  function setPerfField(p: Performance, patch: { rating?: number | null; comment?: string | null }) {
+    setPerfEdits((prev) => {
+      const base = prev[p.id] ?? { rating: p.rating, comment: p.comment };
+      return { ...prev, [p.id]: { ...base, ...patch } };
+    });
+    if (perfSavedId === p.id) setPerfSavedId(null);
+    setPerfMsg(null);
+  }
+  /** True se la bozza differisce dal valore salvato (abilita il bottone Salva). */
+  function perfDirty(p: Performance): boolean {
+    const e = perfEdits[p.id];
+    if (!e) return false;
+    return e.rating !== p.rating || (e.comment ?? '') !== (p.comment ?? '');
+  }
+
   /**
    * Salva voto/commento di una singola esibizione nella tabella privata
-   * event_reviews (upsert sull'event_id). Aggiorna subito lo stato locale così
-   * la media in testata e nell'elenco si ricalcola senza ricaricare.
+   * event_reviews (upsert sull'event_id), su clic del bottone Salva. Aggiorna lo
+   * stato locale così la media in testata e nell'elenco si ricalcola senza ricaricare.
    */
-  async function savePerf(eventId: string, p: { rating?: number | null; comment?: string | null }) {
+  async function savePerf(p: Performance) {
     const supabase = getSupabase();
     if (!supabase) return;
-    const current = events.find((ev) => ev.id === eventId);
-    const next = {
-      event_id: eventId,
-      rating: p.rating !== undefined ? p.rating : current?.rating ?? null,
-      comment: p.comment !== undefined ? p.comment : current?.comment ?? null,
+    const val = perfValue(p);
+    const row = {
+      event_id: p.id,
+      rating: val.rating,
+      comment: (val.comment ?? '').trim() || null,
     };
-    setEvents((prev) =>
-      prev.map((ev) => (ev.id === eventId ? { ...ev, rating: next.rating, comment: next.comment } : ev)),
-    );
+    setPerfSavingId(p.id);
+    setPerfSavedId(null);
     setPerfMsg(null);
-    const { error } = await supabase.from('event_reviews').upsert(next, { onConflict: 'event_id' });
+    const { error } = await supabase.from('event_reviews').upsert(row, { onConflict: 'event_id' });
+    setPerfSavingId(null);
     if (error) {
       setPerfMsg('Salvataggio della recensione non riuscito.');
       return;
     }
-    setPerfMsg('Recensione salvata.');
+    setEvents((prev) =>
+      prev.map((ev) => (ev.id === p.id ? { ...ev, rating: row.rating, comment: row.comment } : ev)),
+    );
+    setPerfEdits((prev) => {
+      const next = { ...prev };
+      delete next[p.id];
+      return next;
+    });
+    setPerfSavedId(p.id);
   }
 
   /** Crea una scheda anagrafica per un artista presente solo come esibizione. */
@@ -474,50 +505,63 @@ export default function ArtistsRegistry() {
         {selected.performances.length > 0 && (
           <div class="g-profile-block">
             <h3 class="g-h3">Esibizioni al Biblio</h3>
-            {perfMsg && <div class="g-perf-msg">{perfMsg}</div>}
+            {perfMsg && <div class="g-msg g-msg-err">{perfMsg}</div>}
             <ul class="g-timeline">
-              {selected.performances.map((p) => (
-                <li key={p.id} class="g-perf">
-                  <div class="g-perf-head">
-                    <div>
-                      <strong>{fmtDay(p.date)}</strong>
-                      <span> · {venueLabel(p.venue)}</span>
-                      <span class="g-chip g-chip-sm">{EVENT_GENRE_LABEL[p.genre] ?? p.genre}</span>
+              {selected.performances.map((p) => {
+                const v = perfValue(p);
+                const dirty = perfDirty(p);
+                return (
+                  <li key={p.id} class="g-perf">
+                    <div class="g-perf-head">
+                      <div>
+                        <strong>{fmtDay(p.date)}</strong>
+                        <span> · {venueLabel(p.venue)}</span>
+                        <span class="g-chip g-chip-sm">{EVENT_GENRE_LABEL[p.genre] ?? p.genre}</span>
+                      </div>
+                      <label class="g-perf-rate">
+                        <span>Valutazione</span>
+                        <select
+                          class="g-select g-select-sm"
+                          value={v.rating ?? ''}
+                          onChange={(e) => {
+                            const raw = (e.target as HTMLSelectElement).value;
+                            setPerfField(p, { rating: raw === '' ? null : Number(raw) });
+                          }}
+                        >
+                          <option value="">— voto —</option>
+                          <option value="1">★ 1</option>
+                          <option value="2">★★ 2</option>
+                          <option value="3">★★★ 3</option>
+                          <option value="4">★★★★ 4</option>
+                          <option value="5">★★★★★ 5</option>
+                        </select>
+                      </label>
                     </div>
-                    <label class="g-perf-rate">
-                      <span>Valutazione</span>
-                      <select
-                        class="g-select g-select-sm"
-                        value={p.rating ?? ''}
-                        onChange={(e) => {
-                          const raw = (e.target as HTMLSelectElement).value;
-                          savePerf(p.id, { rating: raw === '' ? null : Number(raw) });
-                        }}
+                    <div class="g-field g-perf-edit">
+                      <label>Commento sull’esibizione</label>
+                      <textarea
+                        class="g-textarea"
+                        placeholder="Com’è andata la serata? Note per la prossima volta…"
+                        value={v.comment ?? ''}
+                        onInput={(e) => setPerfField(p, { comment: (e.target as HTMLTextAreaElement).value })}
+                      />
+                    </div>
+                    <div class="g-perf-actions">
+                      {perfSavedId === p.id && !dirty && (
+                        <span class="g-perf-saved">✓ Salvato</span>
+                      )}
+                      <button
+                        class="g-btn g-btn-sm"
+                        type="button"
+                        onClick={() => savePerf(p)}
+                        disabled={!dirty || perfSavingId === p.id}
                       >
-                        <option value="">— voto —</option>
-                        <option value="1">★ 1</option>
-                        <option value="2">★★ 2</option>
-                        <option value="3">★★★ 3</option>
-                        <option value="4">★★★★ 4</option>
-                        <option value="5">★★★★★ 5</option>
-                      </select>
-                    </label>
-                  </div>
-                  <div class="g-field g-perf-edit">
-                    <label>Commento sull’esibizione</label>
-                    <textarea
-                      class="g-textarea"
-                      placeholder="Com’è andata la serata? Note per la prossima volta…"
-                      value={p.comment ?? ''}
-                      onInput={(e) => {
-                        const v = (e.target as HTMLTextAreaElement).value;
-                        setEvents((prev) => prev.map((ev) => (ev.id === p.id ? { ...ev, comment: v } : ev)));
-                      }}
-                      onBlur={(e) => savePerf(p.id, { comment: (e.target as HTMLTextAreaElement).value })}
-                    />
-                  </div>
-                </li>
-              ))}
+                        {perfSavingId === p.id ? 'Salvataggio…' : 'Salva'}
+                      </button>
+                    </div>
+                  </li>
+                );
+              })}
             </ul>
           </div>
         )}
