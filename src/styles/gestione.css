@@ -255,6 +255,30 @@ html, body {
 .g-timeline li strong { color: var(--ink); }
 .g-chip-sm { font-size: .74rem; padding: .1rem .5rem; margin-left: auto; }
 
+/* Chip valutazione (stelline): tono ottone, coerente con le altre chip. */
+.g-chip-star {
+  background: #f7eede; border-color: #e6cf9b; color: var(--brass-deep);
+  font-weight: 600; white-space: nowrap;
+}
+.g-list-side .g-chip-star { margin-left: 0; }
+
+/* Recensione per esibizione: voto a tendina + commento. */
+.g-perf { display: block; }
+.g-perf-head { display: flex; align-items: center; gap: .5rem; flex-wrap: wrap; }
+.g-perf-head > div:first-child {
+  display: flex; align-items: center; gap: .5rem; flex-wrap: wrap;
+  flex: 1 1 auto; min-width: 0;
+}
+.g-perf-rate {
+  display: flex; align-items: center; gap: .4rem; margin-left: auto;
+  font-size: .85rem; color: var(--ink-mute); font-weight: 600;
+}
+.g-perf-rate span { white-space: nowrap; }
+.g-select-sm { width: auto; padding: .35rem .5rem; font-size: .9rem; }
+.g-perf-edit { margin: .65rem 0 0; }
+.g-perf-edit .g-textarea { min-height: 3rem; }
+.g-perf-msg { font-size: .9rem; color: var(--ok); margin-bottom: .6rem; font-weight: 600; }
+
 /* ── Detail drawer ── */
 .g-overlay { position: fixed; inset: 0; background: rgba(43,29,18,.35); display: grid; place-items: end center; z-index: 50; }
 .g-drawer { background: var(--paper); width: 100%; max-width: 40rem; max-height: 90vh; overflow-y: auto; border-radius: var(--radius-lg) var(--radius-lg) 0 0; padding: 1.5rem; }

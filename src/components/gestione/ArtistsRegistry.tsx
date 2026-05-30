@@ -46,6 +46,9 @@ type Performance = {
   genre: string;
   venue: string;
   poster_url: string | null;
+  /** Valutazione 1-5 (note PRIVATE: da tabella event_reviews, mai esposte ad anon). */
+  rating: number | null;
+  comment: string | null;
 };
 
 /** Voce del registro: un artista con la sua scheda (se esiste) e le esibizioni. */
@@ -140,6 +143,19 @@ const waLink = (a: Application): string | null => {
   return `https://wa.me/${num}?text=${encodeURIComponent(msg)}`;
 };
 
+/** Media delle valutazioni (1-5) delle esibizioni, o null se nessuna recensita. */
+const avgRating = (perfs: Performance[]): number | null => {
+  const vals = perfs.map((p) => p.rating).filter((r): r is number => typeof r === 'number' && r >= 1 && r <= 5);
+  if (vals.length === 0) return null;
+  return vals.reduce((s, v) => s + v, 0) / vals.length;
+};
+
+/** Stelline piene/vuote per un valore 1-5 (arrotondato per la visualizzazione). */
+const stars = (value: number): string => {
+  const full = Math.round(value);
+  return '★★★★★'.slice(0, full) + '☆☆☆☆☆'.slice(0, 5 - full);
+};
+
 export default function ArtistsRegistry() {
   const [apps, setApps] = useState<Application[]>([]);
   const [events, setEvents] = useState<Performance[]>([]);
@@ -158,6 +174,9 @@ export default function ArtistsRegistry() {
   const [formError, setFormError] = useState<string | null>(null);
   const [formOk, setFormOk] = useState<string | null>(null);
 
+  // recensioni per esibizione (event_id → bozza locale di voto/commento)
+  const [perfMsg, setPerfMsg] = useState<string | null>(null);
+
   async function load() {
     const supabase = getSupabase();
     if (!supabase) return;
@@ -170,13 +189,27 @@ export default function ArtistsRegistry() {
         .select('id, artist, date, genre, venue, poster_url')
         .order('date', { ascending: false }),
     ]);
-    setLoading(false);
     if (a.error || e.error) {
+      setLoading(false);
       setError('Impossibile caricare il registro artisti.');
       return;
     }
+    // Recensioni private (tabella event_reviews). Tollerante: se la tabella non
+    // esiste ancora (migrazione 0007 non applicata) si prosegue senza recensioni.
+    const reviews = new Map<string, { rating: number | null; comment: string | null }>();
+    const r = await supabase.from('event_reviews').select('event_id, rating, comment');
+    if (!r.error && r.data) {
+      for (const row of r.data as { event_id: string; rating: number | null; comment: string | null }[]) {
+        reviews.set(row.event_id, { rating: row.rating, comment: row.comment });
+      }
+    }
+    const evts = ((e.data as Omit<Performance, 'rating' | 'comment'>[]) ?? []).map((ev) => {
+      const rv = reviews.get(ev.id);
+      return { ...ev, rating: rv?.rating ?? null, comment: rv?.comment ?? null } as Performance;
+    });
+    setLoading(false);
     setApps((a.data as Application[]) ?? []);
-    setEvents((e.data as Performance[]) ?? []);
+    setEvents(evts);
   }
 
   useEffect(() => {
@@ -321,6 +354,32 @@ export default function ArtistsRegistry() {
     setFormOk('Scheda salvata.');
   }
 
+  /**
+   * Salva voto/commento di una singola esibizione nella tabella privata
+   * event_reviews (upsert sull'event_id). Aggiorna subito lo stato locale così
+   * la media in testata e nell'elenco si ricalcola senza ricaricare.
+   */
+  async function savePerf(eventId: string, p: { rating?: number | null; comment?: string | null }) {
+    const supabase = getSupabase();
+    if (!supabase) return;
+    const current = events.find((ev) => ev.id === eventId);
+    const next = {
+      event_id: eventId,
+      rating: p.rating !== undefined ? p.rating : current?.rating ?? null,
+      comment: p.comment !== undefined ? p.comment : current?.comment ?? null,
+    };
+    setEvents((prev) =>
+      prev.map((ev) => (ev.id === eventId ? { ...ev, rating: next.rating, comment: next.comment } : ev)),
+    );
+    setPerfMsg(null);
+    const { error } = await supabase.from('event_reviews').upsert(next, { onConflict: 'event_id' });
+    if (error) {
+      setPerfMsg('Salvataggio della recensione non riuscito.');
+      return;
+    }
+    setPerfMsg('Recensione salvata.');
+  }
+
   /** Crea una scheda anagrafica per un artista presente solo come esibizione. */
   async function createAnagrafica() {
     const supabase = getSupabase();
@@ -402,6 +461,11 @@ export default function ArtistsRegistry() {
                 {selected.performances.length === 1 ? 'esibizione' : 'esibizioni'}
               </span>
             )}
+            {avgRating(selected.performances) !== null && (
+              <span class="g-chip g-chip-star" title="Media valutazioni esibizioni">
+                {stars(avgRating(selected.performances)!)} {avgRating(selected.performances)!.toFixed(1)}
+              </span>
+            )}
             <span class="g-chip">{selected.application ? 'Candidatura' : 'Solo esibizioni'}</span>
           </div>
         </div>
@@ -410,12 +474,48 @@ export default function ArtistsRegistry() {
         {selected.performances.length > 0 && (
           <div class="g-profile-block">
             <h3 class="g-h3">Esibizioni al Biblio</h3>
+            {perfMsg && <div class="g-perf-msg">{perfMsg}</div>}
             <ul class="g-timeline">
               {selected.performances.map((p) => (
-                <li key={p.id}>
-                  <strong>{fmtDay(p.date)}</strong>
-                  <span> · {venueLabel(p.venue)}</span>
-                  <span class="g-chip g-chip-sm">{EVENT_GENRE_LABEL[p.genre] ?? p.genre}</span>
+                <li key={p.id} class="g-perf">
+                  <div class="g-perf-head">
+                    <div>
+                      <strong>{fmtDay(p.date)}</strong>
+                      <span> · {venueLabel(p.venue)}</span>
+                      <span class="g-chip g-chip-sm">{EVENT_GENRE_LABEL[p.genre] ?? p.genre}</span>
+                    </div>
+                    <label class="g-perf-rate">
+                      <span>Valutazione</span>
+                      <select
+                        class="g-select g-select-sm"
+                        value={p.rating ?? ''}
+                        onChange={(e) => {
+                          const raw = (e.target as HTMLSelectElement).value;
+                          savePerf(p.id, { rating: raw === '' ? null : Number(raw) });
+                        }}
+                      >
+                        <option value="">— voto —</option>
+                        <option value="1">★ 1</option>
+                        <option value="2">★★ 2</option>
+                        <option value="3">★★★ 3</option>
+                        <option value="4">★★★★ 4</option>
+                        <option value="5">★★★★★ 5</option>
+                      </select>
+                    </label>
+                  </div>
+                  <div class="g-field g-perf-edit">
+                    <label>Commento sull’esibizione</label>
+                    <textarea
+                      class="g-textarea"
+                      placeholder="Com’è andata la serata? Note per la prossima volta…"
+                      value={p.comment ?? ''}
+                      onInput={(e) => {
+                        const v = (e.target as HTMLTextAreaElement).value;
+                        setEvents((prev) => prev.map((ev) => (ev.id === p.id ? { ...ev, comment: v } : ev)));
+                      }}
+                      onBlur={(e) => savePerf(p.id, { comment: (e.target as HTMLTextAreaElement).value })}
+                    />
+                  </div>
                 </li>
               ))}
             </ul>
@@ -742,13 +842,15 @@ export default function ArtistsRegistry() {
                 <span class="g-list-name">{ar.name}</span>
                 <span class="g-list-meta">
                   {ar.genreLabel}
-                  {ar.city ? ` · ${ar.city}` : ''}
-                  {ar.performances.length > 0
-                    ? ` · ${ar.performances.length} ${ar.performances.length === 1 ? 'esibizione' : 'esibizioni'}`
-                    : ''}
+                  {` · ${ar.performances.length} ${ar.performances.length === 1 ? 'esibizione' : 'esibizioni'}`}
                 </span>
               </div>
               <div class="g-list-side">
+                {avgRating(ar.performances) !== null && (
+                  <span class="g-chip g-chip-star g-chip-sm" title="Media valutazioni">
+                    ★ {avgRating(ar.performances)!.toFixed(1)}
+                  </span>
+                )}
                 <span class="g-list-arrow" aria-hidden="true">›</span>
               </div>
             </li>
