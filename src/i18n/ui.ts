@@ -13,6 +13,7 @@ export type Lang = keyof typeof languages;
 export const ui = {
   it: {
     'nav.home':       'Home',
+    'nav.truck':      'Biblio Truck',
     'nav.menu':       'Menu',
     'nav.eventi':     'Eventi',
     'nav.prenota':    'Prenota',
@@ -40,6 +41,36 @@ export const ui = {
     'contatti.meta.description': 'Biblio si trova in Via Armando Diaz 3/A, nel cuore di Treviso. Orari, telefono, indicazioni e recensioni dei nostri ospiti.',
     'artisti.meta.title':    'Per gli artisti · Biblio Treviso',
     'artisti.meta.description': 'Sei un musicista o una band? Proponiti per suonare a Biblio: presentazione, materiali audio o video, disponibilità e cachet.',
+    'truck.meta.title':      'Biblio Truck · musica e food ai Giardinetti · Treviso',
+    'truck.meta.description': 'Biblio porta la sua musica dal vivo e il suo food truck ai Giardinetti di Sant\'Andrea a Treviso: concerti all\'aperto lungo il Sile, cibo e drink a ingresso libero.',
+
+    'truck.hero.eyebrow':   'Biblio all\'aperto',
+    'truck.hero.title':     'Biblio Truck',
+    'truck.hero.tagline':   'Musica dal vivo e food truck ai Giardinetti di Sant\'Andrea, lungo il Sile.',
+
+    'truck.intro.eyebrow':  'Il progetto',
+    'truck.intro.title':    'Biblio esce all\'aperto',
+    'truck.intro.body':     'Quando arriva la bella stagione, Biblio porta la sua anima fuori dalle mura: ai Giardinetti di Sant\'Andrea, sul prato lungo il Sile, montiamo il palco e parcheggiamo il nostro food truck. Stessa cura per la musica, stessa cucina, all\'aperto e a ingresso libero.',
+    'truck.intro.body2':    'Concerti jazz, blues, dj set e voci emergenti al tramonto; tavoli affacciati sul fiume e davanti al palco. Dal truck escono cicchetti, panini e drink pensati per accompagnare la serata sotto le luci tra gli alberi.',
+
+    'truck.menus.eyebrow':  'Cosa trovi al truck',
+    'truck.menus.title':    'Food & drink',
+    'truck.menus.intro':    'Il menu del truck cambia con le serate. Sfoglia le proposte di cibo e drink.',
+    'truck.menus.food':     'Il nostro food',
+    'truck.menus.drink':    'I nostri drink',
+    'truck.menus.hint':     'I menu si aprono in PDF.',
+
+    'truck.events.eyebrow': 'In programma',
+    'truck.events.title':   'Prossime serate ai Giardinetti',
+    'truck.events.intro':   'Gli appuntamenti all\'aperto in arrivo. Tocca una serata per i dettagli sulla pagina eventi.',
+    'truck.events.empty':   'Stiamo definendo le prossime date ai Giardinetti. Torna a trovarci o seguici su Instagram.',
+    'truck.events.cta':     'Vedi tutti gli eventi',
+
+    'truck.cta.eyebrow':    'Ci vediamo ai Giardinetti',
+    'truck.cta.title':      'Ingresso libero, musica e buon cibo',
+    'truck.cta.body':       'Niente prenotazione: si arriva, ci si siede lungo il fiume e si resta fino a tardi. Trovi le date sulla pagina eventi e tutti gli aggiornamenti su Instagram.',
+    'truck.cta.events':     'Le prossime date',
+    'truck.cta.instagram':  'Seguici su Instagram',
 
     'hero.tagline':   'art · food · drink',
     'hero.lede1':     'Tre sere a settimana il palco si accende.',
@@ -238,6 +269,7 @@ export const ui = {
   },
   en: {
     'nav.home':       'Home',
+    'nav.truck':      'Biblio Truck',
     'nav.menu':       'Menu',
     'nav.eventi':     'Events',
     'nav.prenota':    'Reservations',
@@ -265,6 +297,36 @@ export const ui = {
     'contatti.meta.description': 'Biblio is at Via Armando Diaz 3/A in the heart of Treviso. Hours, phone, directions and reviews from our guests.',
     'artisti.meta.title':    'For artists · Biblio Treviso',
     'artisti.meta.description': 'Are you a musician or a band? Pitch a live night at Biblio: bio, audio or video links, availability and fee.',
+    'truck.meta.title':      'Biblio Truck · music and food at the Giardinetti · Treviso',
+    'truck.meta.description': 'Biblio brings its live music and food truck to the Giardinetti di Sant\'Andrea in Treviso: open-air concerts along the Sile, food and drinks, free entry.',
+
+    'truck.hero.eyebrow':   'Biblio outdoors',
+    'truck.hero.title':     'Biblio Truck',
+    'truck.hero.tagline':   'Live music and a food truck at the Giardinetti di Sant\'Andrea, along the Sile.',
+
+    'truck.intro.eyebrow':  'The project',
+    'truck.intro.title':    'Biblio goes outdoors',
+    'truck.intro.body':     'When the warm season arrives, Biblio takes its soul beyond the walls: at the Giardinetti di Sant\'Andrea, on the lawn along the Sile, we set up the stage and park our food truck. The same care for the music, the same kitchen, outdoors and with free entry.',
+    'truck.intro.body2':    'Jazz, blues, DJ sets and emerging voices at sunset; tables facing the river and in front of the stage. From the truck come small plates, sandwiches and drinks made to carry the evening under the lights among the trees.',
+
+    'truck.menus.eyebrow':  'What\'s at the truck',
+    'truck.menus.title':    'Food & drink',
+    'truck.menus.intro':    'The truck menu changes with the nights. Browse the food and drink line-up.',
+    'truck.menus.food':     'Our food',
+    'truck.menus.drink':    'Our drinks',
+    'truck.menus.hint':     'The menus open as PDFs.',
+
+    'truck.events.eyebrow': 'On the calendar',
+    'truck.events.title':   'Upcoming nights at the Giardinetti',
+    'truck.events.intro':   'The open-air dates coming up. Tap a night for the details on the events page.',
+    'truck.events.empty':   'We\'re finalising the next dates at the Giardinetti. Check back soon or follow us on Instagram.',
+    'truck.events.cta':     'See all events',
+
+    'truck.cta.eyebrow':    'See you at the Giardinetti',
+    'truck.cta.title':      'Free entry, music and good food',
+    'truck.cta.body':       'No booking needed: come along, sit by the river and stay until late. You\'ll find the dates on the events page and all the updates on Instagram.',
+    'truck.cta.events':     'Upcoming dates',
+    'truck.cta.instagram':  'Follow us on Instagram',
 
     'hero.tagline':   'art · food · drink',
     'hero.lede1':     'Three nights a week the stage lights up.',
@@ -474,6 +536,7 @@ export function t(lang: Lang, key: UIKey): string {
 // (in EN restano sotto /en/menu, /en/eventi, /en/prenota, /en/contatti, /en/for-artists)
 export const routeMap: Record<string, { it: string; en: string }> = {
   home:     { it: '/',                  en: '/en/' },
+  truck:    { it: '/biblio-truck/',     en: '/en/biblio-truck/' },
   menu:     { it: '/menu/',             en: '/en/menu/' },
   eventi:   { it: '/eventi/',           en: '/en/eventi/' },
   prenota:  { it: '/prenota/',          en: '/en/prenota/' },

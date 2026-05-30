@@ -8,8 +8,9 @@ import ApplicationsList from './ApplicationsList';
 import ArtistsRegistry from './ArtistsRegistry';
 import MenuEditor from './MenuEditor';
 import EventsEditor from './EventsEditor';
+import TruckMenus from './TruckMenus';
 
-type TabId = 'prenotazioni' | 'candidature' | 'artisti' | 'menu' | 'eventi';
+type TabId = 'prenotazioni' | 'candidature' | 'artisti' | 'menu' | 'eventi' | 'truck';
 
 const TABS: { id: TabId; label: string }[] = [
   { id: 'prenotazioni', label: 'Prenotazioni' },
@@ -17,6 +18,7 @@ const TABS: { id: TabId; label: string }[] = [
   { id: 'artisti', label: 'Artisti' },
   { id: 'menu', label: 'Menu' },
   { id: 'eventi', label: 'Eventi' },
+  { id: 'truck', label: 'Biblio Truck' },
 ];
 
 // Aree future (solo etichette, non cliccabili): idee da valutare insieme al
@@ -139,6 +141,7 @@ export default function Dashboard() {
         {tab === 'artisti' && <ArtistsRegistry />}
         {tab === 'menu' && <MenuEditor />}
         {tab === 'eventi' && <EventsEditor />}
+        {tab === 'truck' && <TruckMenus />}
       </main>
     </div>
   );
