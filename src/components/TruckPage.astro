@@ -29,6 +29,11 @@ const menus = await getTruckMenus();
 
 const instagram = 'https://www.instagram.com/biblio_treviso/';
 
+// Posizione dei Giardinetti di Sant'Andrea (Treviso, lungo il Sile).
+const mapQuery = "Giardino di Sant'Andrea, Treviso";
+const mapEmbed = `https://www.google.com/maps?q=${encodeURIComponent(mapQuery)}&output=embed`;
+const mapLink = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(mapQuery)}`;
+
 const heroAlt = lang === 'it'
   ? 'Il bancone del food truck di Biblio ai Giardinetti, fra le luci della sera'
   : "Biblio's food-truck counter at the Giardinetti, among the evening lights";
@@ -96,7 +101,6 @@ const truckAlt = lang === 'it'
           {t(lang, 'truck.menus.drink')}
         </a>
       </div>
-      <p class="truck-menu-hint reveal">{t(lang, 'truck.menus.hint')}</p>
     </div>
   </section>
 
@@ -130,6 +134,30 @@ const truckAlt = lang === 'it'
 
       <p class="truck-events-cta reveal">
         <a class="btn btn-dark" href={routeMap.eventi[lang]}>{t(lang, 'truck.events.cta')}</a>
+      </p>
+    </div>
+  </section>
+
+  {/* Dove: posizione dei Giardinetti */}
+  <section class="truck-where bg-paper-2">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="eyebrow">{t(lang, 'truck.location.eyebrow')}</span>
+        <h2>{t(lang, 'truck.location.title')}</h2>
+        <p>{t(lang, 'truck.location.body')}</p>
+      </div>
+      <div class="truck-map reveal">
+        <iframe
+          title={t(lang, 'truck.location.map')}
+          src={mapEmbed}
+          loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade"
+        ></iframe>
+      </div>
+      <p class="truck-map-cta reveal">
+        <a class="btn btn-dark" href={mapLink} target="_blank" rel="noopener noreferrer">
+          {t(lang, 'truck.location.cta')}
+        </a>
       </p>
     </div>
   </section>
@@ -202,9 +230,12 @@ const truckAlt = lang === 'it'
     margin: 0 auto;
   }
 
-  /* La foto portrait del truck nel racconto */
+  /* La foto portrait del truck nel racconto: ratio nativa (5:7) → nessun
+     ritaglio, con una larghezza massima così non domina la colonna. */
   .truck-portrait {
-    aspect-ratio: 4 / 5;
+    aspect-ratio: 5 / 7;
+    max-width: 26rem;
+    margin-inline: auto;
   }
 
   /* ---- Bottoni menu PDF ---- */
@@ -214,12 +245,26 @@ const truckAlt = lang === 'it'
     gap: 1rem;
     justify-content: center;
   }
-  .truck-menu-hint {
+
+  /* ---- Dove: mappa dei Giardinetti ---- */
+  .truck-map {
+    max-width: 56rem;
+    margin: 0 auto;
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: var(--shadow-warm);
+    border: 1px solid var(--line);
+    line-height: 0;
+  }
+  .truck-map iframe {
+    display: block;
+    width: 100%;
+    height: clamp(260px, 42vh, 420px);
+    border: 0;
+  }
+  .truck-map-cta {
     text-align: center;
-    margin: 1.25rem 0 0;
-    font-size: 0.85rem;
-    font-style: italic;
-    color: var(--ink-soft);
+    margin: 1.5rem 0 0;
   }
 
   /* ---- Lista eventi (no immagini) ---- */

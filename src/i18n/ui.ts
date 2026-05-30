@@ -48,17 +48,22 @@ export const ui = {
     'truck.hero.title':     'Biblio Truck',
     'truck.hero.tagline':   'Musica dal vivo e food truck ai Giardinetti di Sant\'Andrea, lungo il Sile.',
 
-    'truck.intro.eyebrow':  'Il progetto',
+    'truck.intro.eyebrow':  'In estate',
     'truck.intro.title':    'Biblio esce all\'aperto',
-    'truck.intro.body':     'Quando arriva la bella stagione, Biblio porta la sua anima fuori dalle mura: ai Giardinetti di Sant\'Andrea, sul prato lungo il Sile, montiamo il palco e parcheggiamo il nostro food truck. Stessa cura per la musica, stessa cucina, all\'aperto e a ingresso libero.',
-    'truck.intro.body2':    'Concerti jazz, blues, dj set e voci emergenti al tramonto; tavoli affacciati sul fiume e davanti al palco. Dal truck escono cicchetti, panini e drink pensati per accompagnare la serata sotto le luci tra gli alberi.',
+    'truck.intro.body':     'Quando arriva la bella stagione, Biblio porta la sua anima ai Giardinetti di Sant\'Andrea: sul prato, lungo il Sile, montiamo il palco e parcheggiamo il nostro food truck. La stessa cura per la musica, la stessa cucina, gli stessi amici del Biblio.',
+    'truck.intro.body2':    'Concerti jazz, blues, dj set e voci emergenti al tramonto. Dal truck escono cicchetti, panini e drink pensati per accompagnare la serata sotto le stelle.',
 
     'truck.menus.eyebrow':  'Cosa trovi al truck',
     'truck.menus.title':    'Food & drink',
     'truck.menus.intro':    'Il menu del truck cambia con le serate. Sfoglia le proposte di cibo e drink.',
     'truck.menus.food':     'Il nostro food',
     'truck.menus.drink':    'I nostri drink',
-    'truck.menus.hint':     'I menu si aprono in PDF.',
+
+    'truck.location.eyebrow': 'Dove',
+    'truck.location.title':   'Ai Giardinetti di Sant\'Andrea',
+    'truck.location.body':    'Sul prato lungo il Sile, a pochi minuti dal centro di Treviso.',
+    'truck.location.cta':     'Apri in Google Maps',
+    'truck.location.map':     'Mappa dei Giardinetti di Sant\'Andrea, Treviso',
 
     'truck.events.eyebrow': 'In programma',
     'truck.events.title':   'Prossime serate ai Giardinetti',
@@ -304,17 +309,22 @@ export const ui = {
     'truck.hero.title':     'Biblio Truck',
     'truck.hero.tagline':   'Live music and a food truck at the Giardinetti di Sant\'Andrea, along the Sile.',
 
-    'truck.intro.eyebrow':  'The project',
+    'truck.intro.eyebrow':  'In summer',
     'truck.intro.title':    'Biblio goes outdoors',
-    'truck.intro.body':     'When the warm season arrives, Biblio takes its soul beyond the walls: at the Giardinetti di Sant\'Andrea, on the lawn along the Sile, we set up the stage and park our food truck. The same care for the music, the same kitchen, outdoors and with free entry.',
-    'truck.intro.body2':    'Jazz, blues, DJ sets and emerging voices at sunset; tables facing the river and in front of the stage. From the truck come small plates, sandwiches and drinks made to carry the evening under the lights among the trees.',
+    'truck.intro.body':     'When the warm season arrives, Biblio brings its soul to the Giardinetti di Sant\'Andrea: on the lawn, along the Sile, we set up the stage and park our food truck. The same care for the music, the same kitchen, the same Biblio friends.',
+    'truck.intro.body2':    'Jazz, blues, DJ sets and emerging voices at sunset. From the truck come small plates, sandwiches and drinks made to carry the evening under the stars.',
 
     'truck.menus.eyebrow':  'What\'s at the truck',
     'truck.menus.title':    'Food & drink',
     'truck.menus.intro':    'The truck menu changes with the nights. Browse the food and drink line-up.',
     'truck.menus.food':     'Our food',
     'truck.menus.drink':    'Our drinks',
-    'truck.menus.hint':     'The menus open as PDFs.',
+
+    'truck.location.eyebrow': 'Where',
+    'truck.location.title':   'At the Giardinetti di Sant\'Andrea',
+    'truck.location.body':    'On the lawn along the Sile, a few minutes from the centre of Treviso.',
+    'truck.location.cta':     'Open in Google Maps',
+    'truck.location.map':     'Map of the Giardinetti di Sant\'Andrea, Treviso',
 
     'truck.events.eyebrow': 'On the calendar',
     'truck.events.title':   'Upcoming nights at the Giardinetti',
