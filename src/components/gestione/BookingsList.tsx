@@ -145,7 +145,7 @@ export default function BookingsList({ onUnreadChange }: { onUnreadChange?: () =
             <div class="g-card-meta">
               <span>{fmtDate(b.booking_date)}</span>
               <span>ore {b.booking_time}</span>
-              <span>{b.guests} pax</span>
+              <span>{b.guests} pers</span>
             </div>
             {b.event_label && (
               <div class="g-chiprow">
