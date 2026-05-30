@@ -70,15 +70,6 @@ const GENRE_LABEL: Record<string, string> = {
 };
 const GENRES = Object.entries(GENRE_LABEL);
 
-const STATUS_LABEL: Record<string, string> = {
-  new: 'Nuova',
-  read: 'Letta',
-  contacted: 'Contattata',
-  booked: 'Confermata',
-  archived: 'Archiviata',
-};
-const STATUSES = Object.entries(STATUS_LABEL);
-
 /** Genere evento → genere candidatura (per filtro/etichetta coerenti). */
 const EVENT_GENRE_TO_APP: Record<string, string> = {
   jazz: 'jazz',
@@ -317,7 +308,6 @@ export default function ArtistsRegistry() {
       availability: orNull(draft.availability),
       fee: orNull(draft.fee),
       note: orNull(draft.note),
-      status: draft.status,
     };
     const { error } = await supabase.from('applications').update(payload).eq('id', draft.id);
     setSaving(false);
@@ -406,11 +396,6 @@ export default function ArtistsRegistry() {
           <div class="g-chiprow">
             <span class="g-chip">{selected.genreLabel}</span>
             {selected.city && <span class="g-chip">{selected.city}</span>}
-            {selected.application && (
-              <span class="g-chip g-chip-ok">
-                {STATUS_LABEL[selected.application.status] ?? selected.application.status}
-              </span>
-            )}
             {selected.performances.length > 0 && (
               <span class="g-chip">
                 {selected.performances.length}{' '}
@@ -570,20 +555,6 @@ export default function ArtistsRegistry() {
                   value={app.availability ?? ''}
                   onInput={(e) => patch({ availability: (e.target as HTMLInputElement).value })}
                 />
-              </div>
-              <div class="g-field">
-                <label>Stato</label>
-                <select
-                  class="g-select"
-                  value={app.status}
-                  onChange={(e) => patch({ status: (e.target as HTMLSelectElement).value })}
-                >
-                  {STATUSES.map(([value, label]) => (
-                    <option key={value} value={value}>
-                      {label}
-                    </option>
-                  ))}
-                </select>
               </div>
             </div>
 
@@ -778,12 +749,6 @@ export default function ArtistsRegistry() {
                 </span>
               </div>
               <div class="g-list-side">
-                {ar.application && !['new', 'read'].includes(ar.application.status) && (
-                  <span class="g-chip g-chip-ok">
-                    {STATUS_LABEL[ar.application.status] ?? ar.application.status}
-                  </span>
-                )}
-                {!ar.application && <span class="g-chip">storico</span>}
                 <span class="g-list-arrow" aria-hidden="true">›</span>
               </div>
             </li>

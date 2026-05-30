@@ -40,14 +40,23 @@ const GENRE_LABEL: Record<string, string> = {
 };
 const GENRES = Object.entries(GENRE_LABEL);
 
-const STATUS_LABEL: Record<string, string> = {
-  new: 'Nuova',
-  read: 'Letta',
-  contacted: 'Contattata',
-  booked: 'Confermata',
-  archived: 'Archiviata',
+/** Numero in formato wa.me (come BookingsList): cifre + prefisso internazionale. */
+const waNumber = (raw: string | null): string | null => {
+  if (!raw) return null;
+  let d = raw.replace(/[^\d+]/g, '');
+  if (d.startsWith('+')) d = d.slice(1);
+  else if (d.startsWith('00')) d = d.slice(2);
+  else if (/^3\d{8,9}$/.test(d)) d = '39' + d;
+  return d.length >= 8 ? d : null;
 };
-const STATUSES = Object.entries(STATUS_LABEL);
+/** Link "Scrivi su WhatsApp" con messaggio precompilato, o null se manca il numero. */
+const waLink = (a: Application): string | null => {
+  const num = waNumber(a.phone);
+  if (!num) return null;
+  const nome = (a.contact_name || a.artist_name || '').trim().split(/\s+/)[0] || '';
+  const msg = `Ciao ${nome}, ti scrivo dal Biblio riguardo alla candidatura di ${a.artist_name}. `;
+  return `https://wa.me/${num}?text=${encodeURIComponent(msg)}`;
+};
 
 const fmtReceived = (iso: string): string => {
   const d = new Date(iso);
@@ -98,32 +107,22 @@ export default function ApplicationsList({ onUnreadChange }: { onUnreadChange?: 
     load();
   }, []);
 
-  async function markRead(id: string) {
+  /** Segna letto/non letto. La marcatura è manuale: la fa il gestore quando vuole. */
+  async function setRead(id: string, makeRead: boolean) {
     const supabase = getSupabase();
     if (!supabase) return;
-    const now = new Date().toISOString();
-    setRows((prev) =>
-      prev.map((r) => (r.id === id && !r.read_at ? { ...r, read_at: now, status: r.status === 'new' ? 'read' : r.status } : r)),
-    );
-    await supabase
-      .from('applications')
-      .update({ read_at: now, status: 'read' })
-      .eq('id', id)
-      .eq('status', 'new'); // non sovrascrive uno stato avanzato (contattata/confermata…)
+    const next = makeRead ? new Date().toISOString() : null;
+    setRows((prev) => prev.map((r) => (r.id === id ? { ...r, read_at: next } : r)));
+    setDraft((d) => (d && d.id === id ? { ...d, read_at: next } : d));
+    await supabase.from('applications').update({ read_at: next }).eq('id', id);
     onUnreadChange?.();
   }
 
   function openCard(a: Application) {
-    const willRead = !a.read_at;
-    const now = new Date().toISOString();
-    setDraft(
-      willRead
-        ? { ...a, read_at: now, status: a.status === 'new' ? 'read' : a.status }
-        : { ...a },
-    );
+    // Aprire la scheda NON la segna letta: il gestore lo decide col toggle.
+    setDraft({ ...a });
     setFormError(null);
     setFormOk(null);
-    if (willRead) markRead(a.id);
   }
 
   function closeDrawer() {
@@ -166,7 +165,6 @@ export default function ApplicationsList({ onUnreadChange }: { onUnreadChange?: 
       availability: orNull(draft.availability),
       fee: orNull(draft.fee),
       note: orNull(draft.note),
-      status: draft.status,
     };
     const { error } = await supabase.from('applications').update(payload).eq('id', draft.id);
     setSaving(false);
@@ -249,9 +247,18 @@ export default function ApplicationsList({ onUnreadChange }: { onUnreadChange?: 
               {a.city && <span>{a.city}</span>}
             </div>
             <div class="g-chiprow">
-              {!['new', 'read'].includes(a.status) && (
-                <span class="g-chip g-chip-ok">{STATUS_LABEL[a.status] ?? a.status}</span>
-              )}
+              <button
+                class={`g-readtoggle${a.read_at ? ' is-read' : ''}`}
+                type="button"
+                aria-pressed={a.read_at ? 'true' : 'false'}
+                title={a.read_at ? 'Segna come non letto' : 'Segna come letto'}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setRead(a.id, !a.read_at);
+                }}
+              >
+                {a.read_at ? '✓ Letto' : 'Non letto'}
+              </button>
               {a.file_paths.length > 0 && <span class="g-chip">{a.file_paths.length} file</span>}
               <span class="g-chip">{a.contact_name}</span>
             </div>
@@ -367,20 +374,6 @@ export default function ApplicationsList({ onUnreadChange }: { onUnreadChange?: 
                   onInput={(e) => patch({ availability: (e.target as HTMLInputElement).value })}
                 />
               </div>
-              <div class="g-field">
-                <label>Stato</label>
-                <select
-                  class="g-select"
-                  value={draft.status}
-                  onChange={(e) => patch({ status: (e.target as HTMLSelectElement).value })}
-                >
-                  {STATUSES.map(([value, label]) => (
-                    <option key={value} value={value}>
-                      {label}
-                    </option>
-                  ))}
-                </select>
-              </div>
             </div>
 
             <div class="g-field">
@@ -487,9 +480,27 @@ export default function ApplicationsList({ onUnreadChange }: { onUnreadChange?: 
               <button class="g-btn" type="button" onClick={saveDraft} disabled={saving}>
                 {saving ? 'Salvataggio…' : 'Salva modifiche'}
               </button>
+              {waLink(draft) && (
+                <a
+                  class="g-btn g-btn-wa"
+                  href={waLink(draft)!}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Scrivi su WhatsApp
+                </a>
+              )}
               <a class="g-btn g-btn-ghost" href={`mailto:${draft.email}`}>
-                Rispondi via email
+                Email
               </a>
+              <button
+                class="g-btn g-btn-ghost"
+                type="button"
+                onClick={() => setRead(draft.id, !draft.read_at)}
+                disabled={saving}
+              >
+                {draft.read_at ? 'Segna come non letto' : 'Segna come letto'}
+              </button>
               <button class="g-btn g-btn-danger" type="button" onClick={remove} disabled={saving}>
                 Elimina
               </button>
