@@ -66,6 +66,94 @@ const reviews: Review[] = [
 
 // Helper stelle.
 const renderStars = (n: number) => '★'.repeat(n) + '☆'.repeat(5 - n);
+
+// FAQ bilingue: risposte brevi alle domande più ricercate (dove, orari, live,
+// prenotazioni). Alimentano sia l'accordion visibile sia lo schema FAQPage qui
+// sotto, così la risposta mostrata e quella indicizzata da Google coincidono.
+type Faq = {
+  q: { it: string; en: string };
+  a: { it: string; en: string };
+  link?: { href: string; label: { it: string; en: string } };
+};
+const faqs: Faq[] = [
+  {
+    q: {
+      it: 'Dove si trova Biblio e come ci si arriva?',
+      en: 'Where is Biblio and how do I get there?',
+    },
+    a: {
+      it: 'Biblio è in Via Armando Diaz 3/A, nel centro storico di Treviso, a pochi passi da Piazza dei Signori. Diversi parcheggi pubblici sono nelle vicinanze e dalla stazione sono circa 10 minuti a piedi.',
+      en: 'Biblio is at Via Armando Diaz 3/A, in the historic centre of Treviso, a few steps from Piazza dei Signori. Several public car parks are nearby and it is about a 10-minute walk from the train station.',
+    },
+  },
+  {
+    q: {
+      it: 'Quali sono gli orari di apertura?',
+      en: 'What are your opening hours?',
+    },
+    a: {
+      it: 'Siamo aperti dal martedì alla domenica dalle 18:00 fino a tardi: l’una di notte, le due il venerdì e il sabato. Il lunedì siamo chiusi.',
+      en: 'We are open Tuesday to Sunday from 6:00 PM until late: 1 AM, and 2 AM on Friday and Saturday. We are closed on Mondays.',
+    },
+  },
+  {
+    q: {
+      it: 'È necessario prenotare un tavolo?',
+      en: 'Do I need to book a table?',
+    },
+    a: {
+      it: 'Non è obbligatorio, ma nelle sere con musica dal vivo lo consigliamo: i posti vicino al palco vanno in fretta. Puoi prenotare online, per telefono o su WhatsApp e ti rispondiamo in poche ore.',
+      en: 'It is not required, but on live-music nights we recommend it: seats near the stage fill up fast. You can book online, by phone or on WhatsApp, and we reply within a few hours.',
+    },
+    link: { href: routeMap.prenota[lang], label: { it: 'Prenota un tavolo', en: 'Book a table' } },
+  },
+  {
+    q: {
+      it: 'C’è musica dal vivo? In quali serate?',
+      en: 'Is there live music? Which nights?',
+    },
+    a: {
+      it: 'Sì, tre sere a settimana e sempre a ingresso libero: il giovedì è dedicato al jazz, il venerdì al blues e al soul, la domenica ai cantautori emergenti. Il programma aggiornato è nella pagina Eventi.',
+      en: 'Yes, three nights a week and always free entry: Thursday is jazz, Friday is blues and soul, Sunday is for emerging songwriters. The up-to-date line-up is on the Events page.',
+    },
+    link: { href: routeMap.eventi[lang], label: { it: 'Scopri gli eventi', en: 'See the events' } },
+  },
+  {
+    q: {
+      it: 'Cosa si può mangiare e bere?',
+      en: 'What can I eat and drink?',
+    },
+    a: {
+      it: 'Drink d’autore, una lista curata di gin e cocktail, vini del territorio e birre artigianali alla spina, accompagnati da cicchetti gourmet. Il menù completo, food e drink, è sempre online.',
+      en: 'Signature drinks, a curated gin and cocktail list, regional wines and craft beers on tap, paired with gourmet cicchetti. The full food and drink menu is always online.',
+    },
+    link: { href: routeMap.menu[lang], label: { it: 'Sfoglia il menù', en: 'Browse the menu' } },
+  },
+  {
+    q: {
+      it: 'Ci sono eventi all’aperto d’estate?',
+      en: 'Are there outdoor events in summer?',
+    },
+    a: {
+      it: 'In estate Biblio esce all’aperto con il Biblio Truck ai Giardini di Sant’Andrea, lungo il Sile: concerti al tramonto a ingresso libero, con la stessa cucina e gli stessi drink. Trovi tutto nella pagina del Truck.',
+      en: 'In summer Biblio moves outdoors with the Biblio Truck at the Giardini di Sant’Andrea, along the river Sile: free open-air sunset concerts, with the same kitchen and drinks. It is all on the Truck page.',
+    },
+    link: { href: routeMap.truck[lang], label: { it: 'Scopri il Truck', en: 'Discover the Truck' } },
+  },
+];
+
+// Schema FAQPage: stessa fonte dell'accordion, così il testo indicizzato
+// coincide con quello mostrato. I link interni sono UI a parte (fuori dalla
+// risposta), per non divergere dal testo dichiarato a Google.
+const faqLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqs.map((f) => ({
+    '@type': 'Question',
+    name: f.q[lang],
+    acceptedAnswer: { '@type': 'Answer', text: f.a[lang] },
+  })),
+};
 ---
 
 <section class="contatti-page">
@@ -212,6 +300,36 @@ const renderStars = (n: number) => '★'.repeat(n) + '☆'.repeat(5 - n);
     </div>
   </section>
 
+  {/* FAQ — risposte brevi + schema FAQPage */}
+  <section class="contatti-faq bg-paper-2">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow">{t(lang, 'contatti.faq.eyebrow')}</span>
+        <h2>{t(lang, 'contatti.faq.title')}</h2>
+        <p>{t(lang, 'contatti.faq.intro')}</p>
+      </div>
+
+      <ul class="faq-list" role="list">
+        {faqs.map((f, i) => (
+          <li class="faq-item reveal" style={`--reveal-delay:${(i % 3) * 0.06}s`}>
+            <details class="faq-details">
+              <summary class="faq-summary">
+                <span class="faq-q">{f.q[lang]}</span>
+                <span class="faq-icon" aria-hidden="true"></span>
+              </summary>
+              <div class="faq-a">
+                <p>{f.a[lang]}</p>
+                {f.link && (
+                  <a class="faq-link" href={f.link.href}>{f.link.label[lang]} →</a>
+                )}
+              </div>
+            </details>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
   {/* CTA finale */}
   <section class="cta-banner">
     <span class="eyebrow">{t(lang, 'contatti.cta.title')}</span>
@@ -219,7 +337,111 @@ const renderStars = (n: number) => '★'.repeat(n) + '☆'.repeat(5 - n);
     <p>{t(lang, 'contatti.cta.body')}</p>
     <a class="btn" href={routeMap.prenota[lang]}>{t(lang, 'contatti.cta.btn')}</a>
   </section>
+
+  {/* Dati strutturati: FAQ in formato FAQPage, così Google può mostrare le
+      risposte direttamente nei risultati di ricerca. */}
+  <script type="application/ld+json" is:inline set:html={JSON.stringify(faqLd)} />
 </section>
 
 <!-- Scroll-reveal è gestito globalmente dal Base layout. -->
+
+<style>
+  .contatti-faq {
+    padding-block: clamp(3rem, 7vw, 5.5rem);
+  }
+
+  .faq-list {
+    list-style: none;
+    margin: 2.5rem auto 0;
+    padding: 0;
+    max-width: 56rem;
+    display: grid;
+    gap: 0.75rem;
+  }
+
+  .faq-details {
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--paper);
+    box-shadow: var(--shadow-card);
+    overflow: hidden;
+    transition: border-color 0.25s var(--ease), box-shadow 0.25s var(--ease);
+  }
+  .faq-details[open] {
+    border-color: var(--brass);
+    box-shadow: var(--shadow-soft);
+  }
+
+  .faq-summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1.15rem 1.4rem;
+    cursor: pointer;
+    list-style: none;
+    font-family: var(--font-display);
+    font-size: 1.3rem;
+    line-height: 1.3;
+    color: var(--ink);
+  }
+  .faq-summary::-webkit-details-marker { display: none; }
+  .faq-summary:hover .faq-q { color: var(--brass-deep); }
+  .faq-q { transition: color 0.2s var(--ease); }
+
+  /* Icona +/× che ruota all'apertura. */
+  .faq-icon {
+    position: relative;
+    flex: 0 0 auto;
+    width: 18px;
+    height: 18px;
+    transition: transform 0.3s var(--ease);
+  }
+  .faq-icon::before,
+  .faq-icon::after {
+    content: '';
+    position: absolute;
+    background: var(--brass);
+    border-radius: 2px;
+  }
+  .faq-icon::before { inset: 8px 0; height: 2px; }
+  .faq-icon::after { inset: 0 8px; width: 2px; }
+  .faq-details[open] .faq-icon { transform: rotate(135deg); }
+
+  .faq-a {
+    padding: 0 1.4rem 1.3rem;
+    color: var(--ink-soft);
+  }
+  .faq-a p {
+    margin: 0;
+    line-height: 1.7;
+  }
+
+  .faq-link {
+    display: inline-block;
+    margin-top: 0.85rem;
+    font-family: var(--font-display);
+    font-size: 1.05rem;
+    color: var(--brass-deep);
+    text-decoration: none;
+    border-bottom: 1px solid color-mix(in srgb, var(--brass) 45%, transparent);
+    transition: border-color 0.2s var(--ease), color 0.2s var(--ease);
+  }
+  .faq-link:hover {
+    color: var(--ink);
+    border-bottom-color: var(--brass);
+  }
+
+  @media (max-width: 640px) {
+    .faq-summary { font-size: 1.15rem; padding: 1rem 1.1rem; }
+    .faq-a { padding: 0 1.1rem 1.1rem; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .faq-details,
+    .faq-icon,
+    .faq-q,
+    .faq-link { transition: none; }
+  }
+</style>
 

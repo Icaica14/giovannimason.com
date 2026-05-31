@@ -194,6 +194,9 @@ export const ui = {
     'contatti.cta.body':      'Tre sere a settimana il palco si accende. Ti aspettiamo fra le librerie e i divanetti.',
     'contatti.cta.btn':       'Prenota un tavolo',
     'contatti.reviews.stars.label': 'stelle',
+    'contatti.faq.eyebrow':   'Domande frequenti',
+    'contatti.faq.title':     'Le domande più comuni',
+    'contatti.faq.intro':     'Dove siamo, gli orari, le serate live e come prenotare: le risposte in breve.',
 
     'artisti.title':              'Per gli artisti',
     'artisti.tagline':            'Suona a Biblio',
@@ -455,6 +458,9 @@ export const ui = {
     'contatti.cta.body':      'Three nights a week the stage lights up. We\'ll save you a spot among the bookshelves and sofas.',
     'contatti.cta.btn':       'Book a table',
     'contatti.reviews.stars.label': 'stars',
+    'contatti.faq.eyebrow':   'Frequently asked',
+    'contatti.faq.title':     'Common questions',
+    'contatti.faq.intro':     'Where we are, opening hours, live nights and how to book: the short answers.',
 
     'artisti.title':              'For artists',
     'artisti.tagline':            'Play at Biblio',
