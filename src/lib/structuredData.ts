@@ -7,7 +7,7 @@
 // JSON-LD storico e con la pagina contatti.
 // ─────────────────────────────────────────────────────────────────────────────
 import { type Lang, routeMap, t } from '../i18n/ui';
-import { type EventEntry, eventBlurb, genreLabel, tx } from '../data/eventi';
+import { type EventEntry, eventBlurb, eventStatus, genreLabel, tx } from '../data/eventi';
 
 type Route = keyof typeof routeMap;
 
@@ -150,12 +150,21 @@ export function musicEventLd(ev: EventEntry, lang: Lang, siteOrigin: string) {
   const url = `${siteOrigin}${routeMap.eventi[lang]}#${ev.id}`;
   const description = eventBlurb(e, lang) ?? `${tx(genreLabel[e.genre], lang)} · ${BIZ.name}, ${BIZ.city}`;
 
+  // Stato evento per Google: annullato / rimandato si riflettono nei rich results.
+  const status = eventStatus(e);
+  const schemaStatus =
+    status === 'cancelled'
+      ? 'https://schema.org/EventCancelled'
+      : status === 'postponed'
+        ? 'https://schema.org/EventPostponed'
+        : 'https://schema.org/EventScheduled';
+
   return {
     '@context': 'https://schema.org',
     '@type': 'MusicEvent',
     name: e.artist,
     startDate: startDateIso(e.date, e.time),
-    eventStatus: 'https://schema.org/EventScheduled',
+    eventStatus: schemaStatus,
     eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
     performer: { '@type': 'MusicGroup', name: e.artist },
     location,

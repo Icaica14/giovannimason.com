@@ -26,9 +26,14 @@ type EventRow = {
   venue: string | null;
   published: boolean;
   sort_index: number | null;
+  // Stato serata (colonne aggiunte in 0009; opzionali per tollerare DB non migrato).
+  status?: string | null;
+  status_note?: string | null;
+  status_note_en?: string | null;
 };
 
 function rowToEntry(row: EventRow): EventEntry {
+  const status = row.status === 'cancelled' || row.status === 'postponed' ? row.status : 'regular';
   const data: EventData = {
     artist: row.artist,
     date: row.date,
@@ -41,6 +46,9 @@ function rowToEntry(row: EventRow): EventEntry {
     poster: row.poster_url,
     venue: row.venue ?? undefined,
     published: row.published,
+    status,
+    statusNote: row.status_note ?? undefined,
+    statusNoteEn: row.status_note_en ?? undefined,
   };
   return { id: row.id, data };
 }
