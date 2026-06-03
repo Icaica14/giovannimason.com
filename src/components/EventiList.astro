@@ -2,6 +2,7 @@
 import { type Lang, t, routeMap } from '../i18n/ui';
 import { genreLabel, splitEventi, tx, eventDateLabel, eventBlurb, eventVenue, VENUE_DEFAULT } from '../data/eventi';
 import { getEvents } from '../data/eventiRemote';
+import { musicEventLd } from '../lib/structuredData';
 
 interface Props {
   lang: Lang;
@@ -14,6 +15,9 @@ const { lang } = Astro.props;
 const entries = await getEvents();
 const todayISO = new Date().toISOString().slice(0, 10);
 const { upcoming, past } = splitEventi(entries, todayISO);
+
+// Base URL assoluto per i dati strutturati MusicEvent (immagini, location, offers).
+const siteOrigin = Astro.site ? Astro.site.origin : '';
 ---
 
 <section class="eventi-page">
@@ -149,6 +153,12 @@ const { upcoming, past } = splitEventi(entries, todayISO);
     <p>{t(lang, 'eventi.cta.body')}</p>
     <a class="btn" href={routeMap.prenota[lang]}>{t(lang, 'eventi.cta.btn')}</a>
   </section>
+
+  {/* Dati strutturati: ogni serata in arrivo come MusicEvent, cosi' Google puo'
+      mostrarle nei risultati eventi. Solo le future (le passate non servono). */}
+  {upcoming.map((ev) => (
+    <script type="application/ld+json" is:inline set:html={JSON.stringify(musicEventLd(ev, lang, siteOrigin))} />
+  ))}
 </section>
 
 <!-- Scroll-reveal è gestito globalmente dal Base layout. -->

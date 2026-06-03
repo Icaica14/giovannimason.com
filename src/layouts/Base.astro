@@ -3,6 +3,8 @@ import '../styles/global.css';
 import Nav from '../components/Nav.astro';
 import Footer from '../components/Footer.astro';
 import { type Lang, t, routeMap } from '../i18n/ui';
+import { SITE_INDEXABLE } from '../config/seo';
+import { localBusinessLd, webSiteLd, breadcrumbLd } from '../lib/structuredData';
 
 interface Props {
   lang: Lang;
@@ -26,34 +28,15 @@ const enUrl  = `${siteOrigin}${enPath}`;
 const canonicalUrl = lang === 'it' ? itUrl : enUrl;
 const ogImage = `${siteOrigin}/og-default.jpg`;
 
-// Dati strutturati: il LocalBusiness rimane lo stesso su ogni pagina,
-// così Google ne ha una scheda coerente.
-const ldJson = {
-  '@context': 'https://schema.org',
-  '@type': 'BarOrPub',
-  name: 'Biblio',
-  url: siteOrigin || undefined,
-  image: siteOrigin ? ogImage : undefined,
-  telephone: '+390422270575',
-  email: 'biblio.bookcafe@gmail.com',
-  address: {
-    '@type': 'PostalAddress',
-    streetAddress: 'Via Armando Diaz 3/A',
-    postalCode: '31100',
-    addressLocality: 'Treviso',
-    addressRegion: 'TV',
-    addressCountry: 'IT',
-  },
-  servesCuisine: ['Italian', 'Cocktails', 'Wine'],
-  priceRange: '€€',
-  // Orari coerenti con contatti.hours.body (lunedì chiuso → assente).
-  openingHoursSpecification: [
-    { '@type': 'OpeningHoursSpecification', dayOfWeek: ['Tuesday', 'Wednesday'], opens: '18:00', closes: '01:00' },
-    { '@type': 'OpeningHoursSpecification', dayOfWeek: ['Thursday', 'Friday', 'Saturday'], opens: '18:00', closes: '02:00' },
-    { '@type': 'OpeningHoursSpecification', dayOfWeek: 'Sunday', opens: '18:00', closes: '01:00' },
-  ],
-  sameAs: ['https://www.instagram.com/biblio_treviso/'],
-};
+// Dati strutturati: un unico @graph con la scheda LocalBusiness (coerente su
+// ogni pagina) + il nodo WebSite, piu' il Breadcrumb sulle sottopagine. I nodi
+// sono costruiti in src/lib/structuredData.ts (NAP centralizzato).
+const crumbLabel = t(lang, `nav.${currentRoute}`);
+const graph: Record<string, unknown>[] = [localBusinessLd(siteOrigin, ogImage), webSiteLd(siteOrigin)];
+if (currentRoute !== 'home') {
+  graph.push(breadcrumbLd(currentRoute, lang, siteOrigin, crumbLabel));
+}
+const ldGraph = { '@context': 'https://schema.org', '@graph': graph };
 
 // Toggle labels mobile menu, passati al client via data attribute.
 const menuOpenLabel  = t(lang, 'nav.menu.toggle');
@@ -67,6 +50,9 @@ const menuCloseLabel = t(lang, 'nav.menu.close');
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{pageTitle}</title>
     <meta name="description" content={pageDesc} />
+    {/* Dominio temporaneo: noindex finche' non si va live sul dominio definitivo
+        (vedi src/config/seo.ts). Su /gestione il noindex e' gia' nel suo layout. */}
+    {!SITE_INDEXABLE && <meta name="robots" content="noindex, nofollow" />}
     <link rel="canonical" href={canonicalUrl} />
     <link rel="alternate" hreflang="it" href={itUrl} />
     <link rel="alternate" hreflang="en" href={enUrl} />
@@ -97,7 +83,7 @@ const menuCloseLabel = t(lang, 'nav.menu.close');
     <script
       type="application/ld+json"
       is:inline
-      set:html={JSON.stringify(ldJson)}
+      set:html={JSON.stringify(ldGraph)}
     ></script>
   </head>
   <body data-menu-open-label={menuOpenLabel} data-menu-close-label={menuCloseLabel}>
