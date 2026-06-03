@@ -76,6 +76,10 @@ jobs:
         env:
           PUBLIC_SUPABASE_URL: ${{ secrets.PUBLIC_SUPABASE_URL }}
           PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.PUBLIC_SUPABASE_ANON_KEY }}
+          # Turnstile SITE key (pubblica): abilita il widget anti-spam sui form
+          # pubblici (prenotazione, candidatura). Se assente, i form funzionano
+          # comunque ma senza challenge Turnstile. La SECRET key sta lato Supabase.
+          PUBLIC_TURNSTILE_SITE_KEY: ${{ secrets.PUBLIC_TURNSTILE_SITE_KEY }}
         run: npx astro build
 
       - name: Upload artifact
