@@ -18,6 +18,11 @@ const eventi = defineCollection({
     poster: z.string(),                 // path pubblico, es. /uploads/locandine-3.webp
     venue: z.string().optional(),       // luogo: 'biblio-bistrot' | 'giardinetti' (default bistrot)
     published: z.boolean().default(true),
+    // Stato serata: 'regular' (default) | 'cancelled' (annullata) | 'postponed' (rimandata).
+    // Mostra un avviso rosso sull'annuncio. statusNote = messaggio libero (es. nuova data).
+    status: z.enum(['regular', 'cancelled', 'postponed']).default('regular'),
+    statusNote: z.string().optional(),
+    statusNoteEn: z.string().optional(),
   }),
 });
 

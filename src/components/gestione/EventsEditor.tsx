@@ -17,6 +17,9 @@ type EventRow = {
   venue: string | null;
   published: boolean;
   sort_index: number | null;
+  status: string | null;
+  status_note: string | null;
+  status_note_en: string | null;
 };
 
 /** Bozza editabile nel drawer (campi sempre stringa per gli input controllati). */
@@ -33,10 +36,22 @@ type Draft = {
   poster_url: string;
   venue: string;
   published: boolean;
+  status: string;
+  status_note: string;
+  status_note_en: string;
 };
 
 const GENRES = Object.entries(genreLabel) as [string, { it: string; en: string }][];
 const VENUES = Object.entries(venueLabel) as [string, { it: string; en: string }][];
+
+/** Stato della serata mostrato come selettore a tre pulsanti nel drawer. */
+const STATUS_OPTIONS: [string, string][] = [
+  ['regular', 'Confermata'],
+  ['cancelled', 'Annullata'],
+  ['postponed', 'Rimandata'],
+];
+const statusItLabel = (s: string): string =>
+  s === 'cancelled' ? 'Annullata' : s === 'postponed' ? 'Rimandata' : 'Confermata';
 
 const POSTER_MAX = 8 * 1024 * 1024; // 8MB
 const POSTER_TYPES = new Set(['image/jpeg', 'image/png', 'image/webp']);
@@ -80,6 +95,9 @@ function emptyDraft(): Draft {
     poster_url: '',
     venue: VENUE_DEFAULT,
     published: true,
+    status: 'regular',
+    status_note: '',
+    status_note_en: '',
   };
 }
 
@@ -138,6 +156,9 @@ export default function EventsEditor() {
       poster_url: row.poster_url,
       venue: row.venue || VENUE_DEFAULT,
       published: row.published,
+      status: row.status === 'cancelled' || row.status === 'postponed' ? row.status : 'regular',
+      status_note: row.status_note ?? '',
+      status_note_en: row.status_note_en ?? '',
     });
     setPosterFile(null);
     setPosterPreview(row.poster_url);
@@ -202,6 +223,8 @@ export default function EventsEditor() {
         posterUrl = supabase.storage.from('posters').getPublicUrl(path).data.publicUrl;
       }
 
+      // Se la serata è confermata, azzera le note di stato (non avrebbero senso).
+      const isRegular = draft.status !== 'cancelled' && draft.status !== 'postponed';
       const payload = {
         artist: draft.artist.trim(),
         date: draft.date,
@@ -214,6 +237,9 @@ export default function EventsEditor() {
         poster_url: posterUrl,
         venue: draft.venue || VENUE_DEFAULT,
         published: draft.published,
+        status: isRegular ? 'regular' : draft.status,
+        status_note: isRegular ? null : orNull(draft.status_note),
+        status_note_en: isRegular ? null : orNull(draft.status_note_en),
       };
 
       if (draft.id) {
@@ -280,6 +306,9 @@ export default function EventsEditor() {
         </div>
         <div class="g-chiprow">
           <span class="g-chip">{venueLabel[(ev.venue as keyof typeof venueLabel) || VENUE_DEFAULT]?.it ?? venueLabel[VENUE_DEFAULT].it}</span>
+          {(ev.status === 'cancelled' || ev.status === 'postponed') && (
+            <span class="g-chip g-chip-danger">{statusItLabel(ev.status)}</span>
+          )}
           {!ev.published && <span class="g-chip g-chip-warn">Bozza</span>}
         </div>
       </div>
@@ -390,6 +419,69 @@ export default function EventsEditor() {
                 ))}
               </select>
             </div>
+
+            <div class="g-field">
+              <label>Stato della serata</label>
+              <div class="ev-status-seg" role="group" aria-label="Stato della serata">
+                {STATUS_OPTIONS.map(([value, label]) => (
+                  <button
+                    key={value}
+                    type="button"
+                    class={`ev-status-btn ev-status-${value}${draft.status === value ? ' is-active' : ''}`}
+                    aria-pressed={draft.status === value}
+                    onClick={() => patch({ status: value })}
+                  >
+                    {label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {(draft.status === 'cancelled' || draft.status === 'postponed') && (
+              <div class="ev-status-detail">
+                <p class="ev-status-hint">
+                  Comparirà <strong>in rosso</strong>, ben visibile, sull’annuncio della serata nel sito.
+                  Il messaggio è facoltativo: senza, mostra solo “{statusItLabel(draft.status)}”.
+                </p>
+                <div class="g-field">
+                  <label>Messaggio IT (opzionale)</label>
+                  <input
+                    class="g-input"
+                    type="text"
+                    placeholder={
+                      draft.status === 'postponed'
+                        ? 'es. Rimandata a sabato 18 maggio'
+                        : 'es. Serata annullata per maltempo'
+                    }
+                    value={draft.status_note}
+                    onInput={(e) => patch({ status_note: (e.target as HTMLInputElement).value })}
+                  />
+                </div>
+                <div class="g-field">
+                  <label>Messaggio EN (opzionale)</label>
+                  <input
+                    class="g-input"
+                    type="text"
+                    placeholder={
+                      draft.status === 'postponed'
+                        ? 'e.g. Postponed to Saturday 18 May'
+                        : 'e.g. Cancelled due to bad weather'
+                    }
+                    value={draft.status_note_en}
+                    onInput={(e) => patch({ status_note_en: (e.target as HTMLInputElement).value })}
+                  />
+                </div>
+                <div class={`ev-status-preview ev-status-preview-${draft.status}`}>
+                  <span class="ev-status-preview-label">Anteprima sul sito</span>
+                  <div class="ev-status-preview-banner">
+                    <span class="ev-status-preview-tag">{statusItLabel(draft.status)}</span>
+                    {draft.status_note.trim() && (
+                      <span class="ev-status-preview-note">{draft.status_note.trim()}</span>
+                    )}
+                  </div>
+                </div>
+              </div>
+            )}
 
             <div class="g-field">
               <label>Descrizione IT</label>

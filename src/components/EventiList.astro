@@ -1,6 +1,6 @@
 ---
 import { type Lang, t, routeMap } from '../i18n/ui';
-import { genreLabel, splitEventi, tx, eventDateLabel, eventBlurb, eventVenue, VENUE_DEFAULT } from '../data/eventi';
+import { genreLabel, splitEventi, tx, eventDateLabel, eventBlurb, eventVenue, VENUE_DEFAULT, eventStatus, eventStatusNote, statusLabel } from '../data/eventi';
 import { getEvents } from '../data/eventiRemote';
 import { musicEventLd } from '../lib/structuredData';
 
@@ -64,7 +64,11 @@ const siteOrigin = Astro.site ? Astro.site.origin : '';
       ) : (
         <ul class="poster-grid poster-grid-featured">
           {upcoming.map((ev, i) => (
-            <li class="poster-card reveal" style={`--reveal-delay:${(i % 6) * 0.08}s`} id={ev.id}>
+            <li
+              class={`poster-card reveal${eventStatus(ev.data) !== 'regular' ? ` is-${eventStatus(ev.data)}` : ''}`}
+              style={`--reveal-delay:${(i % 6) * 0.08}s`}
+              id={ev.id}
+            >
               <a class="poster-link" href={`#${ev.id}`} aria-label={ev.data.artist}>
                 <div class="poster-frame">
                   <img
@@ -75,6 +79,14 @@ const siteOrigin = Astro.site ? Astro.site.origin : '';
                   />
                 </div>
                 <div class="poster-meta">
+                  {eventStatus(ev.data) !== 'regular' && (
+                    <p class={`event-alert event-alert-${eventStatus(ev.data)}`} role="status">
+                      <span class="event-alert-tag">{tx(statusLabel[eventStatus(ev.data) as 'cancelled' | 'postponed'], lang)}</span>
+                      {eventStatusNote(ev.data, lang) && (
+                        <span class="event-alert-note">{eventStatusNote(ev.data, lang)}</span>
+                      )}
+                    </p>
+                  )}
                   <span class={`genre-badge genre-${ev.data.genre}`}>{tx(genreLabel[ev.data.genre], lang)}</span>
                   <h3>{ev.data.artist}</h3>
                   <p class="poster-when">

@@ -89,6 +89,26 @@ export function eventBlurb(e: EventData, lang: Lang): string | undefined {
   return lang === 'en' ? (e.blurbEn ?? e.blurb) : e.blurb;
 }
 
+// Stato della serata: normale, annullata o rimandata.
+export type EventStatus = 'regular' | 'cancelled' | 'postponed';
+// Etichetta automatica dello stato (mostrata in rosso sull'annuncio).
+export const statusLabel: Record<'cancelled' | 'postponed', Bilingual> = {
+  cancelled: { it: 'Annullata', en: 'Cancelled' },
+  postponed: { it: 'Rimandata', en: 'Postponed' },
+};
+// Stato robusto, con fallback a 'regular' se il dato manca (es. colonna assente).
+export function eventStatus(e: EventData): EventStatus {
+  const s = (e as { status?: string }).status;
+  return s === 'cancelled' || s === 'postponed' ? s : 'regular';
+}
+// Messaggio libero dello stato: IT primario, EN opzionale con fallback su IT.
+export function eventStatusNote(e: EventData, lang: Lang): string | undefined {
+  const it = (e as { statusNote?: string }).statusNote;
+  const en = (e as { statusNoteEn?: string }).statusNoteEn;
+  const v = lang === 'en' ? (en ?? it) : it;
+  return v && v.trim() ? v : undefined;
+}
+
 // Suddivide gli eventi pubblicati in "in arrivo" e "passati" rispetto a today (ISO),
 // ordinati per data discendente. today è passato come stringa per evitare TZ surprise.
 export function splitEventi(entries: EventEntry[], today: string) {
