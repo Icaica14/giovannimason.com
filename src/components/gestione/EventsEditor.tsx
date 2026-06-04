@@ -502,7 +502,7 @@ export default function EventsEditor() {
 
             <div class="ev-form-grid">
               <div class="g-field">
-                <label>Etichetta data IT (override, opzionale)</label>
+                <label>Etichetta data IT (personalizzata, opzionale)</label>
                 <input
                   class="g-input"
                   type="text"
@@ -512,7 +512,7 @@ export default function EventsEditor() {
                 />
               </div>
               <div class="g-field">
-                <label>Etichetta data EN (override, opzionale)</label>
+                <label>Etichetta data EN (personalizzata, opzionale)</label>
                 <input
                   class="g-input"
                   type="text"
