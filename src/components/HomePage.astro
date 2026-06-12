@@ -1,6 +1,7 @@
 ---
 import { Image } from 'astro:assets';
 import Hero from './Hero.astro';
+import NextEventBand from './NextEventBand.astro';
 import { type Lang, t, routeMap } from '../i18n/ui';
 
 // Foto nuove caricate dal titolare.
@@ -46,6 +47,9 @@ const cucinaImgs = [cucina1, cucina2, cucina3, cucina4, cucina5];
 ---
 
 <Hero lang={lang} />
+
+{/* Banda bordeaux: invito al Biblio Truck + prossima serata ai Giardinetti */}
+<NextEventBand lang={lang} variant="home" />
 
 {/* Intro: chi siamo */}
 <section class="container">

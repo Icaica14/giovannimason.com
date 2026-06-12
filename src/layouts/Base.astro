@@ -8,21 +8,25 @@ import { localBusinessLd, webSiteLd, breadcrumbLd } from '../lib/structuredData'
 
 interface Props {
   lang: Lang;
-  currentRoute: 'home' | 'truck' | 'menu' | 'eventi' | 'prenota' | 'contatti' | 'artisti';
+  currentRoute: 'home' | 'truck' | 'menu' | 'eventi' | 'news' | 'prenota' | 'contatti' | 'artisti';
   /** Override SEO title; default è il titolo di sito */
   title?: string;
   description?: string;
+  /** Override dei path IT/EN per canonical, hreflang e selettore lingua
+      (es. pagine di dettaglio News: stesso slug nelle due lingue). */
+  itPath?: string;
+  enPath?: string;
 }
 
-const { lang, currentRoute, title, description } = Astro.props;
+const { lang, currentRoute, title, description, itPath: itPathProp, enPath: enPathProp } = Astro.props;
 const pageTitle = title ?? t(lang, 'site.title');
 const pageDesc  = description ?? t(lang, 'site.description');
 
 // URL assoluti per canonical, hreflang e Open Graph.
 // Astro.site è settato in astro.config.mjs (placeholder fino al go-live).
 const siteOrigin = Astro.site ? Astro.site.origin : '';
-const itPath = routeMap[currentRoute].it;
-const enPath = routeMap[currentRoute].en;
+const itPath = itPathProp ?? routeMap[currentRoute].it;
+const enPath = enPathProp ?? routeMap[currentRoute].en;
 const itUrl  = `${siteOrigin}${itPath}`;
 const enUrl  = `${siteOrigin}${enPath}`;
 const canonicalUrl = lang === 'it' ? itUrl : enUrl;
@@ -88,7 +92,7 @@ const menuCloseLabel = t(lang, 'nav.menu.close');
   </head>
   <body data-menu-open-label={menuOpenLabel} data-menu-close-label={menuCloseLabel}>
     <a class="skip-link" href="#main">{t(lang, 'a11y.skip')}</a>
-    <Nav lang={lang} currentRoute={currentRoute} />
+    <Nav lang={lang} currentRoute={currentRoute} itHref={itPath} enHref={enPath} />
     <main id="main">
       <slot />
     </main>

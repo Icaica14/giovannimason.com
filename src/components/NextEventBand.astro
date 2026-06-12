@@ -1,0 +1,185 @@
+---
+import { type Lang, t, routeMap } from '../i18n/ui';
+import { getEvents } from '../data/eventiRemote';
+import { upcomingLive, eventDateLabel, eventStatus } from '../data/eventi';
+
+interface Props {
+  lang: Lang;
+  /** 'truck' = banda della pagina Biblio Truck; 'home' = variante per la Home
+      con la frase cliccabile "Vieni a trovarci al Biblio Truck!". */
+  variant?: 'truck' | 'home';
+}
+const { lang, variant = 'truck' } = Astro.props;
+
+// Prossima serata ai Giardinetti (= Biblio Truck), la più vicina nel tempo e non
+// annullata/rimandata. Stessa fonte degli eventi (Supabase a build-time): il
+// manager la gestisce dalla solita app, scegliendo luogo = Giardinetti.
+const entries = await getEvents();
+const todayISO = new Date().toISOString().slice(0, 10);
+const next = upcomingLive(entries, todayISO, 50).find(
+  (e) => e.data.venue === 'giardinetti' && eventStatus(e.data) === 'regular',
+);
+
+const eventiHref = routeMap.eventi[lang];
+const truckHref = routeMap.truck[lang];
+---
+
+<section class={`next-band${variant === 'home' ? ' next-band-home' : ''}`}>
+  <div class="container next-band-inner">
+    <div class="next-band-text">
+      {variant === 'home' && (
+        <a class="next-band-headline" href={truckHref}>
+          {t(lang, 'band.home.cta')} <span aria-hidden="true">→</span>
+        </a>
+      )}
+
+      {next ? (
+        variant === 'home' ? (
+          <span class="next-band-event-line">
+            <span class="next-band-eyebrow">{t(lang, 'band.eyebrow')}:</span>{' '}
+            <span class="next-band-date">{eventDateLabel(next.data, lang)}</span> · {next.data.artist}
+          </span>
+        ) : (
+          <a class="next-band-event" href={`${eventiHref}#${next.id}`}>
+            <span class="next-band-eyebrow">{t(lang, 'band.eyebrow')}</span>
+            <span class="next-band-event-main">
+              <span class="next-band-date">{eventDateLabel(next.data, lang)}</span>
+              <span class="next-band-sep" aria-hidden="true">·</span>
+              <span class="next-band-artist">{next.data.artist}</span>
+              <span class="next-band-sep" aria-hidden="true">·</span>
+              <span class="next-band-time">{next.data.time}</span>
+            </span>
+          </a>
+        )
+      ) : (
+        <span class="next-band-emptywrap">
+          {variant !== 'home' && <span class="next-band-eyebrow">{t(lang, 'band.eyebrow')}</span>}
+          <span class="next-band-empty">{t(lang, 'band.empty')}</span>
+        </span>
+      )}
+    </div>
+
+    <a class="btn btn-ghost next-band-cta" href={eventiHref}>{t(lang, 'band.cta')}</a>
+  </div>
+</section>
+
+<style>
+  .next-band {
+    background: var(--vino);
+    color: var(--paper);
+    border-top: 1px solid rgba(246, 239, 225, 0.12);
+    border-bottom: 1px solid rgba(246, 239, 225, 0.12);
+  }
+  .next-band-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem 2rem;
+    padding: 1.15rem 0;
+    flex-wrap: wrap;
+  }
+  .next-band-text {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    min-width: 0;
+  }
+  .next-band-eyebrow {
+    font-family: var(--font-brand);
+    font-size: 0.68rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--paper-3);
+  }
+  .next-band-event {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    color: var(--paper);
+  }
+  .next-band-event:hover {
+    color: var(--paper);
+  }
+  .next-band-event-main {
+    display: inline-flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.5rem;
+    font-family: var(--font-display);
+    font-size: 1.35rem;
+  }
+  .next-band-date {
+    font-weight: 600;
+  }
+  .next-band-artist {
+    font-style: italic;
+  }
+  .next-band-event:hover .next-band-artist {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .next-band-time {
+    color: var(--paper-3);
+    font-size: 1.05rem;
+  }
+  .next-band-sep {
+    color: rgba(246, 239, 225, 0.5);
+  }
+  .next-band-emptywrap {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+  }
+  .next-band-empty {
+    margin: 0;
+    font-style: italic;
+    color: var(--paper-3);
+    font-size: 1.08rem;
+  }
+  .next-band-cta {
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  /* Variante Home: titolo cliccabile verso la pagina Biblio Truck */
+  .next-band-headline {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: clamp(1.4rem, 3.2vw, 1.95rem);
+    line-height: 1.1;
+    color: var(--paper);
+  }
+  .next-band-headline:hover {
+    color: var(--paper);
+  }
+  .next-band-headline span {
+    display: inline-block;
+    transition: transform 0.2s var(--ease);
+  }
+  .next-band-headline:hover span {
+    transform: translateX(4px);
+  }
+  .next-band-event-line {
+    color: var(--paper-3);
+    font-size: 1rem;
+  }
+  .next-band-event-line .next-band-eyebrow {
+    display: inline;
+  }
+  .next-band-event-line .next-band-date {
+    color: var(--paper);
+  }
+
+  @media (max-width: 640px) {
+    .next-band-inner {
+      padding: 1rem 0;
+    }
+    .next-band-event-main {
+      font-size: 1.2rem;
+    }
+    .next-band-cta {
+      width: 100%;
+      text-align: center;
+    }
+  }
+</style>

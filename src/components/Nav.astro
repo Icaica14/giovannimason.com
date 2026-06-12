@@ -4,14 +4,18 @@ import { type Lang, t, routeMap } from '../i18n/ui';
 
 interface Props {
   lang: Lang;
-  currentRoute: 'home' | 'truck' | 'menu' | 'eventi' | 'prenota' | 'contatti' | 'artisti';
+  currentRoute: 'home' | 'truck' | 'menu' | 'eventi' | 'news' | 'prenota' | 'contatti' | 'artisti';
+  /** Override href del selettore lingua (pagine di dettaglio: stesso contenuto
+      nelle due lingue). Default: la rotta corrente da routeMap. */
+  itHref?: string;
+  enHref?: string;
 }
 
 const { lang, currentRoute } = Astro.props;
-const items = ['home', 'truck', 'menu', 'eventi', 'prenota', 'contatti', 'artisti'] as const;
+const items = ['home', 'truck', 'menu', 'eventi', 'news', 'prenota', 'contatti', 'artisti'] as const;
 
-const itHref = routeMap[currentRoute].it;
-const enHref = routeMap[currentRoute].en;
+const itHref = Astro.props.itHref ?? routeMap[currentRoute].it;
+const enHref = Astro.props.enHref ?? routeMap[currentRoute].en;
 ---
 
 <nav class="nav" aria-label="Primary">

@@ -19,6 +19,7 @@ export const ui = {
     'nav.prenota':    'Prenota',
     'nav.contatti':   'Contatti',
     'nav.artisti':    'Per gli artisti',
+    'nav.news':       'News',
     'nav.lang.it':    'IT',
     'nav.lang.en':    'EN',
     'nav.menu.toggle':'Apri il menu',
@@ -43,6 +44,8 @@ export const ui = {
     'artisti.meta.description': 'Sei un musicista o una band? Proponiti per suonare a Biblio: presentazione, materiali audio o video, disponibilità e cachet.',
     'truck.meta.title':      'Biblio Truck · musica e food ai Giardinetti · Treviso',
     'truck.meta.description': 'Biblio porta la sua musica dal vivo e il suo food truck ai Giardinetti di Sant\'Andrea a Treviso: concerti all\'aperto lungo il Sile, cibo e drink a ingresso libero.',
+    'news.meta.title':       'News & novità · Biblio Treviso',
+    'news.meta.description': 'Le novità di Biblio: serate speciali, ospiti, racconti dal locale e dal Biblio Truck. Annunci e aggiornamenti dal cuore di Treviso.',
 
     'truck.hero.eyebrow':   'Biblio all\'aperto',
     'truck.hero.title':     'Biblio Truck',
@@ -76,6 +79,20 @@ export const ui = {
     'truck.cta.body':       'Niente prenotazione: si arriva, ci si siede lungo il fiume e si resta fino a tardi. Trovi le date sulla pagina eventi e tutti gli aggiornamenti su Instagram.',
     'truck.cta.events':     'Le prossime date',
     'truck.cta.instagram':  'Seguici su Instagram',
+
+    'news.title':           'News',
+    'news.lede':            'Le novità dal Biblio e dal Biblio Truck: serate speciali, ospiti, piccoli racconti dal locale. Gli annunci più freschi, qui.',
+    'news.empty':           'Presto le nostre novità qui. Nel frattempo, seguici su Instagram.',
+    'news.readmore':        'Leggi tutto',
+    'news.back':            '← Tutte le news',
+    'news.gallery.label':   'Galleria immagini',
+    'news.gallery.prev':    'Immagine precedente',
+    'news.gallery.next':    'Immagine successiva',
+
+    'band.eyebrow':         'Prossima serata al Biblio Truck',
+    'band.empty':           'Nuove serate in arrivo: torna presto a trovarci.',
+    'band.cta':             'Tutti gli eventi',
+    'band.home.cta':        'Vieni a trovarci al Biblio Truck!',
 
     'hero.tagline':   'art · food · drink',
     'hero.lede1':     'Tre sere a settimana il palco si accende.',
@@ -282,6 +299,7 @@ export const ui = {
     'nav.prenota':    'Reservations',
     'nav.contatti':   'Contact',
     'nav.artisti':    'For artists',
+    'nav.news':       'News',
     'nav.lang.it':    'IT',
     'nav.lang.en':    'EN',
     'nav.menu.toggle':'Open menu',
@@ -306,6 +324,8 @@ export const ui = {
     'artisti.meta.description': 'Are you a musician or a band? Pitch a live night at Biblio: bio, audio or video links, availability and fee.',
     'truck.meta.title':      'Biblio Truck · music and food at the Giardinetti · Treviso',
     'truck.meta.description': 'Biblio brings its live music and food truck to the Giardinetti di Sant\'Andrea in Treviso: open-air concerts along the Sile, food and drinks, free entry.',
+    'news.meta.title':       'News & updates · Biblio Treviso',
+    'news.meta.description': 'News from Biblio: special nights, guests, stories from the venue and the Biblio Truck. Announcements and updates from the heart of Treviso.',
 
     'truck.hero.eyebrow':   'Biblio outdoors',
     'truck.hero.title':     'Biblio Truck',
@@ -339,6 +359,20 @@ export const ui = {
     'truck.cta.body':       'No booking needed: come along, sit by the river and stay until late. You\'ll find the dates on the events page and all the updates on Instagram.',
     'truck.cta.events':     'Upcoming dates',
     'truck.cta.instagram':  'Follow us on Instagram',
+
+    'news.title':           'News',
+    'news.lede':            'The latest from Biblio and the Biblio Truck: special nights, guests, little stories from the venue. The freshest announcements, right here.',
+    'news.empty':           'Our news is coming soon. In the meantime, follow us on Instagram.',
+    'news.readmore':        'Read more',
+    'news.back':            '← All news',
+    'news.gallery.label':   'Image gallery',
+    'news.gallery.prev':    'Previous image',
+    'news.gallery.next':    'Next image',
+
+    'band.eyebrow':         'Next night at the Biblio Truck',
+    'band.empty':           'New nights coming soon — check back soon.',
+    'band.cta':             'See all events',
+    'band.home.cta':        'Come find us at the Biblio Truck!',
 
     'hero.tagline':   'art · food · drink',
     'hero.lede1':     'Three nights a week the stage lights up.',
@@ -549,10 +583,11 @@ export function t(lang: Lang, key: UIKey): string {
 // (in IT le rotte sono /menu, /eventi, /prenota, /contatti, /per-gli-artisti)
 // (in EN restano sotto /en/menu, /en/eventi, /en/prenota, /en/contatti, /en/for-artists)
 export const routeMap: Record<string, { it: string; en: string }> = {
-  home:     { it: '/',                  en: '/en/' },
+  home:     { it: '/home/',             en: '/en/home/' },
   truck:    { it: '/biblio-truck/',     en: '/en/biblio-truck/' },
   menu:     { it: '/menu/',             en: '/en/menu/' },
   eventi:   { it: '/eventi/',           en: '/en/eventi/' },
+  news:     { it: '/news/',             en: '/en/news/' },
   prenota:  { it: '/prenota/',          en: '/en/prenota/' },
   contatti: { it: '/contatti/',         en: '/en/contatti/' },
   artisti:  { it: '/per-gli-artisti/',  en: '/en/for-artists/' },
