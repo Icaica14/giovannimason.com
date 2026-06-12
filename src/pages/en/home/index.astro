@@ -1,0 +1,18 @@
+---
+import Base from '../../../layouts/Base.astro';
+import HomePage from '../../../components/HomePage.astro';
+import { t } from '../../../i18n/ui';
+
+// English home, served at /en/home/. The domain root /en/ redirects to the
+// Biblio Truck page (see redirects in astro.config.mjs).
+const lang = 'en' as const;
+---
+
+<Base
+  lang={lang}
+  currentRoute="home"
+  title={t(lang, 'home.meta.title')}
+  description={t(lang, 'home.meta.description')}
+>
+  <HomePage lang={lang} />
+</Base>

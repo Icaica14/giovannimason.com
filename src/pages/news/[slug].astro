@@ -1,0 +1,32 @@
+---
+import Base from '../../layouts/Base.astro';
+import NewsDetail from '../../components/NewsDetail.astro';
+import { getNews } from '../../data/newsRemote';
+import { publishedNews, newsTitle, newsExcerpt } from '../../data/news';
+import { routeMap } from '../../i18n/ui';
+
+// Una pagina di dettaglio per ogni news pubblicata. Lo slug è derivato dal
+// titolo (vedi withSlugs in src/data/news.ts) ed è condiviso fra IT ed EN.
+export async function getStaticPaths() {
+  const items = publishedNews(await getNews());
+  return items.map((entry) => ({ params: { slug: entry.slug }, props: { entry } }));
+}
+
+const lang = 'it' as const;
+const { entry } = Astro.props;
+const title = newsTitle(entry.data, lang);
+const description = newsExcerpt(entry.data, lang, 160);
+const itPath = `${routeMap.news.it}${entry.slug}/`;
+const enPath = `${routeMap.news.en}${entry.slug}/`;
+---
+
+<Base
+  lang={lang}
+  currentRoute="news"
+  title={`${title} · Biblio`}
+  description={description}
+  itPath={itPath}
+  enPath={enPath}
+>
+  <NewsDetail lang={lang} entry={entry} />
+</Base>

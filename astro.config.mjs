@@ -9,6 +9,12 @@ import preact from '@astrojs/preact';
 export default defineConfig({
   site: 'https://masoninnovation.it',
   // base: '/',  // se metti il sito in https://utente.github.io/biblio/, decommenta e usa '/biblio'
+  // Pagina iniziale del dominio = Biblio Truck. La Home resta su /home/ (e /en/home/),
+  // raggiungibile da nav/brand/footer. Redirect statici (meta-refresh + canonical).
+  redirects: {
+    '/': '/biblio-truck/',
+    '/en/': '/en/biblio-truck/',
+  },
   i18n: {
     defaultLocale: 'it',
     locales: ['it', 'en'],

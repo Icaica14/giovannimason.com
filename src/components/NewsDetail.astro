@@ -1,0 +1,94 @@
+---
+import { type Lang, t, routeMap } from '../i18n/ui';
+import { type NewsEntry, newsTitle, newsBody, newsParagraphs } from '../data/news';
+
+interface Props {
+  lang: Lang;
+  entry: NewsEntry;
+}
+const { lang, entry } = Astro.props;
+
+const title = newsTitle(entry.data, lang);
+const paras = newsParagraphs(newsBody(entry.data, lang));
+const images = entry.data.images.filter(Boolean);
+const multi = images.length > 1;
+---
+
+<article class="news-detail">
+  <div class="container news-detail-inner">
+    <p class="news-detail-back">
+      <a href={routeMap.news[lang]}>{t(lang, 'news.back')}</a>
+    </p>
+
+    <header class="news-detail-head reveal">
+      <h1>{title}</h1>
+    </header>
+
+    {images.length === 1 && (
+      <figure class="news-detail-single reveal">
+        <img src={images[0]} alt={title} loading="eager" decoding="async" />
+      </figure>
+    )}
+
+    {multi && (
+      <figure class="news-gallery reveal" aria-label={t(lang, 'news.gallery.label')} aria-roledescription="carousel">
+        <div class="news-gallery-strip">
+          {images.map((src, i) => (
+            <div class="news-gallery-slide">
+              <img
+                src={src}
+                alt={`${title} — ${i + 1}/${images.length}`}
+                loading={i === 0 ? 'eager' : 'lazy'}
+                decoding="async"
+              />
+            </div>
+          ))}
+        </div>
+        <button class="news-gallery-btn news-gallery-prev" type="button" aria-label={t(lang, 'news.gallery.prev')} hidden>‹</button>
+        <button class="news-gallery-btn news-gallery-next" type="button" aria-label={t(lang, 'news.gallery.next')} hidden>›</button>
+        <div class="news-gallery-dots" aria-hidden="true">
+          {images.map((_, i) => (
+            <span class={`news-gallery-dot${i === 0 ? ' is-active' : ''}`}></span>
+          ))}
+        </div>
+      </figure>
+    )}
+
+    <div class="news-detail-body prose">
+      {paras.map((p) => <p>{p}</p>)}
+    </div>
+  </div>
+</article>
+
+{multi && (
+  <script is:inline>
+    // Enhancement progressivo della gallery: senza JS resta una striscia
+    // scorrevole (swipe/scroll). Con JS: frecce prev/next + indicatori attivi.
+    (function () {
+      document.querySelectorAll('.news-gallery').forEach(function (g) {
+        var strip = g.querySelector('.news-gallery-strip');
+        var prev = g.querySelector('.news-gallery-prev');
+        var next = g.querySelector('.news-gallery-next');
+        var dots = Array.prototype.slice.call(g.querySelectorAll('.news-gallery-dot'));
+        if (!strip) return;
+        if (prev) prev.hidden = false;
+        if (next) next.hidden = false;
+        function step() {
+          var s = strip.querySelector('.news-gallery-slide');
+          return s ? s.getBoundingClientRect().width + 12 : strip.clientWidth;
+        }
+        if (prev) prev.addEventListener('click', function () { strip.scrollBy({ left: -step(), behavior: 'smooth' }); });
+        if (next) next.addEventListener('click', function () { strip.scrollBy({ left: step(), behavior: 'smooth' }); });
+        function sync() {
+          var i = Math.round(strip.scrollLeft / step());
+          dots.forEach(function (d, di) { d.classList.toggle('is-active', di === i); });
+          if (prev) prev.disabled = strip.scrollLeft < 4;
+          if (next) next.disabled = strip.scrollLeft > strip.scrollWidth - strip.clientWidth - 4;
+        }
+        strip.addEventListener('scroll', function () { window.requestAnimationFrame(sync); }, { passive: true });
+        window.addEventListener('resize', sync, { passive: true });
+        sync();
+      });
+    })();
+  </script>
+)}

@@ -4,6 +4,7 @@ import { type Lang, t, routeMap } from '../i18n/ui';
 import { splitEventi, eventDateLabel } from '../data/eventi';
 import { getEvents } from '../data/eventiRemote';
 import { getTruckMenus } from '../data/truckMenus';
+import NextEventBand from './NextEventBand.astro';
 
 // Foto del food truck (caricate dal titolare).
 // bancone.jpg → landscape, usata come banda hero di sfondo.
@@ -63,6 +64,9 @@ const truckAlt = lang === 'it'
     </div>
   </header>
 
+  {/* Banda bordeaux: promemoria della prossima serata al Biblio Truck */}
+  <NextEventBand lang={lang} variant="truck" />
+
   {/* Il progetto: racconto + foto del truck */}
   <section class="container">
     <div class="intro-grid truck-intro">
@@ -86,27 +90,8 @@ const truckAlt = lang === 'it'
 
   <div class="divider"><span>· · ·</span></div>
 
-  {/* Menu food & drink (PDF) */}
-  <section class="bg-paper-2">
-    <div class="container">
-      <div class="section-head reveal">
-        <span class="eyebrow">{t(lang, 'truck.menus.eyebrow')}</span>
-        <h2>{t(lang, 'truck.menus.title')}</h2>
-        <p>{t(lang, 'truck.menus.intro')}</p>
-      </div>
-      <div class="truck-menu-actions reveal">
-        <a class="btn" href={menus.food} target="_blank" rel="noopener noreferrer">
-          {t(lang, 'truck.menus.food')}
-        </a>
-        <a class="btn btn-dark" href={menus.drink} target="_blank" rel="noopener noreferrer">
-          {t(lang, 'truck.menus.drink')}
-        </a>
-      </div>
-    </div>
-  </section>
-
-  {/* Prossimi eventi ai Giardinetti (senza immagini) */}
-  <section class="truck-events">
+  {/* Prossimi eventi ai Giardinetti (senza immagini) — prima del food & drink */}
+  <section class="truck-events bg-paper-2">
     <div class="container">
       <div class="section-head reveal">
         <span class="eyebrow">{t(lang, 'truck.events.eyebrow')}</span>
@@ -136,6 +121,25 @@ const truckAlt = lang === 'it'
       <p class="truck-events-cta reveal">
         <a class="btn btn-dark" href={routeMap.eventi[lang]}>{t(lang, 'truck.events.cta')}</a>
       </p>
+    </div>
+  </section>
+
+  {/* Menu food & drink (PDF) */}
+  <section>
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="eyebrow">{t(lang, 'truck.menus.eyebrow')}</span>
+        <h2>{t(lang, 'truck.menus.title')}</h2>
+        <p>{t(lang, 'truck.menus.intro')}</p>
+      </div>
+      <div class="truck-menu-actions reveal">
+        <a class="btn" href={menus.food} target="_blank" rel="noopener noreferrer">
+          {t(lang, 'truck.menus.food')}
+        </a>
+        <a class="btn btn-dark" href={menus.drink} target="_blank" rel="noopener noreferrer">
+          {t(lang, 'truck.menus.drink')}
+        </a>
+      </div>
     </div>
   </section>
 

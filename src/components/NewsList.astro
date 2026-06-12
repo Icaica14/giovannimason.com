@@ -1,0 +1,56 @@
+---
+import { type Lang, t, routeMap } from '../i18n/ui';
+import { getNews } from '../data/newsRemote';
+import { publishedNews, newsTitle, newsExcerpt, newsCover } from '../data/news';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+
+// News pubblicate, ordinate dall'adapter (più recenti prima). Fonte: Supabase a
+// build-time; se la tabella non c'è ancora, l'elenco è vuoto e mostriamo lo stato
+// vuoto coerente col design.
+const items = publishedNews(await getNews());
+const newsBase = routeMap.news[lang];
+---
+
+<section class="news-page">
+  <header class="news-hero container">
+    <span class="eyebrow">{t(lang, 'hero.tagline')}</span>
+    <h1>{t(lang, 'news.title')}</h1>
+    <p class="lede">{t(lang, 'news.lede')}</p>
+  </header>
+
+  <section class="container news-list-wrap">
+    {items.length === 0 ? (
+      <p class="news-empty">{t(lang, 'news.empty')}</p>
+    ) : (
+      <ul class="news-grid">
+        {items.map((entry, i) => {
+          const cover = newsCover(entry.data);
+          const href = `${newsBase}${entry.slug}/`;
+          const title = newsTitle(entry.data, lang);
+          return (
+            <li class="news-card reveal" style={`--reveal-delay:${(i % 6) * 0.07}s`}>
+              <a class="news-card-link" href={href}>
+                <div class="news-card-media">
+                  {cover ? (
+                    <img src={cover} alt={title} loading="lazy" decoding="async" />
+                  ) : (
+                    <span class="news-card-placeholder" aria-hidden="true">Biblio</span>
+                  )}
+                </div>
+                <div class="news-card-body">
+                  <h2 class="news-card-title">{title}</h2>
+                  <p class="news-card-excerpt">{newsExcerpt(entry.data, lang)}</p>
+                  <span class="news-card-more">{t(lang, 'news.readmore')} →</span>
+                </div>
+              </a>
+            </li>
+          );
+        })}
+      </ul>
+    )}
+  </section>
+</section>

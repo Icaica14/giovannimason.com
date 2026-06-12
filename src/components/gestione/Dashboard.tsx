@@ -8,9 +8,10 @@ import ApplicationsList from './ApplicationsList';
 import ArtistsRegistry from './ArtistsRegistry';
 import MenuEditor from './MenuEditor';
 import EventsEditor from './EventsEditor';
+import NewsEditor from './NewsEditor';
 import TruckMenus from './TruckMenus';
 
-type TabId = 'prenotazioni' | 'candidature' | 'artisti' | 'menu' | 'eventi' | 'truck';
+type TabId = 'prenotazioni' | 'candidature' | 'artisti' | 'menu' | 'eventi' | 'news' | 'truck';
 
 const TABS: { id: TabId; label: string }[] = [
   { id: 'prenotazioni', label: 'Prenotazioni' },
@@ -18,6 +19,7 @@ const TABS: { id: TabId; label: string }[] = [
   { id: 'artisti', label: 'Artisti' },
   { id: 'menu', label: 'Menu' },
   { id: 'eventi', label: 'Eventi' },
+  { id: 'news', label: 'News' },
   { id: 'truck', label: 'Biblio Truck' },
 ];
 
@@ -141,6 +143,7 @@ export default function Dashboard() {
         {tab === 'artisti' && <ArtistsRegistry />}
         {tab === 'menu' && <MenuEditor />}
         {tab === 'eventi' && <EventsEditor />}
+        {tab === 'news' && <NewsEditor />}
         {tab === 'truck' && <TruckMenus />}
       </main>
     </div>
