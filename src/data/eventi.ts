@@ -9,7 +9,7 @@ export type Bilingual = { it: string; en: string };
 
 export type EventGenre =
   | 'jazz' | 'blues' | 'soul' | 'indie' | 'songwriter'
-  | 'reading' | 'workshop';
+  | 'reading' | 'workshop' | 'sport' | 'altro';
 
 // Etichette del badge di genere (fisse, non editabili dal manager).
 export const genreLabel: Record<EventGenre, Bilingual> = {
@@ -20,6 +20,8 @@ export const genreLabel: Record<EventGenre, Bilingual> = {
   songwriter: { it: 'Voci emergenti',     en: 'Emerging voices' },
   reading:    { it: 'Reading',            en: 'Reading' },
   workshop:   { it: 'Workshop',           en: 'Workshop' },
+  sport:      { it: 'Sport',              en: 'Sport' },
+  altro:      { it: 'Altro',              en: 'Other' },
 };
 
 export function tx(node: Bilingual, lang: Lang): string {
