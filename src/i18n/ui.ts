@@ -90,7 +90,7 @@ export const ui = {
     'news.gallery.next':    'Immagine successiva',
 
     'band.eyebrow':         'Prossima serata al Biblio Truck',
-    'band.empty':           'Nuove serate in arrivo: torna presto a trovarci.',
+    'band.empty':           'Nuove serate in arrivo: ti aspettiamo ai Giardinetti di Sant\'Andrea!',
     'band.cta':             'Tutti gli eventi',
     'band.home.cta':        'Vieni a trovarci al Biblio Truck!',
 
@@ -370,7 +370,7 @@ export const ui = {
     'news.gallery.next':    'Next image',
 
     'band.eyebrow':         'Next night at the Biblio Truck',
-    'band.empty':           'New nights coming soon — check back soon.',
+    'band.empty':           'New nights coming soon — see you at the Giardinetti di Sant\'Andrea!',
     'band.cta':             'See all events',
     'band.home.cta':        'Come find us at the Biblio Truck!',
 

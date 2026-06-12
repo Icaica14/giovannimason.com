@@ -10,7 +10,7 @@ const eventi = defineCollection({
     artist: z.string(),
     date: z.string().regex(/^\d{4}-\d{2}-\d{2}/), // ISO; il date-picker di Tina può aggiungere l'ora
     time: z.string(),
-    genre: z.enum(['jazz', 'blues', 'soul', 'indie', 'songwriter', 'reading', 'workshop']),
+    genre: z.enum(['jazz', 'blues', 'soul', 'indie', 'songwriter', 'reading', 'workshop', 'sport', 'altro']),
     blurb: z.string().optional(),
     blurbEn: z.string().optional(),
     dateLabel: z.string().optional(),   // override IT (solo per casi tipo "Gio 23 + Ven 24")
