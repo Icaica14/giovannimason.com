@@ -54,7 +54,9 @@ const menuCloseLabel = t(lang, 'nav.menu.close');
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{pageTitle}</title>
     <meta name="description" content={pageDesc} />
-    {/* Dominio temporaneo: noindex finche' non si va live sul dominio definitivo
+    {/* Verifica proprietà del sito su Google Search Console. */}
+    <meta name="google-site-verification" content="h3xtCb1iue7hSxByat9somC__LrEaQ5gT7OY5IjT_0k" />
+    {/* Su dominio temporaneo emette noindex; a regime SITE_INDEXABLE=true lo disattiva
         (vedi src/config/seo.ts). Su /gestione il noindex e' gia' nel suo layout. */}
     {!SITE_INDEXABLE && <meta name="robots" content="noindex, nofollow" />}
     <link rel="canonical" href={canonicalUrl} />
