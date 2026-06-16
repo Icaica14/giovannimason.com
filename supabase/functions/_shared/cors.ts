@@ -1,8 +1,11 @@
 // CORS condiviso fra le Edge Functions.
-// I form pubblici girano su masoninnovation.it; le function su *.supabase.co
+// I form pubblici girano su bibliotreviso.com; le function su *.supabase.co
 // (cross-origin), quindi serve gestire la preflight OPTIONS e gli header.
 
 const ALLOWED_ORIGINS = new Set<string>([
+  'https://bibliotreviso.com',
+  'https://www.bibliotreviso.com',
+  // Dominio temporaneo precedente (in transizione, rimovibile a regime):
   'https://masoninnovation.it',
   'https://www.masoninnovation.it',
   // Anteprime/sviluppo locale:
@@ -13,7 +16,7 @@ const ALLOWED_ORIGINS = new Set<string>([
 /** Header CORS calcolati sull'Origin della richiesta (echo se in allowlist). */
 export function corsHeaders(req: Request): Record<string, string> {
   const origin = req.headers.get('Origin') ?? '';
-  const allow = ALLOWED_ORIGINS.has(origin) ? origin : 'https://masoninnovation.it';
+  const allow = ALLOWED_ORIGINS.has(origin) ? origin : 'https://bibliotreviso.com';
   return {
     'Access-Control-Allow-Origin': allow,
     'Access-Control-Allow-Methods': 'POST, OPTIONS',
