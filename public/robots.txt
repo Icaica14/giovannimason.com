@@ -2,4 +2,4 @@ User-agent: *
 Allow: /
 Disallow: /gestione/
 
-Sitemap: https://masoninnovation.it/sitemap-index.xml
+Sitemap: https://bibliotreviso.com/sitemap-index.xml
