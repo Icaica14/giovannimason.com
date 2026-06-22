@@ -71,7 +71,11 @@ const goto = t(lang, 'hero.carousel.goto');
   .hero-carousel {
     position: relative;
     isolation: isolate;
+    /* .hero-carousel è un <section>: azzera il padding verticale globale
+       (`section { padding: 5rem 0 }`), altrimenti restano due fasce color carta
+       sopra/sotto le slide (lo sfondo è sui figli .hero-slide, non sul section). */
     margin: 0;
+    padding: 0;
   }
   /* Finestra che ritaglia il track (niente overflow-auto/scroll-snap → niente
      artefatti/fasce su iOS). Lo scorrimento è una translateX sul track. */
