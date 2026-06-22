@@ -274,6 +274,13 @@ p { margin: 0 0 1em; }
   border-color: var(--ink);
 }
 .btn-dark:hover { background: var(--vino); border-color: var(--vino); color: var(--paper); }
+/* Indicatore di focus da tastiera per tutti i bottoni (a11y, WCAG 2.4.7). */
+.btn:focus-visible,
+.btn-ghost:focus-visible,
+.btn-dark:focus-visible {
+  outline: 2px solid var(--brass);
+  outline-offset: 3px;
+}
 
 /* ============================================================
    SECTIONS

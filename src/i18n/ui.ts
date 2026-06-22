@@ -99,6 +99,9 @@ export const ui = {
     'hero.lede2':     'Tra lampade d\'epoca, drink d\'autore e cicchetti gourmet i cuori si scaldano nel centro di Treviso.',
     'hero.cta.book':  'Prenota un tavolo',
     'hero.cta.menu':  'Sfoglia il menu',
+    'hero.truck.cta':       'Scopri il Biblio Truck',
+    'hero.carousel.label':  'Biblio · bar e food truck ai Giardinetti',
+    'hero.carousel.goto':   'Vai alla slide',
 
     'home.intro.eyebrow':  'L\'anima del locale',
     'home.intro.title':    'Prima di tutto, la musica',
@@ -379,6 +382,9 @@ export const ui = {
     'hero.lede2':     'Among vintage lamps, signature drinks and gourmet small plates, hearts warm up in the centre of Treviso.',
     'hero.cta.book':  'Book a table',
     'hero.cta.menu':  'See the menu',
+    'hero.truck.cta':       'Discover Biblio Truck',
+    'hero.carousel.label':  'Biblio · bar and food truck at the Giardinetti',
+    'hero.carousel.goto':   'Go to slide',
 
     'home.intro.eyebrow':  'The soul of the place',
     'home.intro.title':    'Music first',

@@ -26,7 +26,19 @@ const truckHref = routeMap.truck[lang];
 
 <section class={`next-band${variant === 'home' ? ' next-band-home' : ''}`}>
   <div class="container next-band-inner">
-    <div class="next-band-text">
+    <div class="next-band-main">
+      {next && next.data.poster && (
+        <img
+          class="next-band-poster"
+          src={next.data.poster}
+          alt={`Locandina · ${next.data.artist}`}
+          width="84"
+          height="112"
+          loading="lazy"
+          decoding="async"
+        />
+      )}
+      <div class="next-band-text">
       {variant === 'home' && (
         <a class="next-band-headline" href={truckHref}>
           {t(lang, 'band.home.cta')} <span aria-hidden="true">→</span>
@@ -57,6 +69,7 @@ const truckHref = routeMap.truck[lang];
           <span class="next-band-empty">{t(lang, 'band.empty')}</span>
         </span>
       )}
+      </div>
     </div>
 
     <a class="btn btn-ghost next-band-cta" href={eventiHref}>{t(lang, 'band.cta')}</a>
@@ -77,6 +90,25 @@ const truckHref = routeMap.truck[lang];
     gap: 1rem 2rem;
     padding: 1.15rem 0;
     flex-wrap: wrap;
+  }
+  /* Gruppo locandina + testo (sinistra); il CTA resta a destra. */
+  .next-band-main {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    min-width: 0;
+  }
+  /* Locandina del prossimo evento: miniatura ritratto, proporzioni fisse 3:4
+     così non si deforma; cover per riempire il box in modo ordinato. */
+  .next-band-poster {
+    flex-shrink: 0;
+    width: 84px;
+    height: 112px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 1px solid rgba(246, 239, 225, 0.28);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.38);
+    background: rgba(0, 0, 0, 0.18);
   }
   .next-band-text {
     display: flex;
@@ -174,8 +206,15 @@ const truckHref = routeMap.truck[lang];
     .next-band-inner {
       padding: 1rem 0;
     }
+    .next-band-main {
+      flex-basis: 100%;
+    }
     .next-band-event-main {
       font-size: 1.2rem;
+    }
+    .next-band-poster {
+      width: 66px;
+      height: 88px;
     }
     .next-band-cta {
       width: 100%;
