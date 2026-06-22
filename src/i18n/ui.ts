@@ -50,6 +50,7 @@ export const ui = {
     'truck.hero.eyebrow':   'Biblio all\'aperto',
     'truck.hero.title':     'Biblio Truck',
     'truck.hero.tagline':   'Musica dal vivo e food truck ai Giardinetti di Sant\'Andrea, lungo il Sile.',
+    'truck.hero.tagline2':  'Vieni a trovarci per tutta l\'estate!',
 
     'truck.intro.eyebrow':  'In estate',
     'truck.intro.title':    'Biblio esce all\'aperto',
@@ -335,6 +336,7 @@ export const ui = {
     'truck.hero.eyebrow':   'Biblio outdoors',
     'truck.hero.title':     'Biblio Truck',
     'truck.hero.tagline':   'Live music and a food truck at the Giardinetti di Sant\'Andrea, along the Sile.',
+    'truck.hero.tagline2':  'Come and see us all summer long!',
 
     'truck.intro.eyebrow':  'In summer',
     'truck.intro.title':    'Biblio goes outdoors',
