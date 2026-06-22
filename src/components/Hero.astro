@@ -74,6 +74,7 @@ const truckName = t(lang, 'truck.hero.title'); // "Biblio Truck" — alt del log
             </div>
             <div class="hero-copy">
               <p class="lede">{t(lang, 'truck.hero.tagline')}</p>
+              <p class="lede">{t(lang, 'truck.hero.tagline2')}</p>
             </div>
             <div class="hero-cta">
               <a class="btn" href={truckHref}>{t(lang, 'hero.truck.cta')}</a>
@@ -398,7 +399,9 @@ const truckName = t(lang, 'truck.hero.title'); // "Biblio Truck" — alt del log
       setDots(i);
     };
 
-    // Fine transizione (solo con motion attivo): stesso epilogo del path rAF.
+    // Fine transizione (solo con motion attivo): stesso epilogo del settleTimer.
+    // afterSettle() annulla il timer di sicurezza ancora pendente → niente doppio
+    // sblocco quando la transizione completa prima del timeout di backstop.
     track.addEventListener('transitionend', (e) => {
       if (e.propertyName !== 'transform') return;
       afterSettle();
