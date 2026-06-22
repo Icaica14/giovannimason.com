@@ -27,11 +27,11 @@ export const ui = {
 
     'a11y.skip':      'Salta al contenuto',
 
-    'site.title':     'Biblio · musica dal vivo · cicchetti & drink · Treviso',
+    'site.title':     'Bar Biblio Treviso | Aperitivi, eventi e musica dal vivo',
     'site.description': 'Tre sere a settimana di musica dal vivo a Treviso: jazz, blues, soul e voci emergenti. Cicchetti gourmet, vini selezionati e drink d\'autore in una cornice antiquaria.',
 
-    'home.meta.title':       'Biblio · Musica dal vivo, drink & cicchetti · Treviso',
-    'home.meta.description': 'Bar Biblio: tre sere a settimana di musica dal vivo a Treviso. Drink d\'autore, cicchetti gourmet e una sala antiquaria a pochi passi da Piazza dei Signori.',
+    'home.meta.title':       'Bar Biblio Treviso | Eventi, aperitivi e Biblio Truck',
+    'home.meta.description': 'Bar Biblio è un punto di ritrovo a Treviso per aperitivi, serate ed eventi. Scopri anche il Biblio Truck e le prossime iniziative in programma.',
     'menu.meta.title':       'Il menù · Biblio Treviso',
     'menu.meta.description': 'Il menù di Biblio: drink d\'autore, vini di territorio e cicchetti gourmet. Una proposta che evolve con le stagioni e accompagna la musica dal vivo.',
     'eventi.meta.title':     'Eventi & musica dal vivo · Biblio Treviso',
@@ -42,8 +42,8 @@ export const ui = {
     'contatti.meta.description': 'Biblio si trova in Via Armando Diaz 3/A, nel cuore di Treviso. Orari, telefono, indicazioni e recensioni dei nostri ospiti.',
     'artisti.meta.title':    'Per gli artisti · Biblio Treviso',
     'artisti.meta.description': 'Sei un musicista o una band? Proponiti per suonare a Biblio: presentazione, materiali audio o video, disponibilità e cachet.',
-    'truck.meta.title':      'Biblio Truck · musica e food ai Giardinetti · Treviso',
-    'truck.meta.description': 'Biblio porta la sua musica dal vivo e il suo food truck ai Giardinetti di Sant\'Andrea a Treviso: concerti all\'aperto lungo il Sile, cibo e drink a ingresso libero.',
+    'truck.meta.title':      'Biblio Truck Treviso | Serate, eventi e food truck',
+    'truck.meta.description': 'Scopri il Biblio Truck: serate, eventi, food e drink ai Giardinetti di Sant\'Andrea. Guarda il calendario aggiornato e vieni a trovarci.',
     'news.meta.title':       'News & novità · Biblio Treviso',
     'news.meta.description': 'Le novità di Biblio: serate speciali, ospiti, racconti dal locale e dal Biblio Truck. Annunci e aggiornamenti dal cuore di Treviso.',
 
@@ -102,6 +102,8 @@ export const ui = {
     'hero.truck.cta':       'Scopri il Biblio Truck',
     'hero.carousel.label':  'Biblio · bar e food truck ai Giardinetti',
     'hero.carousel.goto':   'Vai alla slide',
+    'hero.carousel.prev':   'Slide precedente',
+    'hero.carousel.next':   'Slide successiva',
 
     'home.intro.eyebrow':  'L\'anima del locale',
     'home.intro.title':    'Prima di tutto, la musica',
@@ -310,11 +312,11 @@ export const ui = {
 
     'a11y.skip':      'Skip to content',
 
-    'site.title':     'Biblio · live music · small plates & drinks · Treviso',
+    'site.title':     'Bar Biblio Treviso | Aperitifs, events and live music',
     'site.description': 'Three nights a week of live music in Treviso: jazz, blues, soul and emerging voices. Gourmet small plates, hand-picked wines and signature drinks in an antique-shop setting.',
 
-    'home.meta.title':       'Biblio · Live music, drinks & small plates · Treviso',
-    'home.meta.description': 'Bar Biblio: three nights a week of live music in Treviso. Signature drinks, gourmet small plates, and an antique-shop setting steps from Piazza dei Signori.',
+    'home.meta.title':       'Bar Biblio Treviso | Events, aperitifs and Biblio Truck',
+    'home.meta.description': 'Bar Biblio is a meeting place in Treviso for aperitifs, evenings and events. Discover the Biblio Truck too and what\'s coming up.',
     'menu.meta.title':       'The menu · Biblio Treviso',
     'menu.meta.description': 'The Biblio menu: signature drinks, regional wines and gourmet small plates. A list that follows the seasons and walks alongside the live music.',
     'eventi.meta.title':     'Events & live music · Biblio Treviso',
@@ -325,8 +327,8 @@ export const ui = {
     'contatti.meta.description': 'Biblio is at Via Armando Diaz 3/A in the heart of Treviso. Hours, phone, directions and reviews from our guests.',
     'artisti.meta.title':    'For artists · Biblio Treviso',
     'artisti.meta.description': 'Are you a musician or a band? Pitch a live night at Biblio: bio, audio or video links, availability and fee.',
-    'truck.meta.title':      'Biblio Truck · music and food at the Giardinetti · Treviso',
-    'truck.meta.description': 'Biblio brings its live music and food truck to the Giardinetti di Sant\'Andrea in Treviso: open-air concerts along the Sile, food and drinks, free entry.',
+    'truck.meta.title':      'Biblio Truck Treviso | Evenings, events and food truck',
+    'truck.meta.description': 'Discover the Biblio Truck: evenings, events, food and drinks at the Giardinetti di Sant\'Andrea. Check the calendar and come find us.',
     'news.meta.title':       'News & updates · Biblio Treviso',
     'news.meta.description': 'News from Biblio: special nights, guests, stories from the venue and the Biblio Truck. Announcements and updates from the heart of Treviso.',
 
@@ -385,6 +387,8 @@ export const ui = {
     'hero.truck.cta':       'Discover Biblio Truck',
     'hero.carousel.label':  'Biblio · bar and food truck at the Giardinetti',
     'hero.carousel.goto':   'Go to slide',
+    'hero.carousel.prev':   'Previous slide',
+    'hero.carousel.next':   'Next slide',
 
     'home.intro.eyebrow':  'The soul of the place',
     'home.intro.title':    'Music first',

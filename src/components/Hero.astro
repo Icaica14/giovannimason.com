@@ -10,11 +10,9 @@ interface Props {
 }
 const { lang } = Astro.props;
 
-// Hero-carousel a due viste: slide 1 = bar Biblio (immagine attuale della home),
-// slide 2 = Biblio Truck (stessa immagine usata nella pagina /). Gli sfondi sono
-// <Image> ottimizzate (webp responsive): la slide 1 è eager + alta priorità (è
-// l'LCP della home), la slide 2 è lazy (fuori schermo) così non rallenta il primo
-// caricamento. Le due slide restano nel DOM (SEO + scroll-snap anche senza JS).
+// Hero-carousel a due viste: slide 1 = bar Biblio, slide 2 = Biblio Truck.
+// Sfondi <Image> ottimizzate (webp): slide 1 eager + fetchpriority high (LCP),
+// slide 2 lazy. Le due slide restano nel DOM (SEO + scroll-snap anche senza JS).
 const truckHref = routeMap.truck[lang];
 const eventiHref = routeMap.eventi[lang];
 const goto = t(lang, 'hero.carousel.goto');
@@ -22,17 +20,10 @@ const goto = t(lang, 'hero.carousel.goto');
 
 <section class="hero-carousel" aria-roledescription="carousel" aria-label={t(lang, 'hero.carousel.label')}>
   <div class="hero-track" data-hero-track>
-    {/* Slide 1 — Bar Biblio: la hero attuale della home, invariata. */}
+    {/* Slide 1 — Bar Biblio */}
     <article class="hero hero-slide" aria-roledescription="slide" aria-label="Biblio">
       <div class="hero-media">
-        <Image
-          src={heroSrc}
-          alt=""
-          widths={[768, 1280, 1920]}
-          sizes="100vw"
-          loading="eager"
-          fetchpriority="high"
-        />
+        <Image src={heroSrc} alt="" widths={[768, 1280, 1920]} sizes="100vw" loading="eager" fetchpriority="high" />
       </div>
       <div class="hero-inner">
         <h1 class="hero-logo" set:html={logoSvg} aria-label="Biblio"></h1>
@@ -45,16 +36,10 @@ const goto = t(lang, 'hero.carousel.goto');
       </div>
     </article>
 
-    {/* Slide 2 — Biblio Truck: speculare alla slide 1 (stesso trattamento). */}
+    {/* Slide 2 — Biblio Truck: speculare alla slide 1 */}
     <article class="hero hero-slide hero-slide-truck" aria-roledescription="slide" aria-label="Biblio Truck">
       <div class="hero-media">
-        <Image
-          src={truckSrc}
-          alt=""
-          widths={[768, 1280, 1920]}
-          sizes="100vw"
-          loading="lazy"
-        />
+        <Image src={truckSrc} alt="" widths={[768, 1280, 1920]} sizes="100vw" loading="lazy" />
       </div>
       <div class="hero-inner">
         <p class="hero-truck-title">{t(lang, 'truck.hero.title')}</p>
@@ -67,6 +52,15 @@ const goto = t(lang, 'hero.carousel.goto');
     </article>
   </div>
 
+  {/* Frecce laterali, sovrapposte e centrate verticalmente */}
+  <button type="button" class="hero-arrow hero-arrow-prev" data-hero-prev aria-label={t(lang, 'hero.carousel.prev')}>
+    <svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6" /></svg>
+  </button>
+  <button type="button" class="hero-arrow hero-arrow-next" data-hero-next aria-label={t(lang, 'hero.carousel.next')}>
+    <svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6" /></svg>
+  </button>
+
+  {/* Pallini, sovrapposti in basso alla slide */}
   <div class="hero-dots" data-hero-dots>
     <button type="button" class="hero-dot is-active" data-hero-dot="0" aria-label={`${goto} 1: Biblio`} aria-current="true"></button>
     <button type="button" class="hero-dot" data-hero-dot="1" aria-label={`${goto} 2: Biblio Truck`} aria-current="false"></button>
@@ -77,9 +71,9 @@ const goto = t(lang, 'hero.carousel.goto');
   .hero-carousel {
     position: relative;
     isolation: isolate;
+    margin-top: 0; /* la hero parte subito sotto la navbar, nessuno spazio vuoto */
   }
-  /* Binario scorrevole: scroll-snap orizzontale = swipe nativo su touch e
-     trackpad, senza librerie. Le due slide restano nel DOM (SEO + no-JS ok). */
+  /* Binario scorrevole: scroll-snap orizzontale = swipe nativo, senza librerie. */
   .hero-track {
     display: flex;
     overflow-x: auto;
@@ -87,20 +81,18 @@ const goto = t(lang, 'hero.carousel.goto');
     scroll-snap-type: x mandatory;
     scroll-behavior: smooth;
     -webkit-overflow-scrolling: touch;
-    scrollbar-width: none; /* Firefox */
+    scrollbar-width: none;
   }
   .hero-track::-webkit-scrollbar {
-    display: none; /* WebKit */
+    display: none;
   }
-  /* Ogni slide riusa la classe .hero (stesso identico trattamento visivo:
-     overlay, tipografia, altezza), ma occupa il 100% del binario. */
+  /* Ogni slide riusa .hero (stesso trattamento), occupa il 100% del binario. */
   .hero-slide {
     flex: 0 0 100%;
     width: 100%;
     scroll-snap-align: start;
   }
-  /* Lo sfondo è ora una <Image> ottimizzata (non più il ::before via --hero-bg):
-     spegniamo lo pseudo-elemento globale e mettiamo l'immagine come layer. */
+  /* Lo sfondo è una <Image> ottimizzata: spegniamo lo ::before globale. */
   .hero.hero-slide::before {
     display: none;
   }
@@ -114,24 +106,63 @@ const goto = t(lang, 'hero.carousel.goto');
     width: 100%;
     height: 100%;
     object-fit: cover;
-    /* Stesso trattamento del vecchio .hero::before (leggibilità del testo). */
     filter: saturate(1.1) brightness(0.55);
   }
+  /* Centratura robusta del contenuto della slide (logo/testo). */
+  .hero-slide .hero-inner {
+    margin-inline: auto;
+    width: 100%;
+  }
 
-  /* Titolo della slide Truck: speculare al logo della slide 1 (stesso peso
-     visivo e stesso margine inferiore del logo). */
+  /* #4: titolo "Biblio Truck" nello stesso rosso del logo Biblio (token). */
   .hero-truck-title {
     margin: 0 auto 2rem;
     font-family: var(--font-display);
     font-style: italic;
-    font-weight: 500;
+    font-weight: 600;
     font-size: clamp(2.6rem, 7vw, 4.4rem);
     line-height: 1;
-    color: var(--paper);
-    filter: drop-shadow(0 4px 24px rgba(0, 0, 0, 0.55));
+    color: var(--logo-red);
+    filter: drop-shadow(0 3px 18px rgba(0, 0, 0, 0.7));
   }
 
-  /* Indicatori (pallini) */
+  /* Frecce laterali (#3): neutre, quasi trasparenti, più visibili su hover/focus. */
+  .hero-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 2;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: clamp(38px, 5vw, 52px);
+    height: clamp(38px, 5vw, 52px);
+    border-radius: 50%;
+    border: 1px solid rgba(246, 239, 225, 0.22);
+    background: rgba(20, 12, 6, 0.22);
+    color: rgba(246, 239, 225, 0.72);
+    cursor: pointer;
+    backdrop-filter: blur(2px);
+    transition: background 0.25s var(--ease), color 0.25s var(--ease), border-color 0.25s var(--ease);
+  }
+  .hero-arrow:hover,
+  .hero-arrow:focus-visible {
+    background: rgba(20, 12, 6, 0.5);
+    color: var(--paper);
+    border-color: rgba(246, 239, 225, 0.5);
+  }
+  .hero-arrow:focus-visible {
+    outline: 2px solid var(--paper);
+    outline-offset: 3px;
+  }
+  .hero-arrow-prev {
+    left: clamp(0.5rem, 2vw, 1.5rem);
+  }
+  .hero-arrow-next {
+    right: clamp(0.5rem, 2vw, 1.5rem);
+  }
+
+  /* Pallini (#2): sovrapposti in basso, centrati. */
   .hero-dots {
     position: absolute;
     left: 50%;
@@ -167,32 +198,46 @@ const goto = t(lang, 'hero.carousel.goto');
     outline-offset: 3px;
   }
 
+  @media (max-width: 560px) {
+    .hero-arrow {
+      width: 36px;
+      height: 36px;
+    }
+  }
   @media (prefers-reduced-motion: reduce) {
     .hero-track {
       scroll-behavior: auto;
     }
-    .hero-dot {
+    .hero-dot,
+    .hero-arrow {
       transition: none;
     }
   }
 </style>
 
 <script>
-  // Carosello hero: navigazione via pallini (click + tastiera) e via swipe/scroll
-  // nativo (scroll-snap). Nessun autoplay: scelta deliberata (elegante, niente
-  // movimento invadente, performance e prefers-reduced-motion rispettati).
-  type Carousel = HTMLElement;
-  document.querySelectorAll<Carousel>('.hero-carousel').forEach((carousel) => {
+  // Carosello hero: pallini + frecce + swipe (scroll-snap) + autoplay ogni 5s.
+  // L'autoplay riparte (in modo ordinato) dopo ogni interazione, si ferma quando
+  // la scheda è in background e resta DISATTIVO con prefers-reduced-motion.
+  document.querySelectorAll<HTMLElement>('.hero-carousel').forEach((carousel) => {
     const track = carousel.querySelector<HTMLElement>('[data-hero-track]');
     const dots = Array.from(carousel.querySelectorAll<HTMLButtonElement>('[data-hero-dot]'));
+    const prev = carousel.querySelector<HTMLButtonElement>('[data-hero-prev]');
+    const next = carousel.querySelector<HTMLButtonElement>('[data-hero-next]');
     if (!track || dots.length < 2) return;
     const slides = Array.from(track.children) as HTMLElement[];
+    const count = slides.length;
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+    let index = 0;
+    let timer: number | undefined;
+
     const goTo = (i: number) => {
-      track.scrollTo({ left: i * track.clientWidth, behavior: reduce ? 'auto' : 'smooth' });
+      index = (i + count) % count;
+      track.scrollTo({ left: index * track.clientWidth, behavior: reduce ? 'auto' : 'smooth' });
     };
     const setActive = (i: number) => {
+      index = i;
       dots.forEach((d, j) => {
         const on = j === i;
         d.classList.toggle('is-active', on);
@@ -200,9 +245,33 @@ const goto = t(lang, 'hero.carousel.goto');
       });
     };
 
-    dots.forEach((dot, i) => dot.addEventListener('click', () => goTo(i)));
+    // ── Autoplay 5s ──────────────────────────────────────────────────────────
+    const AUTOPLAY = 5000;
+    const stop = () => {
+      if (timer !== undefined) {
+        clearInterval(timer);
+        timer = undefined;
+      }
+    };
+    const start = () => {
+      if (reduce) return;
+      stop();
+      timer = window.setInterval(() => goTo(index + 1), AUTOPLAY);
+    };
+    const restart = () => {
+      stop();
+      start();
+    };
+    const navTo = (i: number) => {
+      goTo(i);
+      restart(); // dopo un'interazione il timer riparte da capo, senza scatti
+    };
 
-    // Pallino attivo in base alla slide visibile.
+    dots.forEach((dot, i) => dot.addEventListener('click', () => navTo(i)));
+    prev?.addEventListener('click', () => navTo(index - 1));
+    next?.addEventListener('click', () => navTo(index + 1));
+
+    // Pallino attivo in base alla slide visibile (swipe/scroll nativo).
     if ('IntersectionObserver' in window) {
       const io = new IntersectionObserver(
         (entries) => {
@@ -221,21 +290,25 @@ const goto = t(lang, 'hero.carousel.goto');
       );
     }
 
+    // Swipe/tocco: riparte il timer (niente avanzamento subito dopo lo swipe).
+    carousel.addEventListener('pointerdown', restart, { passive: true });
+    // Niente avanzamenti quando la scheda è nascosta (e nessun leak).
+    document.addEventListener('visibilitychange', () => (document.hidden ? stop() : start()));
+
     // Tastiera: frecce sui pallini.
     carousel.querySelector('[data-hero-dots]')?.addEventListener('keydown', (ev) => {
       const e = ev as KeyboardEvent;
-      const cur = dots.findIndex((d) => d.classList.contains('is-active'));
       if (e.key === 'ArrowRight') {
         e.preventDefault();
-        const n = Math.min(cur + 1, slides.length - 1);
-        goTo(n);
-        dots[n].focus();
+        navTo(index + 1);
+        dots[index].focus();
       } else if (e.key === 'ArrowLeft') {
         e.preventDefault();
-        const n = Math.max(cur - 1, 0);
-        goTo(n);
-        dots[n].focus();
+        navTo(index - 1);
+        dots[index].focus();
       }
     });
+
+    start();
   });
 </script>

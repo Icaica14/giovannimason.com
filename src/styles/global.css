@@ -13,6 +13,7 @@
   --brass:        #b08a3e;
   --brass-deep:   #8a6824;
   --vino:         #7a2e2e;
+  --logo-red:     #c8453a;   /* rosso del logo Biblio (emblema) — token riutilizzabile */
   --line:         #c9b994;
   --shadow-soft:  0 6px 24px rgba(43, 29, 18, 0.12);
   --shadow-warm:  0 18px 60px rgba(122, 88, 40, 0.18);
@@ -124,7 +125,7 @@ p { margin: 0 0 1em; }
   display: inline-flex; align-items: center;
   line-height: 0;
   /* color = primary mark (currentColor); --logo-ink = subtitle text */
-  color: #c8453a;
+  color: var(--logo-red);
   --logo-ink: var(--paper);
 }
 .brand:hover { color: #d75044; }
@@ -225,7 +226,7 @@ p { margin: 0 0 1em; }
 .hero .hero-logo {
   margin: 0 auto 2rem;
   line-height: 0;
-  color: #c8453a;
+  color: var(--logo-red);
   --logo-ink: var(--paper);
   filter: drop-shadow(0 4px 24px rgba(0, 0, 0, .55));
 }
@@ -455,7 +456,7 @@ section { padding: 5rem 0; }
   color: var(--brass);
   margin-bottom: 1rem;
 }
-.footer .brand { color: var(--paper); margin-bottom: .8rem; display: inline-block; }
+.footer .brand { color: var(--logo-red); margin-bottom: .8rem; display: inline-block; }
 .brand-footer .brand-logo { height: 44px; }
 /* Social icons nel footer (Instagram + Facebook) — palette coerente:
    paper-3 base + brass on hover, stesso tono dei link footer. */
