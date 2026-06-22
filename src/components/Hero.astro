@@ -171,7 +171,10 @@ const truckName = t(lang, 'truck.hero.title'); // "Biblio Truck" — alt del log
     /* Centratura OTTICA: il box dell'SVG non è bilanciato (la scritta pende a
        destra). Piccolo offset a sinistra per centrarlo visivamente. */
     --biblio-logo-visual-offset-x: -10px;
-    transform: translateX(var(--biblio-logo-visual-offset-x));
+    /* +25% solo sul logo del BAR (slide 1): è un `scale` post-layout, così la
+       zona logo, il testo, le CTA e il logo Biblio Truck restano INVARIATI e
+       l'ancoraggio (niente salto) è preservato. */
+    transform: translateX(var(--biblio-logo-visual-offset-x)) scale(1.25);
   }
   .hero-logo-biblio :global(svg) {
     display: block;
