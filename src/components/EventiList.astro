@@ -28,7 +28,7 @@ const siteOrigin = Astro.site ? Astro.site.origin : '';
   </header>
 
   {/* In arrivo */}
-  <section class="eventi-upcoming">
+  <section class="eventi-upcoming bg-paper-2">
     <div class="container">
       <div class="section-head">
         <h2>{t(lang, 'eventi.upcoming.title')}</h2>
@@ -87,7 +87,7 @@ const siteOrigin = Astro.site ? Astro.site.origin : '';
 
   {/* Già passati */}
   {past.length > 0 && (
-    <section class="eventi-past bg-paper-2">
+    <section class="eventi-past">
       <div class="container">
         <div class="section-head">
           <h2>{t(lang, 'eventi.past.title')}</h2>
@@ -145,7 +145,7 @@ const siteOrigin = Astro.site ? Astro.site.origin : '';
   )}
 
   {/* Programmazione settimanale fissa: spostata in fondo, sotto "Già passati". */}
-  <section class="eventi-weekly">
+  <section class="eventi-weekly bg-paper-2">
     <div class="container">
       <div class="events-grid">
         <article class="event-card reveal">
