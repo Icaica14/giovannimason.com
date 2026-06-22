@@ -27,35 +27,10 @@ const siteOrigin = Astro.site ? Astro.site.origin : '';
     <p class="lede">{t(lang, 'eventi.lede')}</p>
   </header>
 
-  {/* Programmazione settimanale fissa: card prima, tagline dopo. */}
-  <section class="eventi-weekly bg-paper-2">
-    <div class="container">
-      <div class="events-grid">
-        <article class="event-card reveal">
-          <p class="day">{t(lang, 'evento.gio.day')}</p>
-          <h3>{t(lang, 'evento.gio.title')}</h3>
-          <p class="note">{t(lang, 'evento.gio.note')}</p>
-        </article>
-        <article class="event-card reveal" style="--reveal-delay:.1s">
-          <p class="day">{t(lang, 'evento.ven.day')}</p>
-          <h3>{t(lang, 'evento.ven.title')}</h3>
-          <p class="note">{t(lang, 'evento.ven.note')}</p>
-        </article>
-        <article class="event-card reveal" style="--reveal-delay:.2s">
-          <p class="day">{t(lang, 'evento.dom.day')}</p>
-          <h3>{t(lang, 'evento.dom.title')}</h3>
-          <p class="note">{t(lang, 'evento.dom.note')}</p>
-        </article>
-      </div>
-      <p class="weekly-tagline">{t(lang, 'eventi.weekly.tagline')}</p>
-    </div>
-  </section>
-
   {/* In arrivo */}
   <section class="eventi-upcoming">
     <div class="container">
       <div class="section-head">
-        <span class="eyebrow">{t(lang, 'eventi.upcoming.title')}</span>
         <h2>{t(lang, 'eventi.upcoming.title')}</h2>
       </div>
 
@@ -115,7 +90,6 @@ const siteOrigin = Astro.site ? Astro.site.origin : '';
     <section class="eventi-past bg-paper-2">
       <div class="container">
         <div class="section-head">
-          <span class="eyebrow">{t(lang, 'eventi.past.title')}</span>
           <h2>{t(lang, 'eventi.past.title')}</h2>
           <p>{t(lang, 'eventi.past.intro')}</p>
         </div>
@@ -169,6 +143,30 @@ const siteOrigin = Astro.site ? Astro.site.origin : '';
       </div>
     </section>
   )}
+
+  {/* Programmazione settimanale fissa: spostata in fondo, sotto "Già passati". */}
+  <section class="eventi-weekly">
+    <div class="container">
+      <div class="events-grid">
+        <article class="event-card reveal">
+          <p class="day">{t(lang, 'evento.gio.day')}</p>
+          <h3>{t(lang, 'evento.gio.title')}</h3>
+          <p class="note">{t(lang, 'evento.gio.note')}</p>
+        </article>
+        <article class="event-card reveal" style="--reveal-delay:.1s">
+          <p class="day">{t(lang, 'evento.ven.day')}</p>
+          <h3>{t(lang, 'evento.ven.title')}</h3>
+          <p class="note">{t(lang, 'evento.ven.note')}</p>
+        </article>
+        <article class="event-card reveal" style="--reveal-delay:.2s">
+          <p class="day">{t(lang, 'evento.dom.day')}</p>
+          <h3>{t(lang, 'evento.dom.title')}</h3>
+          <p class="note">{t(lang, 'evento.dom.note')}</p>
+        </article>
+      </div>
+      <p class="weekly-tagline">{t(lang, 'eventi.weekly.tagline')}</p>
+    </div>
+  </section>
 
   {/* CTA finale */}
   <section class="cta-banner">
