@@ -1,5 +1,5 @@
 ---
-import { Image } from 'astro:assets';
+import { getImage } from 'astro:assets';
 import heroSrc from '../assets/img/interni/img_1.webp';
 import truckSrc from '../assets/img/truck/bancone.jpg';
 import logoSvg from '../assets/img/logo/logo.svg?raw';
@@ -10,48 +10,46 @@ interface Props {
 }
 const { lang } = Astro.props;
 
-// Hero-carousel a due viste (slide 1 = bar Biblio, slide 2 = Biblio Truck) con
-// CROSSFADE: le slide sono impilate e si dissolvono l'una nell'altra. Niente
-// track scrollabile orizzontale → niente effetto "ping-pong" avanti/indietro e
-// niente artefatti/fasce dell'overflow su iOS Safari. Sfondi <Image> ottimizzate
-// (slide 1 eager + fetchpriority high = LCP; slide 2 lazy).
+// Hero-carousel a due viste (slide 1 = bar Biblio, slide 2 = Biblio Truck).
+// SCORRIMENTO reale (translateX su un track flex) con LOOP CONTINUO IN AVANTI
+// (clone della prima slide in coda) → niente effetto ping-pong. Lo sfondo è una
+// CSS background `cover` (riempie sempre la slide, niente fasce su iOS Safari).
+const barOpt = await getImage({ src: heroSrc, width: 1600, format: 'webp', quality: 80 });
+const truckOpt = await getImage({ src: truckSrc, width: 1600, format: 'webp', quality: 78 });
+
 const truckHref = routeMap.truck[lang];
 const eventiHref = routeMap.eventi[lang];
 const goto = t(lang, 'hero.carousel.goto');
 ---
 
 <section class="hero-carousel" aria-roledescription="carousel" aria-label={t(lang, 'hero.carousel.label')}>
-  <div class="hero-stage" data-hero-stage>
-    {/* Slide 1 — Bar Biblio */}
-    <article class="hero hero-slide is-current" aria-roledescription="slide" aria-label="Biblio">
-      <div class="hero-media">
-        <Image src={heroSrc} alt="" widths={[768, 1280, 1920]} sizes="100vw" loading="eager" fetchpriority="high" />
-      </div>
-      <div class="hero-inner">
-        <h1 class="hero-logo" set:html={logoSvg} aria-label="Biblio"></h1>
-        <p class="lede">{t(lang, 'hero.lede1')}</p>
-        <p class="lede">{t(lang, 'hero.lede2')}</p>
-        <div class="hero-cta">
-          <a class="btn" href={routeMap.prenota[lang]}>{t(lang, 'hero.cta.book')}</a>
-          <a class="btn btn-ghost" href={routeMap.menu[lang]}>{t(lang, 'hero.cta.menu')}</a>
+  <div class="hero-viewport">
+    <div class="hero-track" data-hero-track>
+      {/* Slide 1 — Bar Biblio */}
+      <article class="hero hero-slide" style={`--hero-bg: url("${barOpt.src}")`} aria-roledescription="slide" aria-label="Biblio">
+        <div class="hero-inner">
+          <h1 class="hero-logo" set:html={logoSvg} aria-label="Biblio"></h1>
+          <p class="lede">{t(lang, 'hero.lede1')}</p>
+          <p class="lede">{t(lang, 'hero.lede2')}</p>
+          <div class="hero-cta">
+            <a class="btn" href={routeMap.prenota[lang]}>{t(lang, 'hero.cta.book')}</a>
+            <a class="btn btn-ghost" href={routeMap.menu[lang]}>{t(lang, 'hero.cta.menu')}</a>
+          </div>
         </div>
-      </div>
-    </article>
+      </article>
 
-    {/* Slide 2 — Biblio Truck: speculare alla slide 1 */}
-    <article class="hero hero-slide hero-slide-truck" aria-roledescription="slide" aria-label="Biblio Truck" aria-hidden="true">
-      <div class="hero-media">
-        <Image src={truckSrc} alt="" widths={[768, 1280, 1920]} sizes="100vw" loading="lazy" />
-      </div>
-      <div class="hero-inner">
-        <p class="hero-truck-title">{t(lang, 'truck.hero.title')}</p>
-        <p class="lede">{t(lang, 'truck.hero.tagline')}</p>
-        <div class="hero-cta">
-          <a class="btn" href={truckHref}>{t(lang, 'hero.truck.cta')}</a>
-          <a class="btn btn-ghost" href={eventiHref}>{t(lang, 'home.eventi.cta')}</a>
+      {/* Slide 2 — Biblio Truck */}
+      <article class="hero hero-slide hero-slide-truck" style={`--hero-bg: url("${truckOpt.src}")`} aria-roledescription="slide" aria-label="Biblio Truck">
+        <div class="hero-inner">
+          <p class="hero-truck-title">{t(lang, 'truck.hero.title')}</p>
+          <p class="lede">{t(lang, 'truck.hero.tagline')}</p>
+          <div class="hero-cta">
+            <a class="btn" href={truckHref}>{t(lang, 'hero.truck.cta')}</a>
+            <a class="btn btn-ghost" href={eventiHref}>{t(lang, 'home.eventi.cta')}</a>
+          </div>
         </div>
-      </div>
-    </article>
+      </article>
+    </div>
   </div>
 
   {/* Frecce laterali */}
@@ -62,7 +60,7 @@ const goto = t(lang, 'hero.carousel.goto');
     <svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6" /></svg>
   </button>
 
-  {/* Pallini */}
+  {/* Pallini, sovrapposti in basso alla slide */}
   <div class="hero-dots" data-hero-dots>
     <button type="button" class="hero-dot is-active" data-hero-dot="0" aria-label={`${goto} 1: Biblio`} aria-current="true"></button>
     <button type="button" class="hero-dot" data-hero-dot="1" aria-label={`${goto} 2: Biblio Truck`} aria-current="false"></button>
@@ -73,52 +71,31 @@ const goto = t(lang, 'hero.carousel.goto');
   .hero-carousel {
     position: relative;
     isolation: isolate;
-    margin: 0; /* full-bleed: nessuno spazio sopra/sotto */
+    margin: 0;
   }
-  /* Le due slide sono IMPILATE nella stessa cella di griglia (crossfade), niente
-     contenitore scrollabile: così non c'è la fascia/artefatto dell'overflow iOS. */
-  .hero-stage {
-    display: grid;
-  }
-  .hero-slide {
-    grid-area: 1 / 1;
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity 0.8s var(--ease), visibility 0s 0.8s;
-    pointer-events: none;
-  }
-  .hero-slide.is-current {
-    opacity: 1;
-    visibility: visible;
-    transition: opacity 0.8s var(--ease);
-    pointer-events: auto;
-    z-index: 1;
-  }
-  /* Sfondo via <Image>: spegniamo lo ::before globale (--hero-bg). */
-  .hero.hero-slide::before {
-    display: none;
-  }
-  .hero-media {
-    position: absolute;
-    inset: 0;
-    z-index: -2;
+  /* Finestra che ritaglia il track (niente overflow-auto/scroll-snap → niente
+     artefatti/fasce su iOS). Lo scorrimento è una translateX sul track. */
+  .hero-viewport {
     overflow: hidden;
   }
-  .hero-media :global(img) {
+  .hero-track {
+    display: flex;
+    will-change: transform;
+  }
+  /* Ogni slide = larghezza piena della finestra. Riusa .hero (sfondo via
+     ::before/--hero-bg che riempie SEMPRE, overlay ::after, tipografia, 88vh). */
+  .hero-slide {
+    flex: 0 0 100%;
     width: 100%;
-    height: 100%;
-    object-fit: cover;
-    filter: saturate(1.1) brightness(0.55);
   }
   .hero-slide .hero-inner {
     margin-inline: auto;
     width: 100%;
   }
 
-  /* #1 — Centratura OTTICA del logo "Biblio" (solo slide 1, l'unica con .hero-logo).
-     Il box del file SVG non è bilanciato: il centro geometrico non coincide col
-     centro visivo della scritta, che appare spostata a destra. Compensiamo con un
-     piccolo spostamento a sinistra, regolabile via variabile. */
+  /* #1 — Centratura OTTICA del logo "Biblio" (solo slide 1). Il box del file SVG
+     non è bilanciato: il centro geometrico non coincide col centro visivo della
+     scritta (che pende a destra). Compensiamo con un piccolo offset a sinistra. */
   .hero-logo {
     --biblio-logo-visual-offset-x: -12px;
     transform: translateX(var(--biblio-logo-visual-offset-x));
@@ -141,7 +118,7 @@ const goto = t(lang, 'hero.carousel.goto');
     filter: drop-shadow(0 3px 18px rgba(0, 0, 0, 0.7));
   }
 
-  /* Frecce laterali: neutre, più visibili su hover/focus. */
+  /* Frecce laterali */
   .hero-arrow {
     position: absolute;
     top: 50%;
@@ -220,7 +197,6 @@ const goto = t(lang, 'hero.carousel.goto');
     }
   }
   @media (prefers-reduced-motion: reduce) {
-    .hero-slide,
     .hero-dot,
     .hero-arrow {
       transition: none;
@@ -229,38 +205,90 @@ const goto = t(lang, 'hero.carousel.goto');
 </style>
 
 <script>
-  // Carosello hero: CROSSFADE (niente ping-pong), pallini, frecce, swipe touch e
-  // autoplay ogni 5s che avanza sempre nello stesso verso. Riparte dopo ogni
-  // interazione, si ferma in background, resta OFF con prefers-reduced-motion.
+  // Carosello hero: SCORRIMENTO con loop continuo in avanti (clone della prima
+  // slide in coda → quando lo si raggiunge, salto istantaneo all'inizio: sembra
+  // un loop infinito sempre nello stesso verso, niente ping-pong). Autoplay 5s,
+  // frecce, pallini, swipe touch, tastiera. Off con prefers-reduced-motion.
   document.querySelectorAll<HTMLElement>('.hero-carousel').forEach((carousel) => {
-    const stage = carousel.querySelector<HTMLElement>('[data-hero-stage]');
+    const track = carousel.querySelector<HTMLElement>('[data-hero-track]');
     const dots = Array.from(carousel.querySelectorAll<HTMLButtonElement>('[data-hero-dot]'));
-    const prev = carousel.querySelector<HTMLButtonElement>('[data-hero-prev]');
-    const next = carousel.querySelector<HTMLButtonElement>('[data-hero-next]');
-    if (!stage || dots.length < 2) return;
-    const slides = Array.from(stage.children) as HTMLElement[];
-    const count = slides.length;
+    const prevBtn = carousel.querySelector<HTMLButtonElement>('[data-hero-prev]');
+    const nextBtn = carousel.querySelector<HTMLButtonElement>('[data-hero-next]');
+    if (!track || dots.length < 2) return;
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-    let index = 0;
-    let timer: number | undefined;
+    const real = Array.from(track.children) as HTMLElement[];
+    const realCount = real.length;
 
-    const setCurrent = (i: number) => {
-      index = (i + count) % count;
-      slides.forEach((s, j) => {
-        const on = j === index;
-        s.classList.toggle('is-current', on);
-        s.setAttribute('aria-hidden', on ? 'false' : 'true');
-      });
+    // Clone della prima slide in coda per il loop continuo in avanti.
+    const clone = real[0].cloneNode(true) as HTMLElement;
+    clone.setAttribute('aria-hidden', 'true');
+    clone.querySelectorAll('a, button').forEach((el) => el.setAttribute('tabindex', '-1'));
+    track.appendChild(clone);
+    const total = realCount + 1;
+
+    let pos = 0;
+    let timer: number | undefined;
+    let animating = false;
+
+    const render = (animate: boolean) => {
+      track.style.transition = animate && !reduce ? 'transform 0.7s var(--ease)' : 'none';
+      track.style.transform = `translateX(-${pos * 100}%)`;
+    };
+    const setDots = (i: number) => {
       dots.forEach((d, j) => {
-        const on = j === index;
+        const on = j === i;
         d.classList.toggle('is-active', on);
         d.setAttribute('aria-current', on ? 'true' : 'false');
       });
     };
 
-    // Autoplay 5s — avanza SEMPRE in avanti (index+1), crossfade ⇒ niente ping-pong.
-    const AUTOPLAY = 5000;
+    const next = () => {
+      if (animating) return;
+      animating = true;
+      pos += 1;
+      render(true);
+      setDots(pos % realCount);
+    };
+    const prev = () => {
+      if (animating) return;
+      animating = true;
+      if (pos === 0) {
+        // salto istantaneo al clone (identico alla slide 1), poi scorre indietro.
+        pos = total - 1;
+        render(false);
+        requestAnimationFrame(() =>
+          requestAnimationFrame(() => {
+            pos = total - 2;
+            render(true);
+            setDots(pos % realCount);
+          }),
+        );
+      } else {
+        pos -= 1;
+        render(true);
+        setDots(pos % realCount);
+      }
+    };
+    const goTo = (i: number) => {
+      if (animating || i === pos % realCount) return;
+      animating = true;
+      pos = i;
+      render(true);
+      setDots(i);
+    };
+
+    // Fine transizione: sblocca e, se siamo sul clone, torna alla slide 1 senza animazione.
+    track.addEventListener('transitionend', (e) => {
+      if (e.propertyName !== 'transform') return;
+      animating = false;
+      if (pos === total - 1) {
+        pos = 0;
+        render(false);
+      }
+    });
+
+    // Autoplay 5s — sempre in avanti.
     const stop = () => {
       if (timer !== undefined) {
         clearInterval(timer);
@@ -270,53 +298,45 @@ const goto = t(lang, 'hero.carousel.goto');
     const start = () => {
       if (reduce) return;
       stop();
-      timer = window.setInterval(() => setCurrent(index + 1), AUTOPLAY);
+      timer = window.setInterval(next, 5000);
     };
     const restart = () => {
       stop();
       start();
     };
-    const navTo = (i: number) => {
-      setCurrent(i);
-      restart(); // dopo un'interazione il timer riparte da capo, senza scatti
-    };
 
-    dots.forEach((dot, i) => dot.addEventListener('click', () => navTo(i)));
-    prev?.addEventListener('click', () => navTo(index - 1));
-    next?.addEventListener('click', () => navTo(index + 1));
+    dots.forEach((dot, i) => dot.addEventListener('click', () => { goTo(i); restart(); }));
+    nextBtn?.addEventListener('click', () => { next(); restart(); });
+    prevBtn?.addEventListener('click', () => { prev(); restart(); });
 
-    // Swipe leggero (touch): qualunque direzione naviga (crossfade ⇒ niente "indietro").
+    // Swipe touch.
     let x0: number | null = null;
-    stage.addEventListener('touchstart', (e) => { x0 = e.changedTouches[0].clientX; }, { passive: true });
-    stage.addEventListener(
+    track.addEventListener('touchstart', (e) => { x0 = e.changedTouches[0].clientX; }, { passive: true });
+    track.addEventListener(
       'touchend',
       (e) => {
         if (x0 === null) return;
         const dx = e.changedTouches[0].clientX - x0;
-        if (Math.abs(dx) > 40) navTo(index + (dx < 0 ? 1 : -1));
+        if (Math.abs(dx) > 40) {
+          if (dx < 0) next();
+          else prev();
+          restart();
+        }
         x0 = null;
       },
       { passive: true },
     );
 
-    // Niente avanzamenti quando la scheda è nascosta (e nessun leak).
     document.addEventListener('visibilitychange', () => (document.hidden ? stop() : start()));
 
-    // Tastiera: frecce sui pallini.
     carousel.querySelector('[data-hero-dots]')?.addEventListener('keydown', (ev) => {
       const e = ev as KeyboardEvent;
-      if (e.key === 'ArrowRight') {
-        e.preventDefault();
-        navTo(index + 1);
-        dots[index].focus();
-      } else if (e.key === 'ArrowLeft') {
-        e.preventDefault();
-        navTo(index - 1);
-        dots[index].focus();
-      }
+      if (e.key === 'ArrowRight') { e.preventDefault(); next(); restart(); }
+      else if (e.key === 'ArrowLeft') { e.preventDefault(); prev(); restart(); }
     });
 
-    setCurrent(0);
+    render(false);
+    setDots(0);
     start();
   });
 </script>
