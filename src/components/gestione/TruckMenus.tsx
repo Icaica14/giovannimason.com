@@ -15,9 +15,11 @@ const SLOTS: { id: Slot; key: string; label: string }[] = [
 type Current = { food: string | null; drink: string | null };
 
 /**
- * Sezione "Biblio Truck" della dashboard: carica/sostituisce i due menu PDF
- * (food / drink) nel bucket pubblico `menus`. La pagina pubblica li legge a
- * build-time (src/data/truckMenus.ts) con fallback ai PDF del repo.
+ * Sezione "Biblio Truck" della dashboard:
+ *  1. Interruttore del CAROSELLO Biblio Truck nella hero della home
+ *     (riga `site_settings`, letta a build-time da src/data/siteSettings.ts):
+ *     spegnibile d'inverno, riaccendibile in estate.
+ *  2. Upload/sostituzione dei due menu PDF (food / drink) nel bucket `menus`.
  */
 export default function TruckMenus() {
   const [current, setCurrent] = useState<Current>({ food: null, drink: null });
@@ -25,6 +27,12 @@ export default function TruckMenus() {
   const [busy, setBusy] = useState<Slot | null>(null);
   const [msg, setMsg] = useState<{ kind: 'ok' | 'err'; text: string } | null>(null);
   const inputs = { food: useRef<HTMLInputElement>(null), drink: useRef<HTMLInputElement>(null) };
+
+  // Stato del carosello Truck. null = non ancora caricato; missing = tabella
+  // site_settings assente (migrazione 0012 non applicata).
+  const [carousel, setCarousel] = useState<boolean | null>(null);
+  const [carouselBusy, setCarouselBusy] = useState(false);
+  const [carouselMissing, setCarouselMissing] = useState(false);
 
   async function load() {
     const supabase = getSupabase();
@@ -48,8 +56,51 @@ export default function TruckMenus() {
     });
   }
 
+  /** Carica lo stato del carosello dalla riga singola di site_settings. */
+  async function loadCarousel() {
+    const supabase = getSupabase();
+    if (!supabase) return;
+    const { data, error } = await supabase
+      .from('site_settings')
+      .select('truck_carousel_active')
+      .eq('id', 1)
+      .maybeSingle();
+    if (error) {
+      // Tabella assente (migrazione non applicata) o non leggibile.
+      setCarouselMissing(true);
+      return;
+    }
+    setCarouselMissing(false);
+    setCarousel((data?.truck_carousel_active ?? true) as boolean);
+  }
+
+  /** Accende/spegne il carosello e persiste su Supabase (upsert riga id=1). */
+  async function toggleCarousel() {
+    const supabase = getSupabase();
+    if (!supabase || carousel === null || carouselBusy) return;
+    const next = !carousel;
+    setCarouselBusy(true);
+    setMsg(null);
+    const { error } = await supabase
+      .from('site_settings')
+      .upsert({ id: 1, truck_carousel_active: next }, { onConflict: 'id' });
+    setCarouselBusy(false);
+    if (error) {
+      setMsg({ kind: 'err', text: `Salvataggio non riuscito: ${error.message}` });
+      return;
+    }
+    setCarousel(next);
+    setMsg({
+      kind: 'ok',
+      text: next
+        ? 'Carosello Biblio Truck attivato: sarà visibile in home al prossimo aggiornamento del sito (~2 min).'
+        : 'Carosello Biblio Truck spento: la home mostrerà solo il bar Biblio al prossimo aggiornamento (~2 min).',
+    });
+  }
+
   useEffect(() => {
     load();
+    loadCarousel();
   }, []);
 
   async function upload(slot: Slot, key: string, file: File) {
@@ -81,14 +132,42 @@ export default function TruckMenus() {
     load();
   }
 
+  const carouselDesc = carouselMissing
+    ? 'Per gestirlo da qui esegui la migrazione 0012 su Supabase.'
+    : carousel === null
+      ? 'Caricamento…'
+      : carousel
+        ? 'Attivo: la home mostra il carosello (bar Biblio + Biblio Truck).'
+        : 'Spento: la home mostra solo il bar Biblio, senza carosello.';
+
   return (
     <section>
       <h2 class="g-h2">Biblio Truck</h2>
-      <p class="g-sub">
-        I menu in PDF della pagina “Biblio Truck”. Carica un nuovo file per sostituire quello online.
-      </p>
+      <p class="g-sub">Gestisci il carosello Biblio Truck in home e i menu in PDF della pagina dedicata.</p>
 
       {msg && <div class={`g-msg ${msg.kind === 'ok' ? 'g-msg-ok' : 'g-msg-err'}`}>{msg.text}</div>}
+
+      {/* 1. Interruttore del carosello in home */}
+      <div class="g-setting" style="margin-bottom:1.8rem;">
+        <div class="g-setting-text">
+          <h3>Carosello Biblio Truck in home</h3>
+          <p>{carouselDesc}</p>
+        </div>
+        <button
+          type="button"
+          class="g-switch"
+          role="switch"
+          aria-checked={carousel ? 'true' : 'false'}
+          aria-label="Carosello Biblio Truck in home"
+          disabled={carousel === null || carouselBusy || carouselMissing}
+          onClick={toggleCarousel}
+        />
+      </div>
+
+      {/* 2. Menu PDF */}
+      <h3 class="g-card-title" style="margin:0 0 .15rem;">Menu in PDF</h3>
+      <p class="g-sub">Carica un nuovo file per sostituire quello online.</p>
+
       {loading && <div class="g-center">Caricamento…</div>}
 
       {!loading && (

@@ -118,7 +118,9 @@ supabase functions deploy trigger-rebuild
 Poi crea il **Database Webhook** che avvia il rebuild: Supabase →
 *Database → Webhooks → Create a new hook*:
 
-- **Tabelle**: `events`, `menu_items`, `menu_sections`.
+- **Tabelle**: `events`, `menu_items`, `menu_sections`, `news`, `site_settings`.
+  (`news` = pubblicazione novità; `site_settings` = interruttore carosello Biblio
+  Truck in home — senza questo webhook il toggle in /gestione non rigenera il sito.)
 - **Eventi**: *Insert, Update, Delete*.
 - **Tipo**: *HTTP Request → POST* verso la function `trigger-rebuild`
   (`https://<progetto>.supabase.co/functions/v1/trigger-rebuild`).

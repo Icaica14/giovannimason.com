@@ -2,6 +2,7 @@
 import { Image } from 'astro:assets';
 import Hero from './Hero.astro';
 import NextEventBand from './NextEventBand.astro';
+import { getSiteSettings } from '../data/siteSettings';
 import { type Lang, t, routeMap } from '../i18n/ui';
 
 // Foto nuove caricate dal titolare.
@@ -44,9 +45,13 @@ const cucinaAlts = lang === 'it'
       'Filled sandwich, counter detail',
     ];
 const cucinaImgs = [cucina1, cucina2, cucina3, cucina4, cucina5];
+
+// Impostazioni del sito (build-time): se il proprietario ha spento il carosello
+// Biblio Truck dal pannello /gestione, la hero diventa statica (solo bar Biblio).
+const settings = await getSiteSettings();
 ---
 
-<Hero lang={lang} />
+<Hero lang={lang} carousel={settings.truckCarouselActive} />
 
 {/* Banda bordeaux: invito al Biblio Truck + prossima serata ai Giardinetti */}
 <NextEventBand lang={lang} variant="home" />

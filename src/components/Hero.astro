@@ -1,36 +1,56 @@
 ---
-import { getImage } from 'astro:assets';
+import { Image, getImage } from 'astro:assets';
 import heroSrc from '../assets/img/interni/img_1.webp';
 import truckSrc from '../assets/img/truck/bancone.jpg';
+import truckLogo from '../assets/img/logo/biblio-truck.png';
 import logoSvg from '../assets/img/logo/logo.svg?raw';
 import { type Lang, t, routeMap } from '../i18n/ui';
 
 interface Props {
   lang: Lang;
+  /**
+   * Mostrare il carosello Biblio Truck. Default true.
+   * false → hero STATICA del solo bar Biblio (niente seconda slide, frecce,
+   * pallini, transizioni o contenitori del carosello): una home pulita.
+   */
+  carousel?: boolean;
 }
-const { lang } = Astro.props;
+const { lang, carousel = true } = Astro.props;
 
-// Hero-carousel a due viste (slide 1 = bar Biblio, slide 2 = Biblio Truck).
-// SCORRIMENTO reale (translateX su un track flex) con LOOP CONTINUO IN AVANTI
-// (clone della prima slide in coda) → niente effetto ping-pong. Lo sfondo è una
-// CSS background `cover` (riempie sempre la slide, niente fasce su iOS Safari).
+// Sfondi delle slide come CSS background `cover` (riempiono sempre la slide →
+// nessuna fascia su iOS Safari). Lo scorrimento è una translateX sul track flex,
+// con loop continuo in avanti (clone della prima slide) → niente ping-pong.
 const barOpt = await getImage({ src: heroSrc, width: 1600, format: 'webp', quality: 80 });
 const truckOpt = await getImage({ src: truckSrc, width: 1600, format: 'webp', quality: 78 });
 
 const truckHref = routeMap.truck[lang];
 const eventiHref = routeMap.eventi[lang];
 const goto = t(lang, 'hero.carousel.goto');
+const truckName = t(lang, 'truck.hero.title'); // "Biblio Truck" — alt del logo
 ---
 
-<section class="hero-carousel" aria-roledescription="carousel" aria-label={t(lang, 'hero.carousel.label')}>
+<section
+  class:list={['hero-carousel', { 'is-static': !carousel }]}
+  aria-roledescription={carousel ? 'carousel' : undefined}
+  aria-label={carousel ? t(lang, 'hero.carousel.label') : undefined}
+>
   <div class="hero-viewport">
     <div class="hero-track" data-hero-track>
-      {/* Slide 1 — Bar Biblio */}
-      <article class="hero hero-slide" style={`--hero-bg: url("${barOpt.src}")`} aria-roledescription="slide" aria-label="Biblio">
+      {/* Slide 1 — Bar Biblio (sempre presente, anche in modalità statica) */}
+      <article
+        class="hero hero-slide"
+        style={`--hero-bg: url("${barOpt.src}")`}
+        aria-roledescription={carousel ? 'slide' : undefined}
+        aria-label="Biblio"
+      >
         <div class="hero-inner">
-          <h1 class="hero-logo" set:html={logoSvg} aria-label="Biblio"></h1>
-          <p class="lede">{t(lang, 'hero.lede1')}</p>
-          <p class="lede">{t(lang, 'hero.lede2')}</p>
+          <div class="hero-brand">
+            <h1 class="hero-brand-logo hero-logo-biblio" set:html={logoSvg} aria-label="Biblio"></h1>
+          </div>
+          <div class="hero-copy">
+            <p class="lede">{t(lang, 'hero.lede1')}</p>
+            <p class="lede">{t(lang, 'hero.lede2')}</p>
+          </div>
           <div class="hero-cta">
             <a class="btn" href={routeMap.prenota[lang]}>{t(lang, 'hero.cta.book')}</a>
             <a class="btn btn-ghost" href={routeMap.menu[lang]}>{t(lang, 'hero.cta.menu')}</a>
@@ -38,33 +58,49 @@ const goto = t(lang, 'hero.carousel.goto');
         </div>
       </article>
 
-      {/* Slide 2 — Biblio Truck */}
-      <article class="hero hero-slide hero-slide-truck" style={`--hero-bg: url("${truckOpt.src}")`} aria-roledescription="slide" aria-label="Biblio Truck">
-        <div class="hero-inner">
-          <p class="hero-truck-title">{t(lang, 'truck.hero.title')}</p>
-          <p class="lede">{t(lang, 'truck.hero.tagline')}</p>
-          <div class="hero-cta">
-            <a class="btn" href={truckHref}>{t(lang, 'hero.truck.cta')}</a>
-            <a class="btn btn-ghost" href={eventiHref}>{t(lang, 'home.eventi.cta')}</a>
+      {/* Slide 2 — Biblio Truck (solo a carosello attivo) */}
+      {carousel && (
+        <article
+          class="hero hero-slide hero-slide-truck"
+          style={`--hero-bg: url("${truckOpt.src}")`}
+          aria-roledescription="slide"
+          aria-label="Biblio Truck"
+        >
+          <div class="hero-inner">
+            <div class="hero-brand">
+              <p class="hero-brand-logo hero-logo-truck">
+                <Image src={truckLogo} alt={truckName} widths={[320, 480, 640, 820]} sizes="(max-width: 560px) 70vw, 460px" loading="eager" />
+              </p>
+            </div>
+            <div class="hero-copy">
+              <p class="lede">{t(lang, 'truck.hero.tagline')}</p>
+            </div>
+            <div class="hero-cta">
+              <a class="btn" href={truckHref}>{t(lang, 'hero.truck.cta')}</a>
+              <a class="btn btn-ghost" href={eventiHref}>{t(lang, 'home.eventi.cta')}</a>
+            </div>
           </div>
-        </div>
-      </article>
+        </article>
+      )}
     </div>
   </div>
 
-  {/* Frecce laterali */}
-  <button type="button" class="hero-arrow hero-arrow-prev" data-hero-prev aria-label={t(lang, 'hero.carousel.prev')}>
-    <svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6" /></svg>
-  </button>
-  <button type="button" class="hero-arrow hero-arrow-next" data-hero-next aria-label={t(lang, 'hero.carousel.next')}>
-    <svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6" /></svg>
-  </button>
+  {/* Frecce + pallini: solo a carosello attivo */}
+  {carousel && (
+    <Fragment>
+      <button type="button" class="hero-arrow hero-arrow-prev" data-hero-prev aria-label={t(lang, 'hero.carousel.prev')}>
+        <svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6" /></svg>
+      </button>
+      <button type="button" class="hero-arrow hero-arrow-next" data-hero-next aria-label={t(lang, 'hero.carousel.next')}>
+        <svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6" /></svg>
+      </button>
 
-  {/* Pallini, sovrapposti in basso alla slide */}
-  <div class="hero-dots" data-hero-dots>
-    <button type="button" class="hero-dot is-active" data-hero-dot="0" aria-label={`${goto} 1: Biblio`} aria-current="true"></button>
-    <button type="button" class="hero-dot" data-hero-dot="1" aria-label={`${goto} 2: Biblio Truck`} aria-current="false"></button>
-  </div>
+      <div class="hero-dots" data-hero-dots>
+        <button type="button" class="hero-dot is-active" data-hero-dot="0" aria-label={`${goto} 1: Biblio`} aria-current="true"></button>
+        <button type="button" class="hero-dot" data-hero-dot="1" aria-label={`${goto} 2: Biblio Truck`} aria-current="false"></button>
+      </div>
+    </Fragment>
+  )}
 </section>
 
 <style>
@@ -77,8 +113,6 @@ const goto = t(lang, 'hero.carousel.goto');
     margin: 0;
     padding: 0;
   }
-  /* Finestra che ritaglia il track (niente overflow-auto/scroll-snap → niente
-     artefatti/fasce su iOS). Lo scorrimento è una translateX sul track. */
   .hero-viewport {
     overflow: hidden;
   }
@@ -92,34 +126,91 @@ const goto = t(lang, 'hero.carousel.goto');
     flex: 0 0 100%;
     width: 100%;
   }
+  /* L'inner riempie l'altezza della slide (le due slide sono già di pari altezza):
+     logo IN ALTO, CTA IN BASSO, testo centrato nel mezzo → logo e pulsanti
+     restano alla STESSA quota nelle due slide, nessun salto al cambio slide. */
+  .hero-slide {
+    align-items: stretch;
+  }
   .hero-slide .hero-inner {
     margin-inline: auto;
     width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
 
-  /* #1 — Centratura OTTICA del logo "Biblio" (solo slide 1). Il box del file SVG
-     non è bilanciato: il centro geometrico non coincide col centro visivo della
-     scritta (che pende a destra). Compensiamo con un piccolo offset a sinistra. */
-  .hero-logo {
-    --biblio-logo-visual-offset-x: -12px;
+  /* ── Uniformità delle due slide ───────────────────────────────────────────
+     Composizione identica: [zona logo] + [copy] + [CTA]. La ZONA LOGO ha la
+     STESSA ALTEZZA in entrambe le slide → il blocco non "salta" né cambia
+     dimensione al cambio slide. Il logo Biblio (emblema ~quadrato) riempie la
+     zona; il logo Biblio Truck (wordmark 2 righe, più largo) è limitato in
+     altezza così la sua larghezza resta equilibrata e centrata nella stessa zona. */
+  .hero-brand {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: clamp(165px, 30vw, 300px);
+    margin: 0 auto 1.6rem;
+  }
+  .hero-brand-logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    max-width: 100%;
+    margin: 0;
+    line-height: 0;
+  }
+  /* Il logo Biblio (SVG bicolore via set:html → non scoped: serve :global). */
+  .hero-logo-biblio {
+    color: var(--logo-red);
+    --logo-ink: var(--paper);
+    /* Centratura OTTICA: il box dell'SVG non è bilanciato (la scritta pende a
+       destra). Piccolo offset a sinistra per centrarlo visivamente. */
+    --biblio-logo-visual-offset-x: -10px;
     transform: translateX(var(--biblio-logo-visual-offset-x));
   }
+  .hero-logo-biblio :global(svg) {
+    display: block;
+    height: 100%;
+    width: auto;
+    max-width: 100%;
+    filter: drop-shadow(0 4px 24px rgba(0, 0, 0, 0.55));
+  }
+  /* Il logo Biblio Truck (PNG trasparente). Altezza definita al ~78% della zona
+     (così il wordmark largo non domina e i due loghi appaiono bilanciati); la
+     larghezza segue l'aspect, anche prima del load (niente collasso a 0). */
+  .hero-logo-truck :global(img) {
+    display: block;
+    height: 67%;
+    width: auto;
+    max-width: 100%;
+    object-fit: contain;
+    filter: drop-shadow(0 4px 20px rgba(0, 0, 0, 0.5));
+  }
   @media (min-width: 820px) {
-    .hero-logo {
-      --biblio-logo-visual-offset-x: -16px; /* il logo è più grande su desktop */
+    .hero-logo-biblio {
+      --biblio-logo-visual-offset-x: -14px;
     }
   }
 
-  /* #4 — "Biblio Truck" nello stesso rosso del logo Biblio (token). */
-  .hero-truck-title {
-    margin: 0 auto 2rem;
-    font-family: var(--font-display);
-    font-style: italic;
-    font-weight: 600;
-    font-size: clamp(2.6rem, 7vw, 4.4rem);
-    line-height: 1;
-    color: var(--logo-red);
-    filter: drop-shadow(0 3px 18px rgba(0, 0, 0, 0.7));
+  /* Zona testo a altezza riservata: la CTA resta alla stessa quota in entrambe
+     le slide anche se una ha due righe di copy e l'altra una. */
+  .hero-copy {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 100%;
+  }
+  .hero-copy .lede:last-child {
+    margin-bottom: 0;
+  }
+  .hero-cta {
+    flex: 0 0 auto;
+    margin-top: 1.6rem;
   }
 
   /* Frecce laterali */
@@ -213,6 +304,8 @@ const goto = t(lang, 'hero.carousel.goto');
   // slide in coda → quando lo si raggiunge, salto istantaneo all'inizio: sembra
   // un loop infinito sempre nello stesso verso, niente ping-pong). Autoplay 5s,
   // frecce, pallini, swipe touch, tastiera. Off con prefers-reduced-motion.
+  // In modalità STATICA (una sola slide, nessun pallino) la guardia
+  // `dots.length < 2` esce subito: nessun clone, nessun autoplay, nessuna chrome.
   document.querySelectorAll<HTMLElement>('.hero-carousel').forEach((carousel) => {
     const track = carousel.querySelector<HTMLElement>('[data-hero-track]');
     const dots = Array.from(carousel.querySelectorAll<HTMLButtonElement>('[data-hero-dot]'));
@@ -233,11 +326,34 @@ const goto = t(lang, 'hero.carousel.goto');
 
     let pos = 0;
     let timer: number | undefined;
+    let settleTimer: number | undefined;
     let animating = false;
 
+    // Completa il ciclo a fine scorrimento: sblocca e, se siamo sul clone
+    // (ultima cella = slide 1), torna all'inizio senza animazione → loop infinito.
+    const afterSettle = () => {
+      if (settleTimer !== undefined) {
+        clearTimeout(settleTimer);
+        settleTimer = undefined;
+      }
+      animating = false;
+      if (pos === total - 1) {
+        pos = 0;
+        render(false);
+      }
+    };
     const render = (animate: boolean) => {
-      track.style.transition = animate && !reduce ? 'transform 0.7s var(--ease)' : 'none';
+      const willAnimate = animate && !reduce;
+      track.style.transition = willAnimate ? 'transform 0.7s var(--ease)' : 'none';
       track.style.transform = `translateX(-${pos * 100}%)`;
+      // Rete di sicurezza: completa il ciclo anche se `transitionend` NON scatta —
+      // con reduced-motion (transition 'none') o con la tab in background (le
+      // transizioni vanno in pausa). Senza, `animating` resterebbe bloccato e la
+      // navigazione manuale si freezerebbe. setTimeout scatta anche da nascosti.
+      if (animate) {
+        if (settleTimer !== undefined) clearTimeout(settleTimer);
+        settleTimer = window.setTimeout(afterSettle, willAnimate ? 820 : 60);
+      }
     };
     const setDots = (i: number) => {
       dots.forEach((d, j) => {
@@ -282,14 +398,10 @@ const goto = t(lang, 'hero.carousel.goto');
       setDots(i);
     };
 
-    // Fine transizione: sblocca e, se siamo sul clone, torna alla slide 1 senza animazione.
+    // Fine transizione (solo con motion attivo): stesso epilogo del path rAF.
     track.addEventListener('transitionend', (e) => {
       if (e.propertyName !== 'transform') return;
-      animating = false;
-      if (pos === total - 1) {
-        pos = 0;
-        render(false);
-      }
+      afterSettle();
     });
 
     // Autoplay 5s — sempre in avanti.
