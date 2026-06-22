@@ -9,12 +9,12 @@ import preact from '@astrojs/preact';
 export default defineConfig({
   site: 'https://bibliotreviso.com',
   // base: '/',  // se metti il sito in https://utente.github.io/biblio/, decommenta e usa '/biblio'
-  // Pagina iniziale del dominio (/) = Biblio Truck, servita DIRETTAMENTE come pagina
-  // (indicizzabile: la home del dominio NON è più un redirect noindex). La Home resta
-  // su /home/ (e /en/home/). Il vecchio URL /biblio-truck/ reindirizza alla radice.
+  // Pagina iniziale del dominio (/) = Home del bar Biblio. La pagina Biblio Truck
+  // vive su /biblio-truck/ (e /en/biblio-truck/), raggiungibile da nav e link.
+  // Il vecchio /home/ — usato per un periodo come Home — reindirizza alla radice.
   redirects: {
-    '/biblio-truck/': '/',
-    '/en/biblio-truck/': '/en/',
+    '/home/': '/',
+    '/en/home/': '/en/',
   },
   i18n: {
     defaultLocale: 'it',

@@ -1,9 +1,9 @@
 ---
-// Radice del dominio (/) = pagina Biblio Truck, servita DIRETTAMENTE (indicizzabile).
-// Scelta del proprietario: il dominio apre sul Biblio Truck. La Home "classica"
-// resta su /home/. Il vecchio URL /biblio-truck/ reindirizza qui (vedi astro.config).
+// Radice del dominio (/) = Home del bar Biblio.
+// La pagina Biblio Truck vive su /biblio-truck/ (raggiungibile da nav e link).
+// Il vecchio /home/ reindirizza qui (vedi astro.config).
 import Base from '../layouts/Base.astro';
-import TruckPage from '../components/TruckPage.astro';
+import HomePage from '../components/HomePage.astro';
 import { t } from '../i18n/ui';
 
 const lang = 'it' as const;
@@ -11,9 +11,9 @@ const lang = 'it' as const;
 
 <Base
   lang={lang}
-  currentRoute="truck"
-  title={t(lang, 'truck.meta.title')}
-  description={t(lang, 'truck.meta.description')}
+  currentRoute="home"
+  title={t(lang, 'home.meta.title')}
+  description={t(lang, 'home.meta.description')}
 >
-  <TruckPage lang={lang} />
+  <HomePage lang={lang} />
 </Base>

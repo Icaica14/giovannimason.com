@@ -593,8 +593,8 @@ export function t(lang: Lang, key: UIKey): string {
 // (in IT le rotte sono /menu, /eventi, /prenota, /contatti, /per-gli-artisti)
 // (in EN restano sotto /en/menu, /en/eventi, /en/prenota, /en/contatti, /en/for-artists)
 export const routeMap: Record<string, { it: string; en: string }> = {
-  home:     { it: '/home/',             en: '/en/home/' },
-  truck:    { it: '/',                  en: '/en/' },
+  home:     { it: '/',                  en: '/en/' },
+  truck:    { it: '/biblio-truck/',     en: '/en/biblio-truck/' },
   menu:     { it: '/menu/',             en: '/en/menu/' },
   eventi:   { it: '/eventi/',           en: '/en/eventi/' },
   news:     { it: '/news/',             en: '/en/news/' },
