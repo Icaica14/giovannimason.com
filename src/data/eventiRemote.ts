@@ -10,7 +10,8 @@
 
 import { getCollection } from 'astro:content';
 import { supabasePublic } from '../lib/supabasePublic';
-import type { EventData, EventEntry, EventGenre } from './eventi';
+import { withEventSlugs } from './eventi';
+import type { EventData, EventEntry, EventEntryWithSlug, EventGenre } from './eventi';
 
 type EventRow = {
   id: string;
@@ -58,7 +59,12 @@ function rowToEntry(row: EventRow): EventEntry {
  * `published` è applicato dagli helper splitEventi/upcomingLive a valle).
  * Build-time only.
  */
-export async function getEvents(): Promise<EventEntry[]> {
+export async function getEvents(): Promise<EventEntryWithSlug[]> {
+  // Slug assegnati alla fonte unica: lista e pagina dettaglio condividono gli stessi.
+  return withEventSlugs(await loadEvents());
+}
+
+async function loadEvents(): Promise<EventEntry[]> {
   if (!supabasePublic) return getCollection('eventi');
 
   const { data, error } = await supabasePublic

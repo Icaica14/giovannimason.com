@@ -2,6 +2,7 @@
 import { type Lang, t, routeMap } from '../i18n/ui';
 import { getEvents } from '../data/eventiRemote';
 import { upcomingLive, eventDateLabel, eventStatus } from '../data/eventi';
+import Poster from './Poster.astro';
 
 interface Props {
   lang: Lang;
@@ -28,14 +29,14 @@ const truckHref = routeMap.truck[lang];
   <div class="container next-band-inner">
     <div class="next-band-main">
       {next && next.data.poster && (
-        <img
+        <Poster
           class="next-band-poster"
           src={next.data.poster}
-          alt={`Locandina · ${next.data.artist}`}
-          width="84"
-          height="112"
+          alt={`${t(lang, 'eventi.poster.alt')} · ${next.data.artist}`}
+          width={180}
+          imgWidth={84}
+          imgHeight={112}
           loading="lazy"
-          decoding="async"
         />
       )}
       <div class="next-band-text">
@@ -52,7 +53,7 @@ const truckHref = routeMap.truck[lang];
             <span class="next-band-date">{eventDateLabel(next.data, lang)}</span> · {next.data.artist}
           </span>
         ) : (
-          <a class="next-band-event" href={`${eventiHref}#${next.id}`}>
+          <a class="next-band-event" href={`${eventiHref}${next.slug}/`}>
             <span class="next-band-eyebrow">{t(lang, 'band.eyebrow')}</span>
             <span class="next-band-event-main">
               <span class="next-band-date">{eventDateLabel(next.data, lang)}</span>
@@ -100,7 +101,8 @@ const truckHref = routeMap.truck[lang];
   }
   /* Locandina del prossimo evento: miniatura ritratto, proporzioni fisse 3:4
      così non si deforma; cover per riempire il box in modo ordinato. */
-  .next-band-poster {
+  /* :global perché l'<img> è reso dal componente figlio Poster.astro. */
+  :global(.next-band-poster) {
     flex-shrink: 0;
     width: 84px;
     height: 112px;
@@ -212,7 +214,7 @@ const truckHref = routeMap.truck[lang];
     .next-band-event-main {
       font-size: 1.2rem;
     }
-    .next-band-poster {
+    :global(.next-band-poster) {
       width: 66px;
       height: 88px;
     }

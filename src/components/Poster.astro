@@ -1,0 +1,63 @@
+---
+// Locandina evento ottimizzata, usata in lista eventi, dettaglio, banda prossimo
+// evento e sezione "Prossime serate" del Biblio Truck.
+//
+// - URL REMOTO (storage Supabase): ottimizzato a BUILD-TIME con getImage →
+//   WebP ridimensionato alla `width` richiesta (≈2× la dimensione a schermo) e
+//   servito same-origin (cache di GitHub Pages). Niente più download del file
+//   originale enorme. Se l'ottimizzazione fallisce (URL irraggiungibile, ecc.)
+//   si ripiega sull'originale: la build resta robusta.
+// - URL LOCALE (/uploads, archivio serate passate): <img> diretto (i file in
+//   /public non passano dalla pipeline). Il layout/aspect-ratio è gestito dal
+//   contenitore via CSS, quindi nessun layout shift.
+import { getImage } from 'astro:assets';
+
+interface Props {
+  src: string;
+  alt: string;
+  /** Larghezza dell'output ottimizzato (px). Default lista; alza per il dettaglio. */
+  width?: number;
+  sizes?: string;
+  loading?: 'lazy' | 'eager';
+  fetchpriority?: 'high' | 'low' | 'auto';
+  /** Attributi width/height intrinseci, dove non c'è un frame con aspect-ratio. */
+  imgWidth?: number;
+  imgHeight?: number;
+  class?: string;
+}
+const {
+  src,
+  alt,
+  width = 600,
+  sizes,
+  loading = 'lazy',
+  fetchpriority,
+  imgWidth,
+  imgHeight,
+  class: className,
+} = Astro.props;
+
+const isRemote = /^https?:\/\//i.test(src);
+
+let resolved = src;
+if (isRemote) {
+  try {
+    const opt = await getImage({ src, inferSize: true, width, format: 'webp', quality: 72 });
+    resolved = opt.src;
+  } catch {
+    resolved = src; // fallback all'originale: la build non si rompe
+  }
+}
+---
+
+<img
+  src={resolved}
+  alt={alt}
+  loading={loading}
+  fetchpriority={fetchpriority}
+  decoding="async"
+  sizes={sizes}
+  width={imgWidth}
+  height={imgHeight}
+  class={className}
+/>

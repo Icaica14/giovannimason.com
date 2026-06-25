@@ -5,6 +5,7 @@ import { splitEventi, eventDateLabel } from '../data/eventi';
 import { getEvents } from '../data/eventiRemote';
 import { getTruckMenus } from '../data/truckMenus';
 import NextEventBand from './NextEventBand.astro';
+import Poster from './Poster.astro';
 
 // Foto del food truck (caricate dal titolare).
 // bancone.jpg → landscape, usata come banda hero di sfondo.
@@ -90,7 +91,7 @@ const truckAlt = lang === 'it'
 
   <div class="divider"><span>· · ·</span></div>
 
-  {/* Prossimi eventi ai Giardinetti (senza immagini) — prima del food & drink */}
+  {/* Prossimi eventi ai Giardinetti (con locandina) — prima del food e drink */}
   <section class="truck-events bg-paper-2">
     <div class="container">
       <div class="section-head reveal">
@@ -105,7 +106,18 @@ const truckAlt = lang === 'it'
         <ul class="truck-events-list reveal">
           {giardinetti.map((ev) => (
             <li>
-              <a class="truck-event" href={`${routeMap.eventi[lang]}#${ev.id}`}>
+              <a class="truck-event" href={`${routeMap.eventi[lang]}${ev.slug}/`}>
+                {ev.data.poster ? (
+                  <Poster
+                    class="truck-event-poster"
+                    src={ev.data.poster}
+                    alt={`${t(lang, 'eventi.poster.alt')} · ${ev.data.artist}`}
+                    width={160}
+                    loading="lazy"
+                  />
+                ) : (
+                  <span class="truck-event-poster truck-event-poster-empty" aria-hidden="true"></span>
+                )}
                 <span class="truck-event-date">{eventDateLabel(ev.data, lang)}</span>
                 <span class="truck-event-main">
                   <span class="truck-event-artist">{ev.data.artist}</span>
@@ -326,10 +338,10 @@ const truckAlt = lang === 'it'
   }
   .truck-event {
     display: grid;
-    grid-template-columns: minmax(8.5rem, auto) 1fr auto;
+    grid-template-columns: auto minmax(6.5rem, auto) 1fr auto;
     align-items: center;
-    gap: 1.25rem;
-    padding: 1.1rem 1.4rem;
+    gap: 1.1rem;
+    padding: 0.9rem 1.2rem;
     background: var(--paper);
     border: 1px solid var(--line);
     border-radius: var(--radius);
@@ -341,6 +353,36 @@ const truckAlt = lang === 'it'
     transform: translateY(-2px);
     border-color: var(--brass);
     color: var(--ink);
+  }
+  /* Locandina miniatura della serata: proporzioni 3:4 (event poster), cover.
+     :global perché l'<img> è reso dal componente figlio Poster.astro (lo scope
+     di Astro non lo raggiungerebbe). Il nome classe è specifico: nessuna collisione. */
+  :global(.truck-event-poster) {
+    width: 56px;
+    aspect-ratio: 3 / 4;
+    object-fit: cover;
+    border-radius: 7px;
+    border: 1px solid var(--line);
+    background: #1a120a;
+    display: block;
+    box-shadow: 0 3px 10px rgba(43, 29, 18, 0.18);
+  }
+  :global(.truck-event-poster-empty) {
+    background: var(--paper-2);
+    border-style: dashed;
+    box-shadow: none;
+  }
+  @media (max-width: 560px) {
+    .truck-event {
+      gap: 0.85rem;
+      padding: 0.8rem 0.95rem;
+    }
+    :global(.truck-event-poster) {
+      width: 46px;
+    }
+    .truck-event-date {
+      font-size: 0.64rem;
+    }
   }
   .truck-event-date {
     font-family: var(--font-brand);

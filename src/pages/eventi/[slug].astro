@@ -1,0 +1,36 @@
+---
+import Base from '../../layouts/Base.astro';
+import EventDetail from '../../components/EventDetail.astro';
+import { getEvents } from '../../data/eventiRemote';
+import { eventExcerpt } from '../../data/eventi';
+import { routeMap, t } from '../../i18n/ui';
+import { musicEventLd } from '../../lib/structuredData';
+
+// Una pagina di dettaglio per ogni evento. Lo slug (artista + data) è stabile e
+// condiviso fra IT ed EN (vedi withEventSlugs in src/data/eventi.ts).
+export async function getStaticPaths() {
+  const events = await getEvents();
+  return events.map((entry) => ({ params: { slug: entry.slug }, props: { entry } }));
+}
+
+const lang = 'it' as const;
+const { entry } = Astro.props;
+const ev = entry.data;
+const title = `${ev.artist} | Bar Biblio Treviso`;
+const description = eventExcerpt(ev, lang) || t(lang, 'eventi.meta.description');
+const itPath = `${routeMap.eventi.it}${entry.slug}/`;
+const enPath = `${routeMap.eventi.en}${entry.slug}/`;
+const siteOrigin = Astro.site ? Astro.site.origin : '';
+---
+
+<Base
+  lang={lang}
+  currentRoute="eventi"
+  title={title}
+  description={description}
+  itPath={itPath}
+  enPath={enPath}
+>
+  <EventDetail lang={lang} entry={entry} />
+  <script type="application/ld+json" is:inline set:html={JSON.stringify(musicEventLd(entry, lang, siteOrigin))} />
+</Base>

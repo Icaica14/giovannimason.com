@@ -4,6 +4,7 @@
 
 import type { Lang } from '../i18n/ui';
 import type { CollectionEntry } from 'astro:content';
+import { slugify } from './news';
 
 export type Bilingual = { it: string; en: string };
 
@@ -15,7 +16,7 @@ export type EventGenre =
 export const genreLabel: Record<EventGenre, Bilingual> = {
   jazz:       { it: 'Giovedì Jazz',       en: 'Thursday Jazz' },
   blues:      { it: 'Blues',              en: 'Blues' },
-  soul:       { it: 'Pop & Soul',         en: 'Pop & Soul' },
+  soul:       { it: 'Pop e Soul',         en: 'Pop and Soul' },
   indie:      { it: 'Indie',              en: 'Indie' },
   songwriter: { it: 'Voci emergenti',     en: 'Emerging voices' },
   reading:    { it: 'Reading',            en: 'Reading' },
@@ -48,6 +49,43 @@ export type EventData = CollectionEntry<'eventi'>['data'];
 // oggetti costruiti dall'adapter remoto (eventiRemote.getEvents) sono assegnabili
 // a questo tipo: così gli helper restano puri e funzionano con entrambe le fonti.
 export type EventEntry = { id: string; data: EventData };
+
+// Evento con slug stabile per la URL della pagina dettaglio (/eventi/<slug>/).
+export type EventEntryWithSlug = EventEntry & { slug: string };
+
+/**
+ * Assegna a ogni evento uno slug stabile e unico (artista + data) con dedup
+ * numerico. Ordina prima per data desc + id, così gli slug sono deterministici
+ * tra una build e l'altra e identici fra lista e pagina dettaglio.
+ */
+export function withEventSlugs<T extends EventEntry>(entries: T[]): (T & { slug: string })[] {
+  const sorted = [...entries].sort((a, b) => {
+    const da = a.data.date.slice(0, 10);
+    const db = b.data.date.slice(0, 10);
+    if (da !== db) return da < db ? 1 : -1; // data decrescente
+    return a.id < b.id ? -1 : 1; // tie-break stabile
+  });
+  const seen = new Map<string, number>();
+  return sorted.map((e) => {
+    const base = slugify(`${e.data.artist} ${e.data.date.slice(0, 10)}`) || `evento-${String(e.id).slice(0, 8)}`;
+    const n = seen.get(base) ?? 0;
+    seen.set(base, n + 1);
+    return { ...e, slug: n === 0 ? base : `${base}-${n + 1}` };
+  });
+}
+
+/**
+ * Paragrafi del testo (riga vuota = nuovo paragrafo). I ritorni a capo singoli
+ * restano dentro al paragrafo e vanno resi con `white-space: pre-line`, così la
+ * formattazione scritta dal gestore (a capo e paragrafi) viene rispettata.
+ */
+export function eventParagraphs(text: string): string[] {
+  return text
+    .replace(/\r\n/g, '\n')
+    .split(/\n{2,}/)
+    .map((p) => p.trim())
+    .filter(Boolean);
+}
 
 // Etichetta data localizzata e derivata dalla data ISO (es. "Giovedì 23 aprile").
 // Il manager non la digita: basta scegliere la data.
@@ -91,6 +129,15 @@ export function eventBlurb(e: EventData, lang: Lang): string | undefined {
   return lang === 'en' ? (e.blurbEn ?? e.blurb) : e.blurb;
 }
 
+/** Estratto piatto del blurb per i metadata SEO: niente a capo, troncato a parola. */
+export function eventExcerpt(e: EventData, lang: Lang, max = 155): string {
+  const flat = (eventBlurb(e, lang) ?? '').replace(/\s+/g, ' ').trim();
+  if (flat.length <= max) return flat;
+  const cut = flat.slice(0, max);
+  const sp = cut.lastIndexOf(' ');
+  return `${(sp > 40 ? cut.slice(0, sp) : cut).trimEnd()}…`;
+}
+
 // Stato della serata: normale, annullata o rimandata.
 export type EventStatus = 'regular' | 'cancelled' | 'postponed';
 // Etichetta automatica dello stato (mostrata in rosso sull'annuncio).
@@ -113,8 +160,8 @@ export function eventStatusNote(e: EventData, lang: Lang): string | undefined {
 
 // Suddivide gli eventi pubblicati in "in arrivo" e "passati" rispetto a today (ISO),
 // ordinati per data discendente. today è passato come stringa per evitare TZ surprise.
-export function splitEventi(entries: EventEntry[], today: string) {
-  const day = (e: EventEntry) => e.data.date.slice(0, 10);
+export function splitEventi<T extends EventEntry>(entries: T[], today: string): { upcoming: T[]; past: T[] } {
+  const day = (e: T) => e.data.date.slice(0, 10);
   const published = entries
     .filter((e) => e.data.published !== false)
     .sort((a, b) => (day(a) < day(b) ? 1 : -1));
@@ -125,11 +172,11 @@ export function splitEventi(entries: EventEntry[], today: string) {
 
 // Prossime serate live (pubblicate, data ≥ oggi), in ordine crescente. Usata dai
 // chip della pagina prenota, così si aggiornano da sole quando il manager pubblica.
-export function upcomingLive(
-  entries: EventEntry[],
+export function upcomingLive<T extends EventEntry>(
+  entries: T[],
   today: string,
   limit = 6,
-) {
+): T[] {
   return entries
     .filter((e) => e.data.published !== false && e.data.date.slice(0, 10) >= today)
     .sort((a, b) => (a.data.date.slice(0, 10) < b.data.date.slice(0, 10) ? -1 : 1))

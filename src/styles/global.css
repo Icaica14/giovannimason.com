@@ -973,6 +973,32 @@ section { padding: 5rem 0; }
   font-size: .92rem;
   color: var(--ink-soft);
   line-height: 1.6;
+  /* Anteprima: massimo 2 righe + ellissi. Il testo completo resta nel modello
+     dati e si legge nella pagina dettaglio dell'evento. */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+/* Cue "Scopri la serata →" dentro la card-link (non è un anchor annidato). */
+.poster-readmore {
+  display: inline-flex;
+  align-items: center;
+  gap: .35rem;
+  margin-top: .7rem;
+  font-family: var(--font-brand);
+  font-size: .82rem;
+  letter-spacing: .02em;
+  color: var(--vino);
+  font-weight: 600;
+}
+.poster-readmore .arrow {
+  transition: transform .2s var(--ease);
+}
+.poster-card:hover .poster-readmore .arrow,
+.poster-link:focus-visible .poster-readmore .arrow {
+  transform: translateX(3px);
 }
 
 /* Avviso serata annullata / rimandata: rosso, ben visibile in cima alla card.
