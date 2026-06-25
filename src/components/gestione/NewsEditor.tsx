@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'preact/hooks';
 import { getSupabase } from '../../lib/supabaseClient';
+import BoldTextarea from './BoldTextarea';
 
 /** Riga news come arriva da Supabase. */
 type NewsRow = {
@@ -337,19 +338,19 @@ export default function NewsEditor() {
 
             <div class="g-field">
               <label>Testo</label>
-              <textarea
+              <BoldTextarea
                 class="g-textarea g-textarea-tall"
                 value={draft.body}
-                onInput={(e) => patch({ body: (e.target as HTMLTextAreaElement).value })}
+                onValue={(v) => patch({ body: v })}
               />
               <p class="news-field-hint">Lascia una riga vuota fra un paragrafo e l’altro.</p>
             </div>
             <div class="g-field">
               <label>Testo EN (opzionale)</label>
-              <textarea
+              <BoldTextarea
                 class="g-textarea g-textarea-tall"
                 value={draft.body_en}
-                onInput={(e) => patch({ body_en: (e.target as HTMLTextAreaElement).value })}
+                onValue={(v) => patch({ body_en: v })}
               />
             </div>
 

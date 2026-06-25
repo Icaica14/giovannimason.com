@@ -4,6 +4,7 @@
 // come gli eventi (vedi eventBlurb in src/data/eventi.ts).
 
 import type { Lang } from '../i18n/ui';
+import { stripBold } from '../lib/richtext';
 
 export type NewsData = {
   title: string;
@@ -42,7 +43,7 @@ export function newsParagraphs(text: string): string[] {
 
 /** Estratto breve per la card: testo su una riga, troncato al limite di parole. */
 export function newsExcerpt(e: NewsData, lang: Lang, max = 150): string {
-  const flat = newsBody(e, lang).replace(/\s+/g, ' ').trim();
+  const flat = stripBold(newsBody(e, lang)).replace(/\s+/g, ' ').trim();
   if (flat.length <= max) return flat;
   const cut = flat.slice(0, max);
   const lastSpace = cut.lastIndexOf(' ');

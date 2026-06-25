@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'preact/hooks';
 import { getSupabase } from '../../lib/supabaseClient';
 import { genreLabel, venueLabel, VENUE_DEFAULT } from '../../data/eventi';
+import BoldTextarea from './BoldTextarea';
 
 /** Riga evento come arriva da Supabase. */
 type EventRow = {
@@ -485,18 +486,18 @@ export default function EventsEditor() {
 
             <div class="g-field">
               <label>Descrizione IT</label>
-              <textarea
+              <BoldTextarea
                 class="g-textarea"
                 value={draft.blurb}
-                onInput={(e) => patch({ blurb: (e.target as HTMLTextAreaElement).value })}
+                onValue={(v) => patch({ blurb: v })}
               />
             </div>
             <div class="g-field">
               <label>Descrizione EN (opzionale)</label>
-              <textarea
+              <BoldTextarea
                 class="g-textarea"
                 value={draft.blurb_en}
-                onInput={(e) => patch({ blurb_en: (e.target as HTMLTextAreaElement).value })}
+                onValue={(v) => patch({ blurb_en: v })}
               />
             </div>
 
