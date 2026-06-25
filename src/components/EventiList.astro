@@ -4,6 +4,7 @@ import { genreLabel, splitEventi, tx, eventDateLabel, eventBlurb, eventVenue, VE
 import { getEvents } from '../data/eventiRemote';
 import { musicEventLd } from '../lib/structuredData';
 import Poster from './Poster.astro';
+import { boldToHtml } from '../lib/richtext';
 
 interface Props {
   lang: Lang;
@@ -80,7 +81,7 @@ const siteOrigin = Astro.site ? Astro.site.origin : '';
                       </>
                     )}
                   </p>
-                  {eventBlurb(ev.data, lang) && <p class="poster-blurb">{eventBlurb(ev.data, lang)}</p>}
+                  {eventBlurb(ev.data, lang) && <p class="poster-blurb" set:html={boldToHtml(eventBlurb(ev.data, lang)!)}></p>}
                   <span class="poster-readmore">{t(lang, 'eventi.readmore')} <span class="arrow" aria-hidden="true">→</span></span>
                 </div>
               </a>
@@ -137,7 +138,7 @@ const siteOrigin = Astro.site ? Astro.site.origin : '';
                       </>
                     )}
                   </p>
-                  {eventBlurb(ev.data, lang) && <p class="poster-blurb">{eventBlurb(ev.data, lang)}</p>}
+                  {eventBlurb(ev.data, lang) && <p class="poster-blurb" set:html={boldToHtml(eventBlurb(ev.data, lang)!)}></p>}
                 </div>
               </a>
             </li>

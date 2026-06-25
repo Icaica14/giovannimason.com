@@ -5,6 +5,7 @@
 import type { Lang } from '../i18n/ui';
 import type { CollectionEntry } from 'astro:content';
 import { slugify } from './news';
+import { stripBold } from '../lib/richtext';
 
 export type Bilingual = { it: string; en: string };
 
@@ -131,7 +132,7 @@ export function eventBlurb(e: EventData, lang: Lang): string | undefined {
 
 /** Estratto piatto del blurb per i metadata SEO: niente a capo, troncato a parola. */
 export function eventExcerpt(e: EventData, lang: Lang, max = 155): string {
-  const flat = (eventBlurb(e, lang) ?? '').replace(/\s+/g, ' ').trim();
+  const flat = stripBold(eventBlurb(e, lang) ?? '').replace(/\s+/g, ' ').trim();
   if (flat.length <= max) return flat;
   const cut = flat.slice(0, max);
   const sp = cut.lastIndexOf(' ');
@@ -162,11 +163,12 @@ export function eventStatusNote(e: EventData, lang: Lang): string | undefined {
 // ordinati per data discendente. today è passato come stringa per evitare TZ surprise.
 export function splitEventi<T extends EventEntry>(entries: T[], today: string): { upcoming: T[]; past: T[] } {
   const day = (e: T) => e.data.date.slice(0, 10);
-  const published = entries
-    .filter((e) => e.data.published !== false)
-    .sort((a, b) => (day(a) < day(b) ? 1 : -1));
-  const upcoming = published.filter((e) => day(e) >= today);
-  const past     = published.filter((e) => day(e) < today);
+  const key = (e: T) => `${day(e)} ${e.data.time ?? ''}`; // data + ora per ordinare a parità di giorno
+  const published = entries.filter((e) => e.data.published !== false);
+  // In arrivo: dal più VICINO al più lontano nel tempo (data crescente).
+  const upcoming = published.filter((e) => day(e) >= today).sort((a, b) => (key(a) < key(b) ? -1 : 1));
+  // Passati: archivio dal più recente (data decrescente).
+  const past = published.filter((e) => day(e) < today).sort((a, b) => (key(a) < key(b) ? 1 : -1));
   return { upcoming, past };
 }
 

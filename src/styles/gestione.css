@@ -134,6 +134,23 @@ html, body {
 @media (max-width: 34rem) { .g-grid-2 { grid-template-columns: 1fr; } }
 .g-input:focus, .g-textarea:focus, .g-select:focus { outline: 2px solid var(--brass); outline-offset: 1px; }
 .g-textarea { min-height: 4.5rem; resize: vertical; }
+
+/* ── Campo testo con barra "Grassetto" (BoldTextarea) ── */
+.g-richfield { display: flex; flex-direction: column; gap: .35rem; }
+.g-richbar { display: flex; align-items: center; gap: .6rem; flex-wrap: wrap; }
+.g-richbtn {
+  appearance: none; cursor: pointer; font: inherit; font-size: .82rem;
+  display: inline-flex; align-items: center; gap: .3rem;
+  padding: .25rem .6rem; border: 1px solid var(--line); border-radius: 6px;
+  background: var(--paper-2); color: var(--ink);
+}
+.g-richbtn:hover { background: var(--paper-3); }
+.g-richbtn b { font-weight: 800; }
+.g-richhint { font-size: .82rem; color: var(--ink-mute); }
+.g-richhint code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: .82em; background: var(--paper-2); padding: .05rem .3rem; border-radius: 4px;
+}
 .g-btn {
   appearance: none; cursor: pointer; font: inherit; font-weight: 600;
   border-radius: 8px; padding: .6rem 1.1rem; border: 1px solid var(--brass-deep);

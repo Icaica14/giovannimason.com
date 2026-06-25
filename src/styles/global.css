@@ -2067,6 +2067,7 @@ section { padding: 5rem 0; }
   margin: 0 0 1.1rem;
   line-height: 1.75;
   color: var(--ink);
+  white-space: pre-line; /* rispetta i ritorni a capo scritti dal gestore */
 }
 
 /* Gallery / carosello: zero-JS = striscia scorrevole con scroll-snap;
