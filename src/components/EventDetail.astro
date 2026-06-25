@@ -14,6 +14,7 @@ import {
   statusLabel,
 } from '../data/eventi';
 import Poster from './Poster.astro';
+import ContactActions from './ContactActions.astro';
 import { boldToHtml } from '../lib/richtext';
 
 interface Props {
@@ -87,9 +88,10 @@ const posterAlt = `${t(lang, 'eventi.poster.alt')} · ${ev.artist}`;
           </div>
         )}
 
-        <p class="event-detail-cta">
-          <a class="btn" href={routeMap.contatti[lang]}>{t(lang, 'eventi.contact.cta')}</a>
-        </p>
+        <div class="event-detail-contact">
+          <h2 class="info-label">{t(lang, 'contatti.phone.label')}</h2>
+          <ContactActions lang={lang} />
+        </div>
       </div>
     </div>
   </div>
@@ -194,8 +196,9 @@ const posterAlt = `${t(lang, 'eventi.poster.alt')} · ${ev.artist}`;
     margin-bottom: 0;
   }
 
-  /* Bottone "Contattaci" in fondo alla descrizione → pagina contatti. */
-  .event-detail-cta {
+  /* Contatti rapidi in fondo alla descrizione: telefono + WhatsApp funzionanti
+     (stessi bottoni della pagina Contatti). L'etichetta usa .info-label globale. */
+  .event-detail-contact {
     margin: 2.2rem 0 0;
   }
 
