@@ -118,13 +118,17 @@ Deno.serve(async (req) => {
   const note = str(body.note, 2000);
   const lang = body.lang === 'en' ? 'en' : 'it';
 
+  // Campi obbligatori (allineati al form pubblico): nome d'arte, contatto, email,
+  // formazione, genere (+ "altro"), repertorio, primo link audio/video.
+  // La bio NON è più obbligatoria.
   const errors: string[] = [];
   if (!artistName) errors.push('artist_name');
   if (!contactName) errors.push('contact_name');
   if (!email || !EMAIL_RE.test(email)) errors.push('email');
+  if (!lineup) errors.push('lineup');
   if (!genre) errors.push('genre');
   if (genre === 'other' && !genreOther) errors.push('genre_other');
-  if (!bio) errors.push('bio');
+  if (!repertoire) errors.push('repertoire');
   if (!link1) errors.push('link1');
   if (errors.length) {
     return jsonResponse(req, { ok: false, error: 'validation', fields: errors }, 422);

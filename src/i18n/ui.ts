@@ -279,6 +279,7 @@ export const ui = {
     'artisti.form.note.placeholder':  'Esigenze tecniche, suggerimenti, qualunque cosa.',
 
     'artisti.form.submit':            'Invia la proposta',
+    'artisti.form.required.popup':    'Compila i campi obbligatori per candidarti',
     'artisti.form.privacy':           'Trattiamo i tuoi dati solo per valutare la candidatura.',
     'artisti.form.required':          'Campo obbligatorio',
     'artisti.form.optional':          '(facoltativo)',
@@ -565,6 +566,7 @@ export const ui = {
     'artisti.form.note.placeholder':  'Technical needs, suggestions, anything else.',
 
     'artisti.form.submit':            'Send your pitch',
+    'artisti.form.required.popup':    'Fill in the required fields to apply',
     'artisti.form.privacy':           'We use your data only to evaluate your pitch.',
     'artisti.form.required':          'Required',
     'artisti.form.optional':          '(optional)',
