@@ -1,5 +1,6 @@
 ---
 import { type Lang, t, routeMap } from '../i18n/ui';
+import logoSvg from '../assets/img/logo/logo.svg?raw';
 
 interface Props {
   lang: Lang;
@@ -169,12 +170,11 @@ const submitEndpoint = SUPABASE_URL ? `${SUPABASE_URL}/functions/v1/submit-appli
 
             <label class="field field-full">
               <span class="field-label">
-                {t(lang, 'artisti.form.bio')} <em class="req" aria-hidden="true">*</em>
+                {t(lang, 'artisti.form.bio')} <span class="opt">{t(lang, 'artisti.form.optional')}</span>
               </span>
               <textarea
                 name="bio"
                 rows="4"
-                required
                 maxlength="600"
                 placeholder={t(lang, 'artisti.form.bio.placeholder')}
               ></textarea>
@@ -339,7 +339,89 @@ const submitEndpoint = SUPABASE_URL ? `${SUPABASE_URL}/functions/v1/submit-appli
     <p>{t(lang, 'artisti.cta.body')}</p>
     <a class="btn" href={routeMap.eventi[lang]}>{t(lang, 'artisti.cta.btn')}</a>
   </section>
+
+  {/* Pop-up "campi obbligatori": rettangolo con logo Biblio + messaggio. */}
+  <div class="req-modal" id="reqModal" hidden>
+    <div class="req-modal-backdrop" data-modal-close></div>
+    <div class="req-modal-card" role="alertdialog" aria-modal="true" aria-labelledby="reqModalText">
+      <span class="req-modal-logo" aria-hidden="true" set:html={logoSvg}></span>
+      <p class="req-modal-text" id="reqModalText">{t(lang, 'artisti.form.required.popup')}</p>
+      <button type="button" class="btn btn-primary req-modal-ok" data-modal-close>OK</button>
+    </div>
+  </div>
 </section>
+
+<style>
+  /* Pop-up "campi obbligatori": rettangolo centrato con logo Biblio e messaggio. */
+  .req-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: grid;
+    place-items: center;
+    padding: 1.5rem;
+  }
+  .req-modal[hidden] {
+    display: none;
+  }
+  .req-modal-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(20, 12, 6, 0.55);
+    backdrop-filter: blur(3px);
+  }
+  .req-modal-card {
+    position: relative;
+    width: 100%;
+    max-width: 25rem;
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 2.2rem 2rem 2rem;
+    text-align: center;
+    box-shadow: 0 24px 70px -24px rgba(0, 0, 0, 0.55);
+    animation: reqPop 0.22s var(--ease);
+  }
+  @keyframes reqPop {
+    from {
+      opacity: 0;
+      transform: translateY(8px) scale(0.98);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  /* Logo Biblio: emblema rosso + wordmark in colore scuro (su carta chiara). */
+  .req-modal-logo {
+    display: block;
+    color: var(--logo-red);
+    --logo-ink: var(--ink);
+    line-height: 0;
+  }
+  .req-modal-logo :global(svg) {
+    width: clamp(110px, 42%, 150px);
+    height: auto;
+    margin: 0 auto;
+    display: block;
+  }
+  .req-modal-text {
+    font-family: var(--font-display);
+    font-size: clamp(1.25rem, 3.6vw, 1.55rem);
+    line-height: 1.25;
+    color: var(--ink);
+    margin: 1.1rem auto 1.5rem;
+    max-width: 22ch;
+  }
+  .req-modal-ok {
+    min-width: 8rem;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .req-modal-card {
+      animation: none;
+    }
+  }
+</style>
 
 {/* Script Turnstile: caricato solo se la site key è configurata. */}
 {TURNSTILE_SITE_KEY && (
@@ -375,6 +457,43 @@ const submitEndpoint = SUPABASE_URL ? `${SUPABASE_URL}/functions/v1/submit-appli
   };
   genreSelect?.addEventListener('change', syncGenreOther);
   syncGenreOther();
+
+  // ── Pop-up "campi obbligatori" ───────────────────────────────────────────
+  // Campi obbligatori del form (in ordine): nome d'arte/band, contatto, email,
+  // formazione, genere (+ "Altro"), repertorio, primo link audio/video.
+  const reqModal = document.getElementById('reqModal') as HTMLElement | null;
+  const REQUIRED_FIELDS = ['artist_name', 'contact_name', 'email', 'lineup', 'genre', 'repertoire', 'link1'];
+  let reqRefocus: HTMLElement | null = null;
+
+  const openReqModal = (focusTarget: HTMLElement | null) => {
+    if (!reqModal) return;
+    reqRefocus = focusTarget;
+    reqModal.hidden = false;
+    (reqModal.querySelector('.req-modal-ok') as HTMLElement | null)?.focus();
+  };
+  const closeReqModal = () => {
+    if (!reqModal || reqModal.hidden) return;
+    reqModal.hidden = true;
+    reqRefocus?.focus();
+    reqRefocus = null;
+  };
+  reqModal?.querySelectorAll('[data-modal-close]').forEach((el) => el.addEventListener('click', closeReqModal));
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeReqModal();
+  });
+
+  /** Primo campo obbligatorio mancante o non valido; null se sono tutti a posto. */
+  const firstMissingRequired = (): HTMLElement | null => {
+    for (const name of REQUIRED_FIELDS) {
+      const el = form?.elements.namedItem(name) as HTMLInputElement | HTMLSelectElement | null;
+      if (!el) continue;
+      if (!el.value.trim() || !el.checkValidity()) return el;
+    }
+    if (genreSelect?.value === 'other' && genreOtherInput && !genreOtherInput.value.trim()) {
+      return genreOtherInput;
+    }
+    return null;
+  };
 
   // ── Validazione file lato client ─────────────────────────────────────────
   const MAX_FILES = 5;
@@ -438,6 +557,13 @@ const submitEndpoint = SUPABASE_URL ? `${SUPABASE_URL}/functions/v1/submit-appli
     const endpoint = form.dataset.endpoint;
     if (!endpoint) {
       errorEl?.removeAttribute('hidden');
+      return;
+    }
+
+    // Campi obbligatori mancanti → pop-up con logo Biblio, niente invio.
+    const missing = firstMissingRequired();
+    if (missing) {
+      openReqModal(missing);
       return;
     }
 
