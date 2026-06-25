@@ -162,16 +162,15 @@ p { margin: 0 0 1em; }
 }
 .lang-switch a {
   display: inline-flex; align-items: center; gap: .3rem;
-  padding: .25rem .55rem;
-  border: 1px solid transparent;
-  border-radius: var(--radius);
+  padding: .2rem .25rem .3rem;
+  border-bottom: 2px solid transparent; /* spazio riservato: niente "salto" quando attivo */
   color: var(--paper-3);
 }
 .lang-switch a:hover { color: var(--paper); }
+/* Lingua attiva: niente riquadro, solo il trattino rosso sotto (come le voci nav). */
 .lang-switch a.is-active {
-  border-color: var(--vino);
   color: var(--paper);
-  background: rgba(122, 46, 46, .25);
+  border-bottom-color: var(--vino);
 }
 .flag { width: 1.1rem; height: .8rem; display: inline-block; border: 1px solid rgba(255,255,255,.2); }
 
