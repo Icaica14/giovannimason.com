@@ -41,5 +41,9 @@ export default defineConfig({
   image: {
     // Astro ottimizza automaticamente le immagini in src/assets
     // (responsive, webp/avif). Quelle in /public restano tali e quali.
+    // Le LOCANDINE caricate dal gestore vivono nello storage Supabase: ne
+    // autorizziamo l'ottimizzazione a build-time (WebP ridimensionato, servito
+    // same-origin). Vedi src/components/Poster.astro.
+    domains: ['cjytdzpjbmadxjhyhsxx.supabase.co'],
   },
 });

@@ -1,0 +1,203 @@
+---
+import { type Lang, t, routeMap } from '../i18n/ui';
+import {
+  type EventEntryWithSlug,
+  genreLabel,
+  tx,
+  eventDateLabel,
+  eventBlurb,
+  eventParagraphs,
+  eventVenue,
+  VENUE_DEFAULT,
+  eventStatus,
+  eventStatusNote,
+  statusLabel,
+} from '../data/eventi';
+import Poster from './Poster.astro';
+
+interface Props {
+  lang: Lang;
+  entry: EventEntryWithSlug;
+}
+const { lang, entry } = Astro.props;
+const ev = entry.data;
+
+const status = eventStatus(ev);
+const blurb = eventBlurb(ev, lang);
+const paras = blurb ? eventParagraphs(blurb) : [];
+const showVenue = ev.venue && ev.venue !== VENUE_DEFAULT;
+const posterAlt = `${t(lang, 'eventi.poster.alt')} · ${ev.artist}`;
+---
+
+<article class="event-detail">
+  <div class="container event-detail-inner">
+    <p class="event-detail-back">
+      <a href={routeMap.eventi[lang]}>{t(lang, 'eventi.back')}</a>
+    </p>
+
+    <div class="event-detail-grid">
+      <div class="event-detail-poster reveal">
+        {ev.poster ? (
+          <Poster
+            src={ev.poster}
+            alt={posterAlt}
+            width={900}
+            loading="eager"
+            fetchpriority="high"
+            class="event-detail-poster-img"
+          />
+        ) : (
+          <div class="event-detail-noposter" aria-hidden="true">
+            <span>{ev.artist}</span>
+          </div>
+        )}
+      </div>
+
+      <div class="event-detail-info reveal">
+        {status !== 'regular' && (
+          <p class={`event-alert event-alert-${status}`} role="status">
+            <span class="event-alert-tag">{tx(statusLabel[status as 'cancelled' | 'postponed'], lang)}</span>
+            {eventStatusNote(ev, lang) && <span class="event-alert-note">{eventStatusNote(ev, lang)}</span>}
+          </p>
+        )}
+
+        <span class={`genre-badge genre-${ev.genre}`}>{tx(genreLabel[ev.genre], lang)}</span>
+        <h1 class="event-detail-title">{ev.artist}</h1>
+
+        <p class="event-detail-when">
+          <span class="event-detail-date">{eventDateLabel(ev, lang)}</span>
+          {ev.time && (
+            <>
+              <span class="dot" aria-hidden="true">·</span>
+              <span>{ev.time}</span>
+            </>
+          )}
+          {showVenue && (
+            <>
+              <span class="dot" aria-hidden="true">·</span>
+              <span>{eventVenue(ev, lang)}</span>
+            </>
+          )}
+        </p>
+
+        {paras.length > 0 && (
+          <div class="event-detail-body">
+            {paras.map((p) => <p>{p}</p>)}
+          </div>
+        )}
+      </div>
+    </div>
+  </div>
+</article>
+
+<style>
+  .event-detail {
+    padding: clamp(1.5rem, 5vw, 3.5rem) 0 clamp(2.5rem, 7vw, 5rem);
+  }
+  .event-detail-back {
+    margin: 0 0 1.6rem;
+  }
+  .event-detail-back a {
+    font-family: var(--font-brand);
+    font-size: 0.9rem;
+    letter-spacing: 0.02em;
+    color: var(--ink-soft);
+  }
+  .event-detail-back a:hover {
+    color: var(--vino);
+  }
+
+  /* Desktop: locandina a sinistra, informazioni a destra. Mobile: impilate. */
+  .event-detail-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+    gap: clamp(1.5rem, 4vw, 3rem);
+    align-items: start;
+  }
+
+  /* La locandina viene mostrata INTERA (contain) in un riquadro 4:5 con sfondo
+     scuro: niente crop, niente deformazione, spazio riservato (zero layout shift). */
+  .event-detail-poster {
+    position: sticky;
+    top: 5.5rem;
+  }
+  .event-detail-poster :global(.event-detail-poster-img) {
+    width: 100%;
+    aspect-ratio: 4 / 5;
+    object-fit: contain;
+    background: #1a120a;
+    border-radius: 12px;
+    border: 1px solid var(--line);
+    box-shadow: var(--shadow-soft, 0 18px 50px -24px rgba(0, 0, 0, 0.55));
+    display: block;
+  }
+  .event-detail-noposter {
+    width: 100%;
+    aspect-ratio: 4 / 5;
+    border-radius: 12px;
+    border: 1px dashed var(--line);
+    background: var(--paper-2);
+    display: grid;
+    place-items: center;
+    padding: 1.5rem;
+    text-align: center;
+  }
+  .event-detail-noposter span {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: clamp(1.4rem, 4vw, 2rem);
+    color: var(--ink-mute);
+  }
+
+  .event-detail-info .genre-badge {
+    margin-bottom: 1rem;
+  }
+  .event-detail-title {
+    margin: 0 0 0.6rem;
+    overflow-wrap: anywhere; /* titoli molto lunghi non sfondano il layout */
+  }
+  .event-detail-when {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.5rem;
+    margin: 0 0 1.8rem;
+    font-family: var(--font-display);
+    font-size: clamp(1.15rem, 2.4vw, 1.45rem);
+    color: var(--ink-soft);
+  }
+  .event-detail-when .event-detail-date {
+    font-weight: 600;
+    color: var(--ink);
+  }
+  .event-detail-when .dot {
+    color: var(--line);
+  }
+
+  /* Corpo: rispetta i ritorni a capo del gestore (pre-line) e i paragrafi. */
+  .event-detail-body {
+    color: var(--ink-soft);
+    font-size: 1.05rem;
+    line-height: 1.75;
+    max-width: 60ch;
+  }
+  .event-detail-body p {
+    white-space: pre-line;
+    margin: 0 0 1.1rem;
+  }
+  .event-detail-body p:last-child {
+    margin-bottom: 0;
+  }
+
+  @media (max-width: 760px) {
+    .event-detail-grid {
+      grid-template-columns: 1fr;
+      gap: 1.6rem;
+    }
+    .event-detail-poster {
+      position: static;
+      max-width: 22rem;
+      margin-inline: auto;
+    }
+  }
+</style>

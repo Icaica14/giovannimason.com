@@ -3,6 +3,7 @@ import { type Lang, t, routeMap } from '../i18n/ui';
 import { genreLabel, splitEventi, tx, eventDateLabel, eventBlurb, eventVenue, VENUE_DEFAULT, eventStatus, eventStatusNote, statusLabel } from '../data/eventi';
 import { getEvents } from '../data/eventiRemote';
 import { musicEventLd } from '../lib/structuredData';
+import Poster from './Poster.astro';
 
 interface Props {
   lang: Lang;
@@ -15,6 +16,9 @@ const { lang } = Astro.props;
 const entries = await getEvents();
 const todayISO = new Date().toISOString().slice(0, 10);
 const { upcoming, past } = splitEventi(entries, todayISO);
+
+// URL della pagina dettaglio per uno slug evento (IT/EN coerente con routeMap).
+const detailHref = (slug: string) => `${routeMap.eventi[lang]}${slug}/`;
 
 // Base URL assoluto per i dati strutturati MusicEvent (immagini, location, offers).
 const siteOrigin = Astro.site ? Astro.site.origin : '';
@@ -44,13 +48,71 @@ const siteOrigin = Astro.site ? Astro.site.origin : '';
               style={`--reveal-delay:${(i % 6) * 0.08}s`}
               id={ev.id}
             >
-              <a class="poster-link" href={`#${ev.id}`} aria-label={ev.data.artist}>
+              <a class="poster-link" href={detailHref(ev.slug)} aria-label={ev.data.artist}>
                 <div class="poster-frame">
-                  <img
+                  <Poster
                     src={ev.data.poster}
-                    alt={`${t(lang, 'eventi.poster.alt')}, ${ev.data.artist}`}
+                    alt={`${t(lang, 'eventi.poster.alt')} · ${ev.data.artist}`}
+                    width={800}
+                    loading={i === 0 ? 'eager' : 'lazy'}
+                    fetchpriority={i === 0 ? 'high' : undefined}
+                  />
+                </div>
+                <div class="poster-meta">
+                  {eventStatus(ev.data) !== 'regular' && (
+                    <p class={`event-alert event-alert-${eventStatus(ev.data)}`} role="status">
+                      <span class="event-alert-tag">{tx(statusLabel[eventStatus(ev.data) as 'cancelled' | 'postponed'], lang)}</span>
+                      {eventStatusNote(ev.data, lang) && (
+                        <span class="event-alert-note">{eventStatusNote(ev.data, lang)}</span>
+                      )}
+                    </p>
+                  )}
+                  <span class={`genre-badge genre-${ev.data.genre}`}>{tx(genreLabel[ev.data.genre], lang)}</span>
+                  <h3>{ev.data.artist}</h3>
+                  <p class="poster-when">
+                    <span>{eventDateLabel(ev.data, lang)}</span>
+                    <span class="dot" aria-hidden="true">·</span>
+                    <span>{ev.data.time}</span>
+                    {ev.data.venue && ev.data.venue !== VENUE_DEFAULT && (
+                      <>
+                        <span class="dot" aria-hidden="true">·</span>
+                        <span>{eventVenue(ev.data, lang)}</span>
+                      </>
+                    )}
+                  </p>
+                  {eventBlurb(ev.data, lang) && <p class="poster-blurb">{eventBlurb(ev.data, lang)}</p>}
+                  <span class="poster-readmore">{t(lang, 'eventi.readmore')} <span class="arrow" aria-hidden="true">→</span></span>
+                </div>
+              </a>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  </section>
+
+  {/* Già passati */}
+  {past.length > 0 && (
+    <section class="eventi-past">
+      <div class="container">
+        <div class="section-head">
+          <h2>{t(lang, 'eventi.past.title')}</h2>
+          <p>{t(lang, 'eventi.past.intro')}</p>
+        </div>
+        <ul class="poster-grid">
+          {past.map((ev, i) => (
+            <li
+              class={`poster-card reveal${eventStatus(ev.data) !== 'regular' ? ` is-${eventStatus(ev.data)}` : ''}`}
+              style={`--reveal-delay:${(i % 6) * 0.07}s`}
+              id={ev.id}
+            >
+              <a class="poster-link" href={detailHref(ev.slug)} aria-label={ev.data.artist}>
+                <div class="poster-frame">
+                  <Poster
+                    src={ev.data.poster}
+                    alt={`${t(lang, 'eventi.poster.alt')} · ${ev.data.artist}`}
+                    width={480}
                     loading="lazy"
-                    decoding="async"
                   />
                 </div>
                 <div class="poster-meta">
@@ -78,59 +140,6 @@ const siteOrigin = Astro.site ? Astro.site.origin : '';
                   {eventBlurb(ev.data, lang) && <p class="poster-blurb">{eventBlurb(ev.data, lang)}</p>}
                 </div>
               </a>
-            </li>
-          ))}
-        </ul>
-      )}
-    </div>
-  </section>
-
-  {/* Già passati */}
-  {past.length > 0 && (
-    <section class="eventi-past">
-      <div class="container">
-        <div class="section-head">
-          <h2>{t(lang, 'eventi.past.title')}</h2>
-          <p>{t(lang, 'eventi.past.intro')}</p>
-        </div>
-        <ul class="poster-grid">
-          {past.map((ev, i) => (
-            <li
-              class={`poster-card reveal${eventStatus(ev.data) !== 'regular' ? ` is-${eventStatus(ev.data)}` : ''}`}
-              style={`--reveal-delay:${(i % 6) * 0.07}s`}
-              id={ev.id}
-            >
-              <div class="poster-frame">
-                <img
-                  src={ev.data.poster}
-                  alt={`${t(lang, 'eventi.poster.alt')}, ${ev.data.artist}`}
-                  loading="lazy"
-                  decoding="async"
-                />
-              </div>
-              <div class="poster-meta">
-                {eventStatus(ev.data) !== 'regular' && (
-                  <p class={`event-alert event-alert-${eventStatus(ev.data)}`} role="status">
-                    <span class="event-alert-tag">{tx(statusLabel[eventStatus(ev.data) as 'cancelled' | 'postponed'], lang)}</span>
-                    {eventStatusNote(ev.data, lang) && (
-                      <span class="event-alert-note">{eventStatusNote(ev.data, lang)}</span>
-                    )}
-                  </p>
-                )}
-                <span class={`genre-badge genre-${ev.data.genre}`}>{tx(genreLabel[ev.data.genre], lang)}</span>
-                <h3>{ev.data.artist}</h3>
-                <p class="poster-when">
-                  <span>{eventDateLabel(ev.data, lang)}</span>
-                  <span class="dot" aria-hidden="true">·</span>
-                  <span>{ev.data.time}</span>
-                  {ev.data.venue && ev.data.venue !== VENUE_DEFAULT && (
-                    <>
-                      <span class="dot" aria-hidden="true">·</span>
-                      <span>{eventVenue(ev.data, lang)}</span>
-                    </>
-                  )}
-                </p>
-              </div>
             </li>
           ))}
         </ul>
@@ -184,4 +193,3 @@ const siteOrigin = Astro.site ? Astro.site.origin : '';
 </section>
 
 <!-- Scroll-reveal è gestito globalmente dal Base layout. -->
-
