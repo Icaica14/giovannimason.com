@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'preact/hooks';
 import type { Session } from '@supabase/supabase-js';
 import { getSupabase } from '../../lib/supabaseClient';
+import { checkAdmin, type AdminCheck } from '../../lib/adminAuth';
 import logoSvg from '../../assets/img/logo/logo.svg?raw';
 import LoginPanel from './LoginPanel';
 import BookingsList from './BookingsList';
@@ -12,6 +13,10 @@ import NewsEditor from './NewsEditor';
 import TruckMenus from './TruckMenus';
 
 type TabId = 'prenotazioni' | 'candidature' | 'artisti' | 'menu' | 'eventi' | 'news' | 'truck';
+
+// Stato di autorizzazione: nessuna sessione, verifica in corso, oppure l'esito
+// di checkAdmin() (admin autorizzato / negato / impossibile verificare).
+type Authz = 'none' | 'checking' | AdminCheck;
 
 const TABS: { id: TabId; label: string }[] = [
   { id: 'prenotazioni', label: 'Prenotazioni' },
@@ -37,6 +42,7 @@ const SOON: string[] = ['Cassa', 'Fatture', 'Scadenze', 'Dipendenti'];
  */
 export default function Dashboard() {
   const [session, setSession] = useState<Session | null>(null);
+  const [authz, setAuthz] = useState<Authz>('none');
   const [ready, setReady] = useState(false);
   const [tab, setTab] = useState<TabId>('prenotazioni');
   const [counts, setCounts] = useState<{ prenotazioni: number; candidature: number }>({
@@ -55,24 +61,34 @@ export default function Dashboard() {
     setCounts({ prenotazioni: b.count ?? 0, candidature: a.count ?? 0 });
   }
 
+  /**
+   * Valuta sessione + autorizzazione admin.
+   * Una sessione valida NON basta: l'accesso è concesso solo se l'utente è un
+   * admin attivo (checkAdmin → RLS lato Supabase). In caso di esito 'denied'
+   * o 'error' la dashboard non viene mai montata.
+   */
+  async function evaluate(s: Session | null) {
+    setSession(s);
+    if (!s) {
+      setAuthz('none');
+      setReady(true);
+      return;
+    }
+    setAuthz('checking');
+    setReady(true);
+    const res = await checkAdmin();
+    setAuthz(res);
+    if (res === 'admin') refreshCounts();
+  }
+
   useEffect(() => {
     const supabase = getSupabase();
     if (!supabase) {
       setReady(true);
       return;
     }
-
-    supabase.auth.getSession().then(({ data }) => {
-      setSession(data.session);
-      setReady(true);
-      if (data.session) refreshCounts();
-    });
-
-    const { data: sub } = supabase.auth.onAuthStateChange((_event, s) => {
-      setSession(s);
-      if (s) refreshCounts();
-    });
-
+    supabase.auth.getSession().then(({ data }) => evaluate(data.session));
+    const { data: sub } = supabase.auth.onAuthStateChange((_event, s) => evaluate(s));
     return () => sub.subscription.unsubscribe();
   }, []);
 
@@ -89,6 +105,53 @@ export default function Dashboard() {
     return <LoginPanel />;
   }
 
+  // Sessione presente ma autorizzazione admin ancora da verificare.
+  if (authz === 'checking') {
+    return <div class="g-center">Verifica permessi…</div>;
+  }
+
+  // Autenticato ma NON autorizzato: nessun accesso alla gestione.
+  if (authz === 'denied') {
+    return (
+      <div class="g-center">
+        <div class="g-login">
+          <div class="g-brand">
+            Biblio<small>Gestione</small>
+          </div>
+          <div class="g-msg g-msg-err">Non hai i permessi per accedere a quest'area.</div>
+          <button class="g-btn g-btn-ghost" type="button" onClick={logout}>
+            Esci
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // Impossibile verificare i permessi (rete, o migrazione 0013 non applicata).
+  // Fail-closed: niente dashboard finché la verifica non riesce.
+  if (authz === 'error') {
+    return (
+      <div class="g-center">
+        <div class="g-login">
+          <div class="g-brand">
+            Biblio<small>Gestione</small>
+          </div>
+          <div class="g-msg g-msg-err">
+            Impossibile verificare i permessi. Riprova tra poco; se persiste, applica la
+            migrazione <code>0013</code> su Supabase.
+          </div>
+          <button class="g-btn" type="button" onClick={() => evaluate(session)}>
+            Riprova
+          </button>
+          <button class="g-btn g-btn-ghost g-btn-sm" type="button" onClick={logout}>
+            Esci
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // authz === 'admin' → accesso consentito.
   return (
     <div class="g-wrap">
       <header class="g-header">

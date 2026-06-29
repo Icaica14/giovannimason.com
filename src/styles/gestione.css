@@ -153,6 +153,7 @@ html, body {
 }
 .g-btn {
   appearance: none; cursor: pointer; font: inherit; font-weight: 600;
+  display: inline-block; text-align: center; text-decoration: none;
   border-radius: 8px; padding: .6rem 1.1rem; border: 1px solid var(--brass-deep);
   background: var(--brass); color: #fff; transition: background .12s ease;
 }
@@ -170,6 +171,23 @@ html, body {
 .g-login { max-width: 22rem; margin: 8vh auto 0; background: #fffdf8; border: 1px solid var(--line); border-radius: var(--radius-lg); padding: 2rem 1.75rem; box-shadow: var(--shadow-card); }
 .g-login .g-brand { text-align: center; margin-bottom: 1.25rem; }
 .g-login .g-btn { width: 100%; margin-top: .25rem; }
+/* Più bottoni impilati nella card (es. schermata "permessi non verificabili"). */
+.g-login .g-btn + .g-btn { margin-top: .6rem; }
+
+/* Titolo / testo introduttivo / footer della card login & reset password. */
+.g-login-title { font-family: var(--font-display); font-weight: 600; font-size: 1.5rem; text-align: center; margin: 0 0 .25rem; }
+.g-login-text { margin: 0 0 1rem; text-align: center; font-size: .95rem; color: var(--ink-soft); line-height: 1.5; }
+.g-login-foot { margin: 1rem 0 0; text-align: center; font-size: .92rem; color: var(--ink-mute); }
+.g-login-foot a { color: var(--brass-deep); }
+
+/* Bottone-link (Password dimenticata?, Mostra/Nascondi, Torna al login). */
+.g-linkbtn {
+  appearance: none; background: none; border: 0; padding: 0; cursor: pointer;
+  font: inherit; font-size: .9rem; color: var(--brass-deep); text-decoration: underline;
+}
+.g-linkbtn:hover { color: var(--ink); }
+/* Toggle mostra/nascondi password: spazio tra i campi e il bottone. */
+.g-pwtoggle { display: inline-block; margin-bottom: .9rem; }
 
 /* ── States ── */
 .g-empty { text-align: center; color: var(--ink-mute); padding: 3rem 1rem; font-size: 1.02rem; border: 1px dashed var(--line); border-radius: var(--radius); }
