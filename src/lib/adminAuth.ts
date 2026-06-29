@@ -21,7 +21,20 @@ export type AdminCheck = 'admin' | 'denied' | 'error';
 export async function checkAdmin(): Promise<AdminCheck> {
   const supabase = getSupabase();
   if (!supabase) return 'error';
-  const { data, error } = await supabase.rpc('is_admin');
-  if (error) return 'error';
-  return data === true ? 'admin' : 'denied';
+  try {
+    // Rete di sicurezza: se per qualsiasi motivo la RPC non risponde, non
+    // lasciamo la UI bloccata su "Verifica permessi…" all'infinito — dopo 10s
+    // restituiamo 'error' (schermata con "Riprova"). Il fix vero al deadlock
+    // (await Supabase nel callback onAuthStateChange) è in Dashboard.tsx.
+    const res = await Promise.race([
+      supabase.rpc('is_admin'),
+      new Promise<{ data: unknown; error: unknown }>((resolve) =>
+        setTimeout(() => resolve({ data: null, error: { message: 'timeout' } }), 10000),
+      ),
+    ]);
+    if ((res as { error: unknown }).error) return 'error';
+    return (res as { data: unknown }).data === true ? 'admin' : 'denied';
+  } catch {
+    return 'error';
+  }
 }

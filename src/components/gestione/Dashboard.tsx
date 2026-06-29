@@ -88,7 +88,14 @@ export default function Dashboard() {
       return;
     }
     supabase.auth.getSession().then(({ data }) => evaluate(data.session));
-    const { data: sub } = supabase.auth.onAuthStateChange((_event, s) => evaluate(s));
+    const { data: sub } = supabase.auth.onAuthStateChange((_event, s) => {
+      // IMPORTANTE: non await-are chiamate Supabase (es. la RPC is_admin dentro
+      // evaluate) direttamente in questo callback. Gira dentro il lock interno
+      // del client auth: una chiamata Supabase qui dentro va in DEADLOCK e la
+      // dashboard resta bloccata su "Verifica permessi…". La rimandiamo fuori
+      // dal callback con un microtask, così il lock viene rilasciato prima.
+      setTimeout(() => evaluate(s), 0);
+    });
     return () => sub.subscription.unsubscribe();
   }, []);
 
