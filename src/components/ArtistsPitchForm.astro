@@ -321,10 +321,6 @@ const submitEndpoint = SUPABASE_URL ? `${SUPABASE_URL}/functions/v1/submit-appli
           </button>
         </div>
 
-        <div class="form-success" id="artistiSuccess" hidden>
-          <h3>{t(lang, 'artisti.success.title')}</h3>
-          <p>{t(lang, 'artisti.success.body')}</p>
-        </div>
         <p class="form-error" id="artistiError" hidden role="alert">
           {t(lang, 'artisti.error')}
         </p>
@@ -340,8 +336,9 @@ const submitEndpoint = SUPABASE_URL ? `${SUPABASE_URL}/functions/v1/submit-appli
     <a class="btn" href={routeMap.eventi[lang]}>{t(lang, 'artisti.cta.btn')}</a>
   </section>
 
-  {/* Pop-up "campi obbligatori": rettangolo con logo Biblio + messaggio. */}
-  <div class="req-modal" id="reqModal" hidden>
+  {/* Pop-up con logo Biblio: stessa grafica per "campi obbligatori" (errore) e
+      per la conferma di invio (testo di successo passato via data-attribute). */}
+  <div class="req-modal" id="reqModal" data-required-text={t(lang, 'artisti.form.required.popup')} data-success-text={t(lang, 'artisti.success.popup')} hidden>
     <div class="req-modal-backdrop" data-modal-close></div>
     <div class="req-modal-card" role="alertdialog" aria-modal="true" aria-labelledby="reqModalText">
       <span class="req-modal-logo" aria-hidden="true" set:html={logoSvg}></span>
@@ -431,8 +428,8 @@ const submitEndpoint = SUPABASE_URL ? `${SUPABASE_URL}/functions/v1/submit-appli
 <script>
   const form = document.getElementById('artistiForm') as HTMLFormElement | null;
   const submitBtn = document.getElementById('artistiSubmit') as HTMLButtonElement | null;
-  const successEl = document.getElementById('artistiSuccess') as HTMLElement | null;
   const errorEl = document.getElementById('artistiError') as HTMLElement | null;
+  const submitLabel = submitBtn?.textContent ?? '';
 
   // Lingua corrente, per i messaggi lato client.
   const lang = (form?.querySelector('input[name="lang"]') as HTMLInputElement | null)?.value === 'en' ? 'en' : 'it';
@@ -462,11 +459,16 @@ const submitEndpoint = SUPABASE_URL ? `${SUPABASE_URL}/functions/v1/submit-appli
   // Campi obbligatori del form (in ordine): nome d'arte/band, contatto, email,
   // formazione, genere (+ "Altro"), repertorio, primo link audio/video.
   const reqModal = document.getElementById('reqModal') as HTMLElement | null;
+  const reqModalText = document.getElementById('reqModalText') as HTMLElement | null;
+  // Stessa grafica (logo Biblio), due testi: errore "campi obbligatori" e conferma invio.
+  const REQUIRED_MSG = reqModal?.dataset.requiredText ?? reqModalText?.textContent ?? '';
+  const SUCCESS_MSG = reqModal?.dataset.successText ?? 'Grazie per la candidatura, a presto';
   const REQUIRED_FIELDS = ['artist_name', 'contact_name', 'email', 'lineup', 'genre', 'repertoire', 'link1'];
   let reqRefocus: HTMLElement | null = null;
 
-  const openReqModal = (focusTarget: HTMLElement | null) => {
+  const openReqModal = (focusTarget: HTMLElement | null, text: string = REQUIRED_MSG) => {
     if (!reqModal) return;
+    if (reqModalText) reqModalText.textContent = text;
     reqRefocus = focusTarget;
     reqModal.hidden = false;
     (reqModal.querySelector('.req-modal-ok') as HTMLElement | null)?.focus();
@@ -481,6 +483,25 @@ const submitEndpoint = SUPABASE_URL ? `${SUPABASE_URL}/functions/v1/submit-appli
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') closeReqModal();
   });
+
+  // ── Normalizzazione URL ──────────────────────────────────────────────────
+  // I campi link sono type="url": senza schema (https://) checkValidity() li
+  // considera NON validi, e il form bloccava l'invio mostrando il pop-up
+  // "campi obbligatori" anche con un link corretto ma scritto senza https://
+  // (es. "www.youtube.com/…", "instagram.com/artista"). Qui anteponiamo
+  // https:// quando manca lo schema, così il link è valido e viene salvato bene.
+  const URL_FIELDS = ['link1', 'link2', 'link3', 'epk'];
+  const normalizeUrl = (raw: string): string => {
+    const v = raw.trim();
+    if (!v) return '';
+    return /^[a-z][a-z0-9+.-]*:\/\//i.test(v) ? v : `https://${v}`;
+  };
+  const normalizeUrlFields = () => {
+    for (const name of URL_FIELDS) {
+      const el = form?.elements.namedItem(name) as HTMLInputElement | null;
+      if (el && el.value.trim()) el.value = normalizeUrl(el.value);
+    }
+  };
 
   /** Primo campo obbligatorio mancante o non valido; null se sono tutti a posto. */
   const firstMissingRequired = (): HTMLElement | null => {
@@ -560,7 +581,11 @@ const submitEndpoint = SUPABASE_URL ? `${SUPABASE_URL}/functions/v1/submit-appli
       return;
     }
 
-    // Campi obbligatori mancanti → pop-up con logo Biblio, niente invio.
+    // Normalizza i link (aggiunge https:// se manca) PRIMA della validazione,
+    // così un link corretto ma senza schema non blocca più l'invio.
+    normalizeUrlFields();
+
+    // Campi obbligatori mancanti o non validi → pop-up con logo Biblio, niente invio.
     const missing = firstMissingRequired();
     if (missing) {
       openReqModal(missing);
@@ -612,8 +637,20 @@ const submitEndpoint = SUPABASE_URL ? `${SUPABASE_URL}/functions/v1/submit-appli
           if (submitBtn) submitBtn.textContent = M.uploading;
           await uploadFiles(out.uploads, files);
         }
-        form.hidden = true;
-        successEl?.removeAttribute('hidden');
+        // Successo: conferma con la STESSA grafica del pop-up errore (logo Biblio).
+        errorEl?.setAttribute('hidden', '');
+        openReqModal(null, SUCCESS_MSG);
+        // Reset del form solo DOPO che il messaggio di successo è visibile.
+        form.reset();
+        syncGenreOther();
+        if (fileList) fileList.innerHTML = '';
+        if (fileError) {
+          fileError.hidden = true;
+          fileError.textContent = '';
+        }
+        if (submitBtn) submitBtn.textContent = submitLabel;
+        submitBtn?.removeAttribute('disabled');
+        (window as unknown as { turnstile?: { reset?: () => void } }).turnstile?.reset?.();
       } else {
         errorEl?.removeAttribute('hidden');
         submitBtn?.removeAttribute('disabled');
